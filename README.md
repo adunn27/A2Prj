@@ -1,7 +1,10 @@
 # A2Prj
 
 # Team Members : ID
-Alex Dunn :
+Alex Dunn : 
+
 Jeffrey Kim : 913848964
+
 Seth Damany :
+
 Whitney Devine : 
