@@ -5,6 +5,6 @@ Alex Dunn :
 
 Jeffrey Kim : 913848964
 
-Seth Damany :
+Seth Damany : 912914750
 
 Whitney Devine : 
