@@ -4,7 +4,7 @@
 
 Seth Damany : 2750
 
-Whitney Devine : 
+Whitney Devine : 7636
 
 Alexander Dunn : 6139
 
