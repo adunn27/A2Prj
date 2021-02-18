@@ -2,14 +2,13 @@ package org.ecs160.a2;
 
 
 import static com.codename1.ui.CN.*;
-import com.codename1.ui.Display;
-import com.codename1.ui.Form;
-import com.codename1.ui.Dialog;
-import com.codename1.ui.Label;
+
+import com.codename1.components.MultiButton;
+import com.codename1.ui.*;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import com.codename1.io.Log;
-import com.codename1.ui.Toolbar;
+
 import java.io.IOException;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.io.NetworkEvent;
@@ -22,6 +21,7 @@ public class AppMain {
 
     private Form current;
     private Resources theme;
+    private Object Center;
 
     public void init(Object context) {
         // use two network threads instead of one
@@ -45,15 +45,38 @@ public class AppMain {
             Dialog.show("Connection Error", "There was a networking error in the connection to " + err.getConnectionRequest().getUrl(), "OK", null);
         });        
     }
-    
+
     public void start() {
         if(current != null){
             current.show();
             return;
         }
-        Form hi = new Form("Hi World", BoxLayout.y());
-        hi.add(new Label("Hi World"));
-        hi.show();
+        ShowArchivePage();
+        //Form hi = new Form("Hi World", BoxLayout.y());
+        //hi.add(new Label("Hi World"));
+        //Button b = new Button("My Button");
+        //b.addActionListener((e)->Func());
+        //hi.add(b);
+        //hi.show();
+    }
+
+    public void ShowArchivePage(){
+        //https://www.youtube.com/watch?v=0m7Bay4g93k&t=114s
+        System.out.println("Showing the Archive Page");
+        Form newForm = new Form("Archive Page", BoxLayout.y());
+        newForm.getToolbar().addCommandToLeftBar("Done", null, (e)->Log.p("Clicked"));
+        newForm.getToolbar().addCommandToRightBar("Filter", null, (e)->Log.p("Filter Clicked"));
+        TextField SearchBar = new TextField("", "Search", 20, TextArea.ANY);
+        newForm.add(SearchBar);
+        Container List = new Container(BoxLayout.y());
+        List.setScrollableY(true);
+        for (int i = 0; i < 1000 ; i++){
+            MultiButton mb = new MultiButton("List Entry " + i);
+            mb.setTextLine2("Further details...");
+            List.add(mb);
+        }
+        newForm.add(Center, List);
+        newForm.show();
     }
 
     public void stop() {
