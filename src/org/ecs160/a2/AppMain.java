@@ -2,13 +2,14 @@ package org.ecs160.a2;
 
 
 import static com.codename1.ui.CN.*;
-
-import com.codename1.components.MultiButton;
-import com.codename1.ui.*;
+import com.codename1.ui.Display;
+import com.codename1.ui.Form;
+import com.codename1.ui.Dialog;
+import com.codename1.ui.Label;
 import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.util.Resources;
 import com.codename1.io.Log;
-
+import com.codename1.ui.Toolbar;
 import java.io.IOException;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.io.NetworkEvent;
@@ -21,7 +22,6 @@ public class AppMain {
 
     private Form current;
     private Resources theme;
-    private Object Center;
 
     public void init(Object context) {
         // use two network threads instead of one
@@ -45,20 +45,15 @@ public class AppMain {
             Dialog.show("Connection Error", "There was a networking error in the connection to " + err.getConnectionRequest().getUrl(), "OK", null);
         });        
     }
-
+    
     public void start() {
         if(current != null){
             current.show();
             return;
         }
-        ArchivePage newArchivePage = new ArchivePage();
-        newArchivePage.start();
-        //Form hi = new Form("Hi World", BoxLayout.y());
-        //hi.add(new Label("Hi World"));
-        //Button b = new Button("My Button");
-        //b.addActionListener((e)->Func());
-        //hi.add(b);
-        //hi.show();
+        Form hi = new Form("Hi World", BoxLayout.y());
+        hi.add(new Label("Hi World"));
+        hi.show();
     }
 
     public void stop() {
