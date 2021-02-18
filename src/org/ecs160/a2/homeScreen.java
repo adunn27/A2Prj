@@ -2,6 +2,7 @@ package org.ecs160.a2;
 
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.layouts.BoxLayout;
 
 public class homeScreen extends Form{
     public homeScreen() {
@@ -16,5 +17,8 @@ public class homeScreen extends Form{
         footerBar.add(BorderLayout.CENTER, new Button("View Archives"));
         footerBar.add(BorderLayout.EAST, new Button("+"));
         add(BorderLayout.SOUTH, footerBar);
+
+        Container taskList = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        add(BorderLayout.CENTER, taskList);
     }
 }
