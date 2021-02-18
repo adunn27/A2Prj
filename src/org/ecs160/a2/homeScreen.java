@@ -18,7 +18,11 @@ public class homeScreen extends Form{
         footerBar.add(BorderLayout.EAST, new Button("+"));
         add(BorderLayout.SOUTH, footerBar);
 
+        Container taskMenu = new Container(new BorderLayout());
         Container taskList = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        add(BorderLayout.CENTER, taskList);
+        Container currentTask = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        taskMenu.add(BorderLayout.CENTER, taskList);
+        taskMenu.add(BorderLayout.NORTH, currentTask);
+        add(BorderLayout.CENTER, taskMenu);
     }
 }
