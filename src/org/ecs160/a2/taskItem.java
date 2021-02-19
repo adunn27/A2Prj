@@ -23,30 +23,49 @@ public class taskItem extends Container{
 
     public taskItem(){
         Container t1 = TableLayout.encloseIn(2, true);
+
+        t1.getAllStyles().setBorder(Border.createLineBorder(1,UITheme.DARK_GREY));
+        t1.getAllStyles().setPadding(5,5,0,0);
+
+        Container SizeContainer = new Container(BoxLayout.x());
+
         taskSize = "S";
         Label sizeLabel = new Label(taskSize);
         Style editSizeLabel = sizeLabel.getAllStyles();
-        editSizeLabel.setFgColor(UITheme.WHITE);
-        editSizeLabel.setPadding(2,2,2,2);
-        editSizeLabel.setMargin(15,15,15,15);
-        editSizeLabel.setBorder(RoundBorder.create().rectangle(true).color(UITheme.DARK_GREY));
+        editSizeLabel.setFgColor(UITheme.BLACK);
+        editSizeLabel.setPadding(UITheme.PAD_3MM,
+                UITheme.PAD_3MM,
+                UITheme.PAD_3MM,
+                UITheme.PAD_3MM);
+        editSizeLabel.setMargin(20,20,20,20);
+        editSizeLabel.setBorder(RoundBorder.create().color(UITheme.YELLOW));
 
-        Font largeFont = Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE);
+        Font largeFont = Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_LARGE);
 
         editSizeLabel.setFont(largeFont);
-        t1.add(sizeLabel);
+        SizeContainer.add(sizeLabel);
 
-        //within the subcomponent, i need a task name and task tag
+        t1.add(SizeContainer);
 
         Container taskInformation = new Container(BoxLayout.y());
 
-
         Font mediumFont = Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE);
-        Font smallFont = Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE);
+        Font smallFont = Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, 1);
 
 
         taskInformation.add("[Task Name Here]");
-        taskInformation.add("[Task Tag Here]");
+
+        Container taskTags = new Container(BoxLayout.x());
+        taskTags.setScrollableX(true);
+        Container TagObject = new UIComponents.TagObject("ECS 160");
+        Container TagObject1 = new UIComponents.TagObject("ECS 193a");
+        Container TagObject2 = new UIComponents.TagObject("ECS 150");
+
+        taskTags.add(TagObject);
+        taskTags.add(TagObject1);
+        taskTags.add(TagObject2);
+
+        taskInformation.add(taskTags);
         t1.add(taskInformation);
         add(t1);
     }

@@ -60,7 +60,7 @@ public class archiveUI extends Form {
         newHeader.add(EAST, newSearchBar);
         Container newFooter = new footerAbstract();
         add(NORTH, newHeader);
-        add(SOUTH, newFooter);
+        //add(SOUTH, newFooter);
 
         Container TaskList = new TaskList();
         add(CENTER, TaskList);
