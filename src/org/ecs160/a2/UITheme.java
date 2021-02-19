@@ -19,4 +19,10 @@ public class UITheme {
     public static final int YELLOW = 0xfab73d;
 
     public static final int RED = 0xbe0000;
+
+
+
+    // padding
+    public static final int PAD_3MM = 3;
+    public static final int PAD_1MM = 1;
 }
