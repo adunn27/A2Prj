@@ -37,17 +37,17 @@ class tagElement extends Container {
         // delete button
         Button tagDelete = new Button(); // needs event listener
         tagDelete.setIcon(FontImage.createMaterial(FontImage.MATERIAL_CLOSE, tagDelete.getUnselectedStyle()));
-        tagDelete.getAllStyles().setFgColor(color_red);
+        tagDelete.getAllStyles().setFgColor(UITheme.RED);
 
         add(BorderLayout.CENTER, tagName);
         add(BorderLayout.EAST, tagDelete);
-        getAllStyles().setBorder(Border.createDashedBorder(6, color_lightGrey));
+        getAllStyles().setBorder(Border.createDashedBorder(6, UITheme.LIGHT_GREY));
         getAllStyles().setMargin(25,25,25,25);
     }
 
 }
 
-public class editTaskUI extends Form {
+public class editTask extends Form {
     String[] sizeOptions = {"S", "M", "L", "XL"};
     String[] deleteOptions = {"Yes, delete permanently", "Cancel"};
 
@@ -59,7 +59,7 @@ public class editTaskUI extends Form {
 
     int pixels = mmToPixels(1.5);
 
-    public editTaskUI() {
+    public editTask() {
 //        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         setTitle("Edit Task");
 
