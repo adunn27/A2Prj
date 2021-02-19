@@ -47,7 +47,8 @@ class TitleRow extends Container {
     }
 }
 class DescRow extends Container {
-    String descriptionData = "Lorem Ipsum"; // TODO: get description data
+//    String descriptionData = "Lorem Ipsum"; // TODO: get description data
+    String descriptionData = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
     public DescRow() {
         setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         Label descTitle = new Label("Description");
@@ -67,11 +68,6 @@ class DescRow extends Container {
         descDataStyle.setFgColor(UITheme.BLACK);
         descDataStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
         descDataStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
-
-
-//        getAllStyles().setBorder(
-//                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY)
-//        );
 
         add(descTitle);
         add(descData);
@@ -121,7 +117,7 @@ class TimeRow extends Container {
 
         //
         SpanLabel allTime = new SpanLabel(
-                "All Time:\t +" +
+                "All Time:\t" +
                 allTimeData + "\n"+
                 "This Week:\t" +
                 weekTimeData + "\n" +
@@ -230,12 +226,14 @@ class FooterSeth extends Container {
 public class taskDetails extends Form {
     public taskDetails() {
         setLayout(new BorderLayout());
+
         setTitle("Details");
 
         // create components
         Container Header = new HeaderSeth();
         Container Body = new Container();
         Body.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
+        Body.setScrollableY(true);
         Body.add(new TitleRow())
             .add(new TimeRow())
             .add(new TagRow())
