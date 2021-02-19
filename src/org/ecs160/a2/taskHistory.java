@@ -12,33 +12,15 @@ import com.codename1.ui.plaf.RoundRectBorder;
 import com.codename1.ui.table.TableLayout;
 import com.codename1.ui.layouts.BoxLayout;
 
-class HeaderTaskHistory extends Container {
-    public HeaderTaskHistory(){
-        //should have a back button
-        setLayout(new BorderLayout());
-
-        Button backButton = new Button("back");
-
-        Label ArchiveTitle = new Label("Task History");
-
-        add(WEST, backButton);
-        add(CENTER, ArchiveTitle);
-    }
-}
 
 public class taskHistory extends Form {
     public taskHistory(){
         setTitle("Archive UI");
         setLayout(new BorderLayout());
 
+        Container taskHistoryHeader = new headerAbstract();
+        taskHistoryHeader.getComponentAt(1).remove();
 
-        Label HeaderLabel = new Label("HEADER");
-        HeaderLabel.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.DARK_GREY));
-        Label FooterLabel = new Label("Footer");
-        Label ListLabel = new Label("List");
-
-        add(NORTH, HeaderLabel);
-        add(SOUTH, FooterLabel);
-        add(CENTER, ListLabel);
+        add(NORTH, taskHistoryHeader);
     }
 }
