@@ -35,7 +35,8 @@ class tagElement extends Container {
         tagName.getAllStyles().setFgColor(color_black);
 
         // delete button
-        Button tagDelete = new Button("x"); // needs event listener
+        Button tagDelete = new Button(); // needs event listener
+        tagDelete.setIcon(FontImage.createMaterial(FontImage.MATERIAL_CLOSE, tagDelete.getUnselectedStyle()));
         tagDelete.getAllStyles().setFgColor(color_red);
 
         add(BorderLayout.CENTER, tagName);
