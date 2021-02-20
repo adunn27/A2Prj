@@ -1,12 +1,14 @@
 package org.ecs160.a2;
 
-import java.time.Duration;
+import jdk.nashorn.internal.objects.SetIterator;
+
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LongSummaryStatistics;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class TaskContainer {
+public class TaskContainer implements Iterable<Task>{
     private Set<Task> taskSet;
 
     public TaskContainer() {
@@ -15,6 +17,10 @@ public class TaskContainer {
 
     private TaskContainer(Set<Task> newTaskSet) {
         taskSet = newTaskSet;
+    }
+
+    public Iterator<Task> iterator() {
+        return taskSet.iterator(); //TODO check
     }
 
     public void addTask(Task newTask) {
