@@ -87,6 +87,10 @@ public class Task {
         tags.add(tag);
     }
 
+    public void removeTag(String tag) {
+        tags.remove(tag);
+    }
+
     public List<String> getAllTags() {
         return tags.stream().sorted().collect(Collectors.toList());
     }
