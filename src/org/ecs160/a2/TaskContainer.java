@@ -1,6 +1,8 @@
 package org.ecs160.a2;
 
+import java.time.Duration;
 import java.util.HashSet;
+import java.util.LongSummaryStatistics;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -45,5 +47,35 @@ public class TaskContainer {
                 .collect(Collectors.toSet());
 
         return new TaskContainer(filteredSet);
+    }
+
+    private LongSummaryStatistics getTimeStatistics() {
+        return taskSet.stream()
+                .mapToLong(task -> task.getTotalTime())
+                .summaryStatistics();
+    }
+
+    public Long getTotalTime() { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics();
+
+        return stats.getSum();
+    }
+
+    public Long getMinimumTime() { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics();
+
+        return stats.getMin();
+    }
+
+    public Long getAverageTime() { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics();
+
+        return Math.round(stats.getAverage());
+    }
+
+    public Long getMaximumTime() { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics();
+
+        return stats.getMax();
     }
 }
