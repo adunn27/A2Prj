@@ -20,6 +20,11 @@ public class UITheme {
 
     public static final int RED = 0xbe0000;
 
+    public static final int COL_SIZE_S = 0x9cacbf;
+    public static final int COL_SIZE_M = 0x2b6684;
+    public static final int COL_SIZE_L = 0x032e42;
+    public static final int COL_SIZE_XL = 0x0a1417;
+
 
 
     // padding
