@@ -1,10 +1,8 @@
 package org.ecs160.a2;
 
-import com.codename1.ui.Button;
-import com.codename1.ui.Component;
-import com.codename1.ui.Container;
-import com.codename1.ui.Font;
+import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
@@ -29,6 +27,50 @@ public class UIComponents {
             );
 
             add(BorderLayout.CENTER, tagLabel);
+        }
+    }
+
+    //Button object defaults to edit icon
+    static class ButtonObject extends Button {
+        public ButtonObject () {
+            getAllStyles().setFgColor(UITheme.BLACK);
+            setIcon(
+                    FontImage.createMaterial(
+                            FontImage.MATERIAL_MODE_EDIT,
+                            getUnselectedStyle()
+                    )
+            );
+            getAllStyles().setBorder(
+                    RoundBorder.create()
+                        .rectangle(true)
+                        .color(UITheme.LIGHT_YELLOW)
+            );
+        }
+    }
+
+    static class SearchBoxObject extends Container {
+        public SearchBoxObject(){
+            setLayout(BoxLayout.xRight());
+            getAllStyles().setMarginLeft(100);
+            TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
+            searchBar.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+            searchBar.getAllStyles().setFgColor(UITheme.BLACK);
+            add(searchBar);
+
+            Button filterButton = new Button("Filter");
+            filterButton.getAllStyles().setFgColor(UITheme.BLACK);
+            filterButton.setIcon(FontImage.createMaterial(
+                    FontImage.MATERIAL_FILTER_LIST,
+                    filterButton.getUnselectedStyle()
+            ));
+            add(filterButton);
+
+        }
+    }
+
+    static class TaskItemObject extends Container {
+        public TaskItemObject(){
+            
         }
     }
 }
