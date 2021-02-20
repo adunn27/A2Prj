@@ -10,6 +10,34 @@ import com.codename1.ui.plaf.Style;
 
 import static com.codename1.ui.CN.*;
 
+public class taskDetails extends Form {
+    public taskDetails() {
+        setLayout(new BorderLayout());
+
+        setTitle("Details");
+
+        // create components
+        Container Header = new HeaderSeth();
+        Container Body = new Container();
+        Body.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
+        Body.setScrollableY(true);
+        Body.add(new TitleRow())
+                .add(new TimeRow())
+                .add(new TagRow())
+                .add(new DescRow());
+
+        Container Footer = new FooterSeth();
+
+
+        // add components
+        add(BorderLayout.NORTH, Header);
+        add(BorderLayout.CENTER, Body);
+        add(BorderLayout.SOUTH, Footer);
+
+
+    }
+}
+
 class TitleRow extends Container {
     public TitleRow() {
         setLayout(new BoxLayout(BoxLayout.X_AXIS));
@@ -58,7 +86,6 @@ class DescRow extends Container {
         descTitleStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_SMALL)));
         descTitleStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
         descTitleStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
-
 
         SpanLabel descData = new SpanLabel();
 
@@ -134,6 +161,7 @@ class TimeRow extends Container {
 
     }
 }
+
 class HeaderSeth extends Container {
     public HeaderSeth() {
         setLayout(new BorderLayout());
@@ -220,33 +248,5 @@ class FooterSeth extends Container {
         // add to container
         add(historyButton);
         add(archiveButton);
-    }
-}
-
-public class taskDetails extends Form {
-    public taskDetails() {
-        setLayout(new BorderLayout());
-
-        setTitle("Details");
-
-        // create components
-        Container Header = new HeaderSeth();
-        Container Body = new Container();
-        Body.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        Body.setScrollableY(true);
-        Body.add(new TitleRow())
-            .add(new TimeRow())
-            .add(new TagRow())
-            .add(new DescRow());
-
-        Container Footer = new FooterSeth();
-
-
-        // add components
-        add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, Body);
-        add(BorderLayout.SOUTH, Footer);
-
-
     }
 }

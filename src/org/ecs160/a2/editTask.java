@@ -42,7 +42,8 @@ class tagElement extends Container {
         add(BorderLayout.CENTER, tagName);
         add(BorderLayout.EAST, tagDelete);
         getAllStyles().setBorder(Border.createDashedBorder(6, UITheme.LIGHT_GREY));
-        getAllStyles().setMargin(25,25,25,25);
+        getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+        getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
     }
 
 }

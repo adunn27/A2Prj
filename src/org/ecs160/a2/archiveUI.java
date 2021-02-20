@@ -38,13 +38,17 @@ class SearchBar extends Container{
     public SearchBar(){
         setLayout(BoxLayout.xRight());
         getAllStyles().setMarginLeft(100);
-        TextField searchBar = new TextField("", "search", 20, TextArea.ANY);
-        add("           ");
+        TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
+//        add("           ");
         searchBar.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
         searchBar.getAllStyles().setFgColor(UITheme.BLACK);
         add(searchBar);
         Button filterButton = new Button("Filter");
-        filterButton.getAllStyles().setBgColor(UITheme.BLACK);
+        filterButton.getAllStyles().setFgColor(UITheme.BLACK);
+        filterButton.setIcon(FontImage.createMaterial(
+                FontImage.MATERIAL_FILTER_LIST,
+                filterButton.getUnselectedStyle()
+        ));
         add(filterButton);
     }
 }
