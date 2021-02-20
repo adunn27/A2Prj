@@ -10,6 +10,10 @@ import com.codename1.ui.plaf.Style;
 
 import static com.codename1.ui.CN.*;
 
+
+// action listener
+
+
 public class taskDetails extends Form {
     public taskDetails() {
         setLayout(new BorderLayout());
@@ -17,7 +21,7 @@ public class taskDetails extends Form {
         setTitle("Details");
 
         // create components
-        Container Header = new HeaderSeth();
+        Container Header = new DetailsHeader();
         Container Body = new Container();
         Body.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         Body.setScrollableY(true);
@@ -26,7 +30,7 @@ public class taskDetails extends Form {
                 .add(new TagRow())
                 .add(new DescRow());
 
-        Container Footer = new FooterSeth();
+        Container Footer = new DetailsFooter();
 
 
         // add components
@@ -115,13 +119,13 @@ class TagRow extends Container {
 
         add(tagTitle);
 
-        Container tagContainer = new Container();
+        Container tagObject = new Container();
 
         for (int i = 0; i < tags.length; i++) {
-            tagContainer.add(new UIComponents.TagObject(tags[i]));
+            tagObject.add(new UIComponents.TagObject(tags[i]));
         }
 
-        add(tagContainer);
+        add(tagObject);
 
     }
 }
@@ -162,53 +166,24 @@ class TimeRow extends Container {
     }
 }
 
-class HeaderSeth extends Container {
-    public HeaderSeth() {
+class DetailsHeader extends Container {
+    public DetailsHeader() {
         setLayout(new BorderLayout());
-        Button editButton = new Button();
-        Style editStyle = editButton.getAllStyles();
-        editStyle.setFgColor(UITheme.BLACK);
 
-        // set edit icon
-        editButton.setIcon(
-                FontImage.createMaterial(
-                        FontImage.MATERIAL_MODE_EDIT,
-                        editButton.getUnselectedStyle()
-                )
-        );
+        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
+        backButton.setMyColor(UITheme.YELLOW);
+        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
 
-        // set edit button background and shape
-        editStyle.setBorder(
-                RoundBorder.create().
-                        rectangle(true).
-                        color(UITheme.LIGHT_YELLOW)
-        );
+        UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
+        editButton.setMyColor(UITheme.YELLOW);
+        editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
 
-        Button backButton = new Button();
-        Style backStyle = backButton.getAllStyles();
-        backStyle.setFgColor(UITheme.BLACK);
-
-        // set edit icon
-        backButton.setIcon(
-                FontImage.createMaterial(
-                        FontImage.MATERIAL_ARROW_BACK,
-                        backButton.getUnselectedStyle()
-                )
-        );
-
-        // set edit button background and shape
-        backStyle.setBorder(
-                RoundBorder.create().
-                        rectangle(true).
-                        color(UITheme.LIGHT_YELLOW)
-        );
-
-        add(BorderLayout.WEST, backButton);
         add(BorderLayout.EAST, editButton);
+        add(BorderLayout.WEST, backButton);
     }
 }
-class FooterSeth extends Container {
-    public FooterSeth() {
+class DetailsFooter extends Container {
+    public DetailsFooter() {
         setLayout(new GridLayout(1,2));
         setScrollableY(false);
 
@@ -250,3 +225,5 @@ class FooterSeth extends Container {
         add(archiveButton);
     }
 }
+
+

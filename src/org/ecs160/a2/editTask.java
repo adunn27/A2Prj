@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import com.codename1.components.InteractionDialog;
 import com.codename1.components.MultiButton;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
@@ -7,13 +8,16 @@ import com.codename1.ui.Button;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
 import com.codename1.ui.Label;
+import com.codename1.ui.TextArea;
 import com.codename1.ui.TextComponent;
+import com.codename1.ui.TextField;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.Validator;
 
@@ -48,69 +52,86 @@ class tagElement extends Container {
 
 }
 
-public class editTask extends Form {
-    String[] sizeOptions = {"S", "M", "L", "XL"};
-    String[] deleteOptions = {"Yes, delete permanently", "Cancel"};
+class tagEditObject extends Container {
+    String name = "tagXX";
+    public tagEditObject() {
+        // todo: implement tagEditObject()
+//        add(tagEdit);
+    }
+}
 
-    String[] sampleTags = {"Sample 1", "Sample 2", "Sample 3"};
 
-    int color_lightGrey = 0xc4c4c4;
-    int color_black = 0x000000;
-    int color_red = 0xbe0000;
+class EditHeader extends Container {
+    public EditHeader() {
+        setLayout(new BorderLayout());
+        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
+        doneButton.setMyColor(UITheme.YELLOW);
+        doneButton.setMyText("Done");
 
-    int pixels = mmToPixels(1.5);
+        add(BorderLayout.EAST, doneButton);
+    }
+}
+class EditFooter extends Container {
+    public EditFooter() {
+        setLayout(new BorderLayout());
+        UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
+        deleteButton.setMyColor(UITheme.RED);
+        deleteButton.setMyText("Delete");
+        deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
+        deleteButton.setMyPadding(UITheme.PAD_3MM);
 
-    public editTask() {
-//        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        setTitle("Edit Task");
+        add(BorderLayout.EAST, deleteButton);
 
-        // init containers
-        Container taskNameSizeContainer = new Container(new BorderLayout());
-        Container tagsContainer = new Container(new FlowLayout());
-        tagsContainer.getAllStyles().setBorder(Border.createLineBorder(4));
+        // delete button functionality
+        deleteButton.addActionListener(e -> {
+            Dialog d = new Dialog();
 
-        // --- tags
-        // add existing tags
-        for (int i = 0; i < sampleTags.length; i++) {
-            Container tag = new tagElement(sampleTags[i]);
-            tagsContainer.add(tag);
-        }
+            UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
+            confirm.setMyColor(UITheme.RED);
+            confirm.setMyPadding(UITheme.PAD_1MM);
+            confirm.setMyText("Confirm");
 
-        // add (new tag) button with action listener
-        tagsContainer.setScrollableY(true);
-        Button addTagButton = new Button("+");
-        tagsContainer.add(addTagButton);
+            confirm.addActionListener(conf -> {
+                // TODO: DELETE!
+            });
 
-        addTagButton.addActionListener(e -> {
-            Container tag = new tagElement("New Tag");
-            tag.getAllStyles().setFgColor(0x000000);
-            tagsContainer.addComponent(0, tag);
-            tag.setWidth(getWidth());
-            tag.setY(getHeight());
-            tagsContainer.animateLayout(125);
+            UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+            cancel.setMyColor(UITheme.LIGHT_GREY);
+            cancel.setMyPadding(UITheme.PAD_3MM);
+            cancel.setMyText("Cancel");
+
+
+            cancel.addActionListener(canc -> {
+                d.dispose();
+            });
+
+
+            d.setLayout(BoxLayout.y());
+            d.addComponent(new SpanLabel("Permanently delete this task?"));
+            d.addComponent(confirm);
+            d.addComponent(cancel);
+            d.showPopupDialog(deleteButton);
         });
+    }
+}
 
-        // init elements
-        TextComponent nameField = new TextComponent().label("Name");
-        MultiButton sizeButton = new MultiButton("Size");
-        Button deleteButton = new Button("Delete");
-        TextComponent descriptionField = new TextComponent().label("Description").multiline(true);
+class SizeMultiButton extends MultiButton {
+    final String[] sizeOptions = {"S", "M", "L", "XL"};
+    public SizeMultiButton(String size) {
+        setText(size);
+        getUnselectedStyle().setMarginUnit(Style.UNIT_TYPE_DIPS);
+        getUnselectedStyle().setMargin(UITheme.PAD_1MM,
+                                       UITheme.PAD_1MM,
+                                       UITheme.PAD_1MM,
+                                       UITheme.PAD_1MM);
 
-        // --- header: name, size
-        // name style
-        nameField.text("My Task");
+        getAllStyles().setBorder(
+                RoundBorder.create()
+                        .rectangle(true)
+                        .color(UITheme.LIGHT_GREY)
+        );
 
-        Style nameStyle = nameField.getAllStyles();
-        Validator val = new Validator();
-        val.addConstraint(nameField, new LengthConstraint(1));
-
-        // size style
-        Style sizeStyle = sizeButton.getAllStyles();
-        sizeStyle.setPaddingUnit(Style.UNIT_TYPE_PIXELS);
-        sizeStyle.setPadding(pixels, pixels, pixels, pixels);
-
-        // source: https://www.codenameone.com/blog/tip-dont-use-combobox.html
-        sizeButton.addActionListener(e -> {
+        this.addActionListener(e -> {
             Dialog d = new Dialog();
             d.setLayout(BoxLayout.y());
             d.getContentPane().setScrollableY(false);
@@ -118,46 +139,61 @@ public class editTask extends Form {
                 MultiButton mb = new MultiButton(sizeOptions[iter]);
                 d.add(mb);
                 mb.addActionListener(ee -> {
-                    sizeButton.setTextLine1(mb.getTextLine1());
-                    sizeButton.setTextLine2(mb.getTextLine2());
+                    this.setTextLine1(mb.getTextLine1());
+                    this.setTextLine2(mb.getTextLine2());
                     d.dispose();
-                    sizeButton.revalidate();
+                    this.revalidate();
                 });
             }
-            d.showPopupDialog(sizeButton);
+            d.showPopupDialog(this);
         });
 
-        // put elements in header container
-        taskNameSizeContainer.add(BorderLayout.CENTER, nameField);
-        taskNameSizeContainer.add(BorderLayout.EAST, sizeButton);
+    }
+}
 
-        // description style
-        descriptionField.text("My Task's description.\nCan have multiple lines!");
+public class editTask extends Form {
 
-        // delete style
-        Style deleteStyle = deleteButton.getAllStyles();
-        deleteStyle.setFgColor(0xffffff);
-        deleteStyle.setBorder(null);
-        deleteStyle.setBgColor(0xbe0000);
-        deleteStyle.setBgTransparency(255);
-        deleteStyle.setPaddingUnit(Style.UNIT_TYPE_PIXELS);
-        deleteStyle.setPadding(pixels,pixels,pixels,pixels);
+    public editTask() {
+        setLayout(new BorderLayout());
+        setTitle("Edit Task");
 
-        deleteButton.addActionListener(e -> {
-            Dialog d = new Dialog();
-            d.setLayout(BoxLayout.y());
-            d.addComponent(new SpanLabel("Are you sure you want to permanently delete this task?"));
-            d.addComponent(new Button("Proceed"));
-            d.addComponent(new Button("Cancel"));
-            d.showPopupDialog(deleteButton);
-        });
+        Container header = new EditHeader();
+        Container footer = new EditFooter();
+        Container body = new Container(new BoxLayout(BoxLayout.Y_AXIS));
 
-        // add containers to form
-        add(taskNameSizeContainer);
-        addComponent(descriptionField);
+        // title row
+        Container titleRow = new Container(new BorderLayout());
+        titleRow.add(BorderLayout.CENTER,
+                     new TextComponent().label("Name"));
 
-        addComponent(tagsContainer);
-        add(deleteButton);
+        titleRow.add(BorderLayout.EAST,
+                     new SizeMultiButton("Size"));
+        body.add(titleRow);
+
+        // description row
+        TextComponent descRow = new TextComponent().label("Description").multiline(true);
+        body.add(descRow);
+
+        // tag row
+        Container tagRow = new Container(new BoxLayout(BoxLayout.Y_AXIS));
+        Container tagList = new Container();
+        UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
+        addButton.setMyIcon(FontImage.MATERIAL_ADD);
+        addButton.setMyColor(UITheme.GREEN);
+
+        for (int i = 0; i < 9; i++) {
+            tagList.add(new tagEditObject());
+        }
+        tagList.add(addButton);
+
+        tagRow.add(new Label("Tags"));
+        tagRow.add(tagList);
+        body.add(tagRow);
+
+        add(BorderLayout.NORTH, header);
+        add(BorderLayout.CENTER, body);
+        add(BorderLayout.SOUTH, footer);
+
     }
 
     private int mmToPixels(double mm) {

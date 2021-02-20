@@ -25,8 +25,6 @@ public class UITheme {
     public static final int COL_SIZE_L = 0x032e42;
     public static final int COL_SIZE_XL = 0x0a1417;
 
-
-
     // padding
     public static final int PAD_3MM = 3;
     public static final int PAD_1MM = 1;
