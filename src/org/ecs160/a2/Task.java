@@ -38,8 +38,8 @@ public class Task {
         name = newTaskName;
     }
 
-    public String getTaskSize() {
-        return size.toString();
+    public TaskSize getTaskSize() {
+        return size;
     }
 
     public void setTaskSize(String newTaskSizeString) {
