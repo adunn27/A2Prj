@@ -1,5 +1,7 @@
 package org.ecs160.a2;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -101,5 +103,13 @@ public class Task {
 
     public List<String> getAllTags() {
         return tags.stream().sorted().collect(Collectors.toList());
+    }
+
+    public long getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+        Duration totalTime = Duration.ofMillis(0);
+        for (TimePeriod timeSpan: allTimes) {
+            totalTime = totalTime.addTo(timeSpan.getTime(start, stop));
+        }
+        return totalTime.toMillis();
     }
 }
