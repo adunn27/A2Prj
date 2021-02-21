@@ -10,35 +10,90 @@ import com.codename1.ui.plaf.Style;
 
 import static com.codename1.ui.CN.*;
 
-
-// action listener
-
-
 public class taskDetails extends Form {
+    Form prev;
+    Form current;
+
+    private Container titleRow;
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container header;
+    private Container footer;
+
+    // TODO: SET NAME, SIZE, DESCRIPTION, TAGS
+    private String name = "[Task Name]";
+    private String size = "S";
+    private String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
+
+
     public taskDetails() {
-        setLayout(new BorderLayout());
+        prev = Display.getInstance().getCurrent();
 
-        setTitle("Details");
+        current.setLayout(new BorderLayout());
+        current.setTitle("Details");
 
-        // create components
-        Container Header = new DetailsHeader();
+        // create body
         Container Body = new Container();
         Body.setLayout(new BoxLayout(BoxLayout.Y_AXIS));
         Body.setScrollableY(true);
-        Body.add(new TitleRow())
-                .add(new TimeRow())
-                .add(new TagRow())
-                .add(new DescRow());
-
-        Container Footer = new DetailsFooter();
-
+        Body.addAll(new TitleRow(), new TimeRow(), new TagRow(), new DescRow());
 
         // add components
-        add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, Body);
-        add(BorderLayout.SOUTH, Footer);
+        current.add(BorderLayout.NORTH, new DetailsHeader());
+        current.add(BorderLayout.SOUTH, new DetailsFooter());
+        current.add(BorderLayout.CENTER, Body);
+
+        current.show();
+    }
+    public void createDescRow() {
+        descRow.setLayout(BoxLayout.y());
+
+        UIComponents.TitleObject descTitle = new UIComponents.TitleObject("Description");
+        descTitle.setSize(SIZE_SMALL);
+
+        SpanLabel descData = new SpanLabel();
+        descData.setText(description);
+        Style descDataStyle = descData.getTextAllStyles();
+        descDataStyle.setFgColor(UITheme.BLACK);
+        descDataStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
+        descDataStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+
+        descRow.add(descTitle);
+        descRow.add(descData);
+    }
 
 
+    private void createTitleRow(String name) {
+        titleRow.setLayout(BoxLayout.x());
+        titleRow.setScrollableY(false);
+        titleRow.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+
+        // task name
+        Label nameLabel = new Label(name);
+        Style nameStyle = nameLabel.getAllStyles();
+        nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_MEDIUM)));
+        nameStyle.setFgColor(UITheme.BLACK);
+        nameStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
+        nameStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+
+        // task size
+        UIComponents.SizeLabelObject sizeLabel = new UIComponents.SizeLabelObject(size);
+
+        // add components
+        titleRow.add(nameLabel);
+        titleRow.add(sizeLabel);
+    }
+
+
+
+
+
+
+
+    // navigation
+    private void goBack() {
+        prev.showBack();
     }
 }
 
@@ -46,8 +101,6 @@ class TitleRow extends Container {
     public TitleRow() {
         setLayout(new BoxLayout(BoxLayout.X_AXIS));
         setScrollableY(false);
-
-        Stroke borderStroke = new Stroke(5, Stroke.CAP_SQUARE, Stroke.JOIN_MITER, 1);
 
         // task name
         Label nameLabel = new Label("[Task Name]"); // TODO: NEEDS TASK NAME
@@ -175,6 +228,16 @@ class DetailsHeader extends Container {
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
 
         UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
+
+
+        NavigationCommand editPage = new NavigationCommand("Go To Edit Page");
+        editPage.setNextForm(new editTask());
+
+        editButton.addActionListener(e -> {
+            editPage.getNextForm().show();
+        });
+
+
         editButton.setMyColor(UITheme.YELLOW);
         editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
 
