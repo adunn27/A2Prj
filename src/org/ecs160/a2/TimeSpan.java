@@ -2,83 +2,90 @@ package org.ecs160.a2;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.Duration;
-import java.util.Date;
-
 public class TimeSpan {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    private final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 
-    public TimeSpan(LocalDateTime StartTime){
-        startTime = StartTime;
+    public TimeSpan(LocalDateTime startTime){
+        this.startTime = startTime;
     }
 
-    public void setStartTime(LocalDateTime StartTime){
-        startTime = StartTime;
+    public void setStartTime(LocalDateTime startTime){
+        this.startTime = startTime;
     }
 
-    public void setEndTime(LocalDateTime EndTime){
-        endTime = EndTime;
+    public void setEndTime(LocalDateTime endTime){
+        this.endTime = endTime;
+    }
+
+    //Unnecessary abstraction?
+    public String getTime(String whichTime){
+        if (whichTime.equals("startTime")) {
+            return startTime.format(timeFormat);
+        } else if (whichTime.equals("endTime")){
+            return endTime.format(timeFormat);
+        } else {
+            return startTime.format(timeFormat);
+        }
     }
 
     public String getStartTime(){
-        String formatStartTime = startTime.format(timeFormat);
-        return formatStartTime;
+        return startTime.format(timeFormat);
     }
 
     public String getEndTime(){
-        String formatEndTime = endTime.format(timeFormat);
-        return formatEndTime;
+        return endTime.format(timeFormat);
     }
 
     public String getStartEndTime(){
         String startTime = this.getStartTime();
         String endTime = this.getEndTime();
-        String StartEnd = "Start:" + startTime + " - " + "End:" + endTime;
-        return StartEnd;
+        return "Start:" + startTime + " - " + "End:" + endTime;
     }
 
     public Duration getDuration(){
         //this function should return error if no end time
         if (endTime == null){
-            Duration duration = Duration.between(startTime, startTime);
-            return duration;
+            LocalDateTime endTime = LocalDateTime.now();
+            return Duration.between(startTime, endTime);
         }
-        Duration duration = Duration.between(startTime, endTime);
-        return duration;
+        return Duration.between(startTime, endTime);
     }
 
-    public Duration getDurationBetween(LocalDateTime StartDate, LocalDateTime EndDate){
-        LocalDateTime trueStartTime = StartDate;
-        LocalDateTime trueEndTime = EndDate;
+    public Duration getDurationBetween(LocalDateTime startDate, LocalDateTime endDate){
+        LocalDateTime trueStartTime = startDate;
+        LocalDateTime trueEndTime = endDate;
         // if startTime > StartDate
-        if (startTime.isAfter(StartDate)){
+        if (startTime.isAfter(startDate)){
             trueStartTime = startTime;
         }
-        if (endTime.isBefore(EndDate)){
+        if (endTime.isBefore(endDate)){
             trueEndTime = endTime;
         }
-        Duration duration = Duration.between(trueStartTime, trueEndTime);
-        return duration;
+        return Duration.between(trueStartTime, trueEndTime);
     }
 
     public static void main(String[] args){
 
-        LocalDateTime start = LocalDateTime.of(2021,2,20,23,0);
+        //Checking Duration
+        //LocalDateTime start = LocalDateTime.of(2021,2,20,23,0);
+        LocalDateTime start = LocalDateTime.now().minusSeconds(5);
         //startTime at 20th 11PM
         LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
         //endTime at 21st 3AM
 
         TimeSpan span = new TimeSpan(start);
-        span.setEndTime(end);
+//        span.setEndTime(end);
 
         //Check between
-        LocalDateTime startDate = LocalDateTime.of(2021,2,21,0,0);
+//        LocalDateTime startDate = LocalDateTime.of(2021,2,21,0,0);
         //startDate at 21st 12AM
-        LocalDateTime endDate = LocalDateTime.of(2021, 2, 23, 1, 0);
+//        LocalDateTime endDate = LocalDateTime.of(2021, 2, 23, 1, 0);
         //endDate at 23rd 1AM
 
         //span.getDurationBetween()
-        System.out.print(span.getDurationBetween(startDate,endDate).toHours());
+//        System.out.print(span.getDurationBetween(startDate,endDate).toHours());
+        System.out.println(span.getDuration().toSeconds());
     }
 }
