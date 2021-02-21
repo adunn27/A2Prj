@@ -1,7 +1,6 @@
 package org.ecs160.a2;
 
-import jdk.nashorn.internal.objects.SetIterator;
-
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LongSummaryStatistics;
@@ -55,14 +54,6 @@ public class TaskContainer implements Iterable<Task>{
         return new TaskContainer(filteredSet);
     }
 
-    public TaskContainer getInactiveTasks() {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> !task.isActive())
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);
-    }
-
     public TaskContainer getArchivedTasks() {
         Set filteredSet = taskSet.stream()
                 .filter(task -> task.isArchived())
@@ -95,32 +86,42 @@ public class TaskContainer implements Iterable<Task>{
         return new TaskContainer(filteredSet);
     }
 
-    private LongSummaryStatistics getTimeStatistics() {
+    public TaskContainer getTasksThatOccurred(LocalDateTime start,
+                                              LocalDateTime stop) {
+        Set filteredSet = taskSet.stream()
+                .filter(task -> task.getTotalTime(start, stop) > 0)
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
+    private LongSummaryStatistics getTimeStatistics(LocalDateTime start,
+                                                    LocalDateTime stop) {
         return taskSet.stream()
-                .mapToLong(task -> task.getTotalTime())
+                .mapToLong(task -> task.getTotalTime(start, stop))
                 .summaryStatistics();
     }
 
-    public Long getTotalTime() { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics();
+    public Long getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getSum();
     }
 
-    public Long getMinimumTime() { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics();
+    public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getMin();
     }
 
-    public Long getAverageTime() { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics();
+    public Long getAverageTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return Math.round(stats.getAverage());
     }
 
-    public Long getMaximumTime() { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics();
+    public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getMax();
     }
