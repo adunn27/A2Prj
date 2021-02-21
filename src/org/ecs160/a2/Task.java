@@ -54,6 +54,14 @@ public class Task {
         description = newDescription;
     }
 
+    public Boolean isActive() {
+        return this.isActive;
+    }
+
+    public Boolean isArchived() {
+        return this.isArchived;
+    }
+
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
         isArchived = true;
