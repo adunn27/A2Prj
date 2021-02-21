@@ -103,7 +103,7 @@ public class editTask extends Form {
 
     private void createTitleRow(String name, String size) {
         // title row
-        TitleRow = new Container(new BorderLayout());
+        TitleRow.setLayout(new BorderLayout());
         TextField nameField = new TextField(name, "Name");
 
         TitleRow.add(BorderLayout.CENTER,nameField);
@@ -128,16 +128,18 @@ public class editTask extends Form {
         TagRow.add(new Label("Tags"));
         TagRow.add(tagList);
     }
+
     private void createHeader() {
         Header.setLayout(new BorderLayout());
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
         doneButton.setMyColor(UITheme.YELLOW);
         doneButton.setMyText("Done");
+        doneButton.setMyPadding(UITheme.PAD_3MM);
 
         doneButton.addActionListener(e -> goDone());
+
         Header.add(BorderLayout.EAST, doneButton);
     }
-
     private void createFooter() {
         Footer.setLayout(new BorderLayout());
         UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
@@ -146,7 +148,7 @@ public class editTask extends Form {
         deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
         deleteButton.setMyPadding(UITheme.PAD_3MM);
 
-        add(BorderLayout.EAST, deleteButton);
+        Footer.add(BorderLayout.EAST, deleteButton);
 
         // listener
         deleteButton.addActionListener(e -> goDelete(deleteButton));
@@ -158,6 +160,8 @@ public class editTask extends Form {
 
     private void goDelete(UIComponents.ButtonObject b) {
         Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+
         UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
 
         // CONFIRM
@@ -176,7 +180,6 @@ public class editTask extends Form {
         cancel.setMyText("Cancel");
         cancel.addActionListener(y -> { d.dispose(); });
 
-        d.setLayout(BoxLayout.y());
         d.addComponent(new SpanLabel("Permanently delete this task?"));
         d.addComponent(confirm);
         d.addComponent(cancel);

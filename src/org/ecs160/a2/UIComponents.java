@@ -1,6 +1,11 @@
 package org.ecs160.a2;
 
+import com.codename1.components.ButtonList;
+import com.codename1.components.MultiButton;
 import com.codename1.ui.*;
+import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
@@ -47,6 +52,11 @@ public class UIComponents {
             this.setText(text);
         }
 
+        public void setMyMargin(int margin) {
+            this.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            this.getAllStyles().setMargin(margin,margin,margin,margin);
+        }
+
         public void setMyPadding(int pad) {
             this.getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
             this.getAllStyles().setPadding(pad,pad,pad,pad);
@@ -59,6 +69,9 @@ public class UIComponents {
         public SizeLabelObject(String size) {
             setText(size);
             getAllStyles().setFgColor(UITheme.WHITE);
+
+            getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+
             getAllStyles().setPadding(UITheme.PAD_3MM,
                     UITheme.PAD_3MM,
                     UITheme.PAD_3MM,
@@ -83,6 +96,69 @@ public class UIComponents {
         }
     }
 
+    static class SizeButtonObject extends Container {
+        ButtonObject b = new ButtonObject();
+        public SizeButtonObject(String size) {
+            setLayout(new BorderLayout());
+            b.setText(size);
+//            b.setMyPadding(UITheme.PAD_3MM);
+
+//            b.setWidth(100);
+//            b.setHeight(100);
+            Dimension d = new Dimension(UITheme.PAD_3MM,UITheme.PAD_3MM);
+            b.setSize(d);
+
+            b.setMyColor(setColor(size));
+            b.getAllStyles().setFgColor(UITheme.WHITE);
+            add(BorderLayout.CENTER, b);
+        }
+
+        public void addMyListener() {
+            SizeListen listener = new SizeListen();
+            b.addActionListener(listener);
+        }
+
+        private int setColor(String size) {
+            if (size == "XL") {
+                return UITheme.COL_SIZE_XL;
+            } else if (size == "L") {
+                return UITheme.COL_SIZE_L;
+            } else if (size == "M") {
+                return UITheme.COL_SIZE_M;
+            } else {
+                return UITheme.COL_SIZE_S;
+            }
+        }
+
+        class SizeListen implements ActionListener {
+            public void actionPerformed(ActionEvent ev) {
+                // filter by size
+                if (!b.isToggle()) {
+                    b.setMyColor(UITheme.YELLOW);
+                    b.setToggle(true);
+
+                } else {
+                    b.setMyColor(setColor(b.getText()));
+                    b.setToggle(false);
+                }
+            }
+        }
+
+    }
+
+    static class TitleObject extends Label {
+        public TitleObject(String title)  {
+            setText(title);
+            getAllStyles().setFgColor(UITheme.GREY);
+            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+        }
+
+        public void setSize(int size) {
+            getAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, size)));
+        }
+    }
+
     // args: tagName
     // used in: taskDetails, homeScreen, archivePage
     static class TagObject extends Container {
@@ -102,9 +178,6 @@ public class UIComponents {
                     RoundBorder.create().rectangle(true).color(UITheme.YELLOW)
             );
 
-//            ButtonListener myButtonListener = new ButtonListener();
-//            tagLabel.addActionListener(myButtonListener);
-
             add(BorderLayout.CENTER, tagLabel);
         }
 
@@ -113,61 +186,81 @@ public class UIComponents {
                     RoundBorder.create().rectangle(true).color(col)
             );
         }
-
-        public void addListener() {
-            TagListener myTagListener = new TagListener();
-            tagLabel.addActionListener(myTagListener);
-        }
     }
 
     // args: name, size, list of tag names
     // used in: homeScreen, archivePage
+
+    static class ActiveTaskObject extends Container {
+        public ActiveTaskObject(String name, String size, String[] tags) {
+            setLayout(new BorderLayout());
+            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
+
+            add(BorderLayout.NORTH, new Label("Now Playing"));
+
+            MultiButton test = new MultiButton(name);
+            test.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
+            test.addActionListener(e->stop(name));
+
+            String tagsTemp = tags[0];
+            for (int i = 1; i < 2; i++) { //TODO: wraparound!
+                tagsTemp += '\t' + tags[i];
+            }
+
+            test.setTextLine2(tagsTemp);
+            add(BorderLayout.CENTER, test);
+        }
+
+        private void stop(String name) {
+            // TODO: stop task
+            log("stop " + name);
+        }
+
+    }
+
+
     static class StandardTaskObject extends Container {
         public StandardTaskObject(String name, String size, String[] tags){
-            Container t1 = TableLayout.encloseIn(2, true);
+            setLayout(new BorderLayout());
+            getAllStyles().setBorder(Border.createLineBorder(UITheme.PAD_1MM,UITheme.DARK_GREY));
+            getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
 
-            t1.getAllStyles().setBorder(Border.createLineBorder(1,UITheme.DARK_GREY));
-//            t1.getAllStyles().setPadding(5,5,0,0);
-            t1.getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
+            Label nameLabel = new Label(name);
+            Font largeFont = Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_MEDIUM);
+            nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
+            nameLabel.getAllStyles().setFont(largeFont);
 
-            Container SizeContainer = new Container(BoxLayout.x());
+            SizeLabelObject sizeLabel = new SizeLabelObject(size);
 
-            Label sizeLabel = new Label(size);
-            Style editSizeLabel = sizeLabel.getAllStyles();
-            editSizeLabel.setFgColor(UITheme.BLACK);
-            editSizeLabel.setPadding(UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM);
-            editSizeLabel.setMarginUnit(Style.UNIT_TYPE_DIPS);
-            editSizeLabel.setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
-            editSizeLabel.setBorder(RoundBorder.create().color(UITheme.YELLOW));
-
-            Font largeFont = Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_LARGE);
-
-            editSizeLabel.setFont(largeFont);
-            SizeContainer.add(sizeLabel);
-
-            t1.add(SizeContainer);
-
-            Container taskInformation = new Container(BoxLayout.y());
-
-            taskInformation.add(name);
-
-            Container taskTags = new Container(BoxLayout.x());
-            taskTags.setScrollableX(true);
-//            Container TagObject = new UIComponents.TagObject("ECS 160");
-//            Container TagObject1 = new UIComponents.TagObject("ECS 193a");
-//            Container TagObject2 = new UIComponents.TagObject("ECS 150");
+            Container tagsContainer = new Container(BoxLayout.x());
+            tagsContainer.setScrollableX(true);
 
             for (int i = 0; i < tags.length; i++) {
                 Container TagObject = new UIComponents.TagObject(tags[i]);
-                taskTags.add(TagObject);
+                tagsContainer.add(TagObject);
             }
 
-            taskInformation.add(taskTags);
-            t1.add(taskInformation);
-            add(t1);
+            MultiButton test = new MultiButton(name);
+            test.addActionListener(e->testing());
+
+            String tagsTemp = tags[0];
+            for (int i = 1; i < 5; i++) { //TODO: wraparound!
+                tagsTemp += '\t' + tags[i];
+            }
+
+            test.setTextLine2(tagsTemp);
+            add(BorderLayout.CENTER, test);
+            add(BorderLayout.EAST, new Label(size));
+//            add(BorderLayout.EAST, new UIComponents.SizeButtonObject(size));
+
+//            add(BorderLayout.CENTER, nameLabel);
+//            add(BorderLayout.WEST, sizeLabel);
+//            add(BorderLayout.SOUTH, tagsContainer);
+        }
+
+        private void testing() {
+            new taskDetails();
         }
     }
 
@@ -211,6 +304,14 @@ public class UIComponents {
 
             add(BorderLayout.WEST, leftContainer);
             add(BorderLayout.EAST, durationLabel);
+
+            Button myButton = new Button();
+            myButton.addActionListener(e->goDescription(name));
+            setLeadComponent(myButton);
+        }
+
+        private void goDescription(String name) {
+            log("go description: " + name);
         }
     }
 }

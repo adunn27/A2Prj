@@ -16,12 +16,12 @@ public class taskDetails extends Form {
     Form editPage;
     Form archivePage;
 
-    private Container titleRow;
-    private Container descRow;
-    private Container tagRow;
-    private Container timeRow;
-    private Container header;
-    private Container footer;
+    private Container titleRow = new Container();
+    private Container descRow = new Container();
+    private Container tagRow = new Container();
+    private Container timeRow = new Container();
+    private Container Header = new Container();
+    private Container Footer = new Container();
 
     // TODO: SET NAME, SIZE, DESCRIPTION, ARRAY of TAGS
     private String nameTemp = "[Task Name]";
@@ -33,11 +33,11 @@ public class taskDetails extends Form {
     private String weekTimeTemp = "[HH:mm:ss]"; // TODO: get weekTimeData
     private String dayTimeTemp = "[HH:mm:ss]"; // TODO: get dayTimeData
 
-    public taskDetails() {
+    taskDetails() {
         prevPage = Display.getInstance().getCurrent();
 
+        currentPage = new Form("Details");
         currentPage.setLayout(new BorderLayout());
-        currentPage.setTitle("Details");
 
         // create header, footer
         createHeader();
@@ -55,8 +55,8 @@ public class taskDetails extends Form {
         Body.addAll(titleRow, timeRow, tagRow, descRow);
 
         // add components
-        currentPage.add(BorderLayout.NORTH, header);
-        currentPage.add(BorderLayout.SOUTH, footer);
+        currentPage.add(BorderLayout.NORTH, Header);
+        currentPage.add(BorderLayout.SOUTH, Footer);
         currentPage.add(BorderLayout.CENTER, Body);
 
         currentPage.show();
@@ -87,7 +87,7 @@ public class taskDetails extends Form {
         // task name
         Label nameLabel = new Label(name);
         Style nameStyle = nameLabel.getAllStyles();
-        nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_MEDIUM)));
+        nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE)));
         nameStyle.setFgColor(UITheme.BLACK);
         nameStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
         nameStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
@@ -100,7 +100,7 @@ public class taskDetails extends Form {
         titleRow.add(sizeLabel);
     }
     private void createTagRow(String[] tags) {
-        tagRow.setLayout(BoxLayout.x());
+        tagRow.setLayout(BoxLayout.y());
 
         UIComponents.TitleObject tagTitle = new UIComponents.TitleObject("Tags");
         tagTitle.setSize(SIZE_SMALL);
@@ -115,7 +115,7 @@ public class taskDetails extends Form {
         tagRow.add(tagObject);
     }
     private void createTimeRow(String allTime, String weekTime, String dayTime) {
-        timeRow.setLayout(BoxLayout.x());
+        timeRow.setLayout(BoxLayout.y());
 
         // time title
         UIComponents.TitleObject timeTitle = new UIComponents.TitleObject("Time Elapsed");
@@ -141,32 +141,34 @@ public class taskDetails extends Form {
 
     // header
     private void createHeader() {
-        header.setLayout(new BorderLayout());
+        Header.setLayout(new BorderLayout());
 
         // back button
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+        backButton.setMyPadding(UITheme.PAD_3MM);
         backButton.addActionListener(e->goBack());
 
         // edit button
         UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
         editButton.setMyColor(UITheme.YELLOW);
         editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
+        editButton.setMyPadding(UITheme.PAD_3MM);
         editButton.addActionListener(e->goEdit());
 
-        header.add(BorderLayout.EAST, editButton);
-        header.add(BorderLayout.WEST, backButton);
+        Header.add(BorderLayout.EAST, editButton);
+        Header.add(BorderLayout.WEST, backButton);
     }
     private void createFooter() {
-        footer.setLayout(new GridLayout(1,2));
-        footer.setScrollableY(false);
+        Footer.setLayout(new GridLayout(1,2));
+        Footer.setScrollableY(false);
 
         // history
         UIComponents.ButtonObject historyButton = new UIComponents.ButtonObject();
         historyButton.setMyText("History");
         historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
-        historyButton.setMyColor(UITheme.DARK_GREEN);
+        historyButton.setMyColor(UITheme.LIGHT_GREY);
         historyButton.setMyPadding(UITheme.PAD_3MM);
         historyButton.addActionListener(e->goHistory());
 
@@ -174,27 +176,31 @@ public class taskDetails extends Form {
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
         archiveButton.setMyText("Archive");
         archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
-        archiveButton.setMyColor(UITheme.DARK_GREEN);
+        archiveButton.setMyColor(UITheme.LIGHT_GREY);
         archiveButton.setMyPadding(UITheme.PAD_3MM);
         archiveButton.addActionListener(e->goArchive());
 
         // add to container
-        footer.add(historyButton);
-        footer.add(archiveButton);
+        Footer.add(historyButton);
+        Footer.add(archiveButton);
     }
 
     // button interaction
     private void goBack() {
         prevPage.showBack();
+//        log("go back");
     }
     private void goEdit() {
         new editTask();
+        log("go edit");
     }
     private void goHistory() {
-        new taskHistory();
+//        new taskHistory();
+        log("go history");
     }
     private void goArchive() {
         // TODO: archive task
+        log("go archive");
     }
 }
 
@@ -215,15 +221,15 @@ class TitleRow extends Container {
         Label sizeLabel = new Label("S"); // TODO: NEEDS TASK SIZE
         Style sizeStyle = sizeLabel.getAllStyles();
         sizeStyle.setPadding(UITheme.PAD_3MM,
-                             UITheme.PAD_3MM,
-                             UITheme.PAD_3MM,
-                             UITheme.PAD_3MM);
+                UITheme.PAD_3MM,
+                UITheme.PAD_3MM,
+                UITheme.PAD_3MM);
 
         sizeStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_MEDIUM)));
         sizeStyle.setFgColor(UITheme.BLACK);
         sizeStyle.setBorder(
                 RoundBorder.create().
-                color(UITheme.YELLOW)
+                        color(UITheme.YELLOW)
         );
 
         add(nameLabel);
@@ -233,7 +239,7 @@ class TitleRow extends Container {
     }
 }
 class DescRow extends Container {
-//    String descriptionData = "Lorem Ipsum"; // TODO: get description data
+    //    String descriptionData = "Lorem Ipsum"; // TODO: get description data
     String descriptionData = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
     public DescRow() {
         setLayout(new BoxLayout(BoxLayout.Y_AXIS));
@@ -258,7 +264,6 @@ class DescRow extends Container {
         add(descData);
     }
 }
-
 class TagRow extends Container {
     String[] tags = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"}; // TODO: get array of tags
     public TagRow() {
@@ -304,11 +309,11 @@ class TimeRow extends Container {
         //
         SpanLabel allTime = new SpanLabel(
                 "All Time:\t" +
-                allTimeData + "\n"+
-                "This Week:\t" +
-                weekTimeData + "\n" +
-                "Today:\t" +
-                dayTimeData
+                        allTimeData + "\n"+
+                        "This Week:\t" +
+                        weekTimeData + "\n" +
+                        "Today:\t" +
+                        dayTimeData
         );
 
         allTime.getTextAllStyles().setFgColor(UITheme.BLACK);
@@ -320,7 +325,6 @@ class TimeRow extends Container {
 
     }
 }
-
 class DetailsHeader extends Container {
     public DetailsHeader() {
         setLayout(new BorderLayout());

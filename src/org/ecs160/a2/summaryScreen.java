@@ -1,69 +1,110 @@
 package org.ecs160.a2;
 
-import com.codename1.ui.Container;
-import com.codename1.ui.Form;
-import com.codename1.ui.Label;
+import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
-// TODO: get name, size, duration
+// TODO: needs list of tags
+
+//class SummaryHeader extends Container {
+//    public SummaryHeader() {
+//        setLayout(new BorderLayout());
+//        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
+//        filterButton.setMyColor(UITheme.YELLOW);
+//        filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
+//        filterButton.addActionListener(e->{
+//            Dialog fd = new FilterDialogue();
+//            fd.show();
+//        });
+//
+//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
+//        filterButton.setMyColor(UITheme.YELLOW);
+//        filterButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+//        filterButton.addActionListener(e->goBack());
+//
+//        add(BorderLayout.EAST, filterButton);
+//        add(BorderLayout.WEST, backButton);
+//    }
+//}
+
+class FilterDialogue extends Dialog {
+    public FilterDialogue() {
+        setLayout(BoxLayout.y());
+        Container sizeOptions = new Container(BoxLayout.x());
+        UIComponents.SizeButtonObject sizeS = new UIComponents.SizeButtonObject("S");
+        UIComponents.SizeButtonObject sizeM = new UIComponents.SizeButtonObject("M");
+        UIComponents.SizeButtonObject sizeL = new UIComponents.SizeButtonObject("L");
+        UIComponents.SizeButtonObject sizeXL = new UIComponents.SizeButtonObject("XL");
+
+
+        sizeS.addMyListener();
+        sizeM.addMyListener();
+        sizeL.addMyListener();
+        sizeXL.addMyListener();
+
+        sizeOptions.addAll(sizeS, sizeM, sizeL, sizeXL);
+
+        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+        cancel.setMyText("Cancel");
+        cancel.setMyColor(UITheme.LIGHT_GREY);
+        cancel.setMyPadding(UITheme.PAD_3MM);
+
+        cancel.addActionListener(c -> {
+            this.dispose();
+        });
+
+        add(sizeOptions);
+        add(cancel);
+    }
+}
+
 public class summaryScreen extends Form {
-    String name = "Task Name";
-    String size = "S";
-    String duration = "HH:mm:ss";
+    Form prevPage;
+    Form currentPage;
+
+    Container Header = new Container();
+
+    private String name = "Task Name";
+    private String size = "S";
+    private String duration = "HH:mm:ss";
+
     public summaryScreen() {
-        setLayout(new BoxLayout(BoxLayout.Y_AXIS));
-        add(new UIComponents.SummaryTaskObject(name, size, duration));
-    }
-}
+        prevPage = Display.getInstance().getCurrent();
+        currentPage = new Form("Summary");
 
-class summaryTaskObject extends Container {
-    public summaryTaskObject(String name, String size, String duration) {
-        setLayout(new BorderLayout());
-        // left side (size, name)
-        Label sizeLabel = new UIComponents.SizeLabelObject(size);
-        Label nameLabel = new Label(name);
-        nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
+        currentPage.setLayout(new BorderLayout());
 
-        Container leftContainer = new Container(new BorderLayout());
-        leftContainer.add(BorderLayout.WEST, sizeLabel);
-        leftContainer.add(BorderLayout.CENTER, nameLabel);
+        createHeader();
+        currentPage.add(BorderLayout.NORTH, Header);
 
-        // right side (time)
-        Label durationLabel = new Label(duration);
+        Container taskList = new Container(BoxLayout.y());
+        taskList.add(new UIComponents.SummaryTaskObject(name, size, duration)); //TODO: add all tasks
 
-        add(BorderLayout.WEST, leftContainer);
-        add(BorderLayout.EAST, durationLabel);
-    }
-}
-
-class sizeLabelObject extends Label {
-    private int setColor(String size) {
-        if (size == "XL") {
-            return UITheme.COL_SIZE_XL;
-        } else if (size == "L") {
-            return UITheme.COL_SIZE_L;
-        } else if (size == "M") {
-            return UITheme.COL_SIZE_M;
-        } else {
-            return UITheme.COL_SIZE_S;
-        }
+        currentPage.show();
     }
 
-    public sizeLabelObject(String size) {
-        setText(size);
-        getAllStyles().setFgColor(UITheme.WHITE);
-        getAllStyles().setPadding(UITheme.PAD_3MM,
-                UITheme.PAD_3MM,
-                UITheme.PAD_3MM,
-                UITheme.PAD_3MM);
+    private void createHeader() {
+        Header.setLayout(new BorderLayout());
+        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
+        filterButton.setMyColor(UITheme.YELLOW);
+        filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
+        filterButton.addActionListener(e->{
+            Dialog fd = new FilterDialogue();
+            fd.show();
+        });
 
-        getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
+        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
+        backButton.setMyColor(UITheme.YELLOW);
+        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+        backButton.addActionListener(e->goBack());
 
-        getAllStyles().setBorder(RoundBorder.create().color(setColor(size)));
+        Header.add(BorderLayout.EAST, filterButton);
+        Header.add(BorderLayout.WEST, backButton);
+    }
 
+    private void goBack() {
+        prevPage.showBack();
     }
 }
