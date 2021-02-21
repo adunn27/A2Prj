@@ -39,6 +39,46 @@ public class TaskContainer implements Iterable<Task>{
         return null;
     }
 
+    public Task getActiveTask() {
+        for (Task aTask: taskSet) {
+            if (aTask.isActive())
+                return aTask;
+        }
+        return null;
+    }
+
+    public TaskContainer getInactiveTasks() {
+        Set filteredSet = taskSet.stream()
+                .filter(task -> !task.isActive())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
+    public TaskContainer getInactiveTasks() {
+        Set filteredSet = taskSet.stream()
+                .filter(task -> !task.isActive())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
+    public TaskContainer getArchivedTasks() {
+        Set filteredSet = taskSet.stream()
+                .filter(task -> task.isArchived())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
+    public TaskContainer getUnarchivedTasks() {
+        Set filteredSet = taskSet.stream()
+                .filter(task -> !task.isArchived())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
     public TaskContainer getTasksBySize(TaskSize taskSize) {
         Set filteredSet = taskSet.stream()
                 .filter(task -> task.getTaskSize() == taskSize)
