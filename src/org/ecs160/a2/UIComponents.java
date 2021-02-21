@@ -226,41 +226,23 @@ public class UIComponents {
             getAllStyles().setBorder(Border.createLineBorder(UITheme.PAD_1MM,UITheme.DARK_GREY));
             getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
 
-            Label nameLabel = new Label(name);
-            Font largeFont = Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_MEDIUM);
-            nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
-            nameLabel.getAllStyles().setFont(largeFont);
+            MultiButton taskButton = new MultiButton(name);
 
-            SizeLabelObject sizeLabel = new SizeLabelObject(size);
-
-            Container tagsContainer = new Container(BoxLayout.x());
-            tagsContainer.setScrollableX(true);
-
-            for (int i = 0; i < tags.length; i++) {
-                Container TagObject = new UIComponents.TagObject(tags[i]);
-                tagsContainer.add(TagObject);
-            }
-
-            MultiButton test = new MultiButton(name);
-            test.addActionListener(e->testing());
 
             String tagsTemp = tags[0];
             for (int i = 1; i < 5; i++) { //TODO: wraparound!
                 tagsTemp += '\t' + tags[i];
             }
 
-            test.setTextLine2(tagsTemp);
-            add(BorderLayout.CENTER, test);
-            add(BorderLayout.EAST, new Label(size));
-//            add(BorderLayout.EAST, new UIComponents.SizeButtonObject(size));
+            taskButton.setTextLine2(tagsTemp);
+            taskButton.setIcon(FontImage.createMaterial(FontImage.MATERIAL_ALARM, getUnselectedStyle()));
+            taskButton.setIconPosition(BorderLayout.WEST);
+            add(BorderLayout.CENTER, taskButton);
+            add(BorderLayout.EAST, new SizeLabelObject(size));
 
-//            add(BorderLayout.CENTER, nameLabel);
-//            add(BorderLayout.WEST, sizeLabel);
-//            add(BorderLayout.SOUTH, tagsContainer);
-        }
-
-        private void testing() {
-            new taskDetails();
+            // LISTENERS
+            taskButton.addActionListener(e->UIManager.goStart(name));
+            taskButton.addLongPressListener(e->UIManager.goDetails());
         }
     }
 

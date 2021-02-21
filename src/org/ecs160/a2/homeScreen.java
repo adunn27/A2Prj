@@ -56,19 +56,19 @@ public class homeScreen extends Form{
         summary.setMyIcon(FontImage.MATERIAL_LEADERBOARD);
         summary.setMyColor(UITheme.YELLOW);
         summary.setMyPadding(UITheme.PAD_3MM);
-        summary.addActionListener(e->goSummary());
+        summary.addActionListener(e->UIManager.goSummary());
 
         UIComponents.ButtonObject archived = new UIComponents.ButtonObject();
         archived.setMyIcon(FontImage.MATERIAL_INBOX);
         archived.setMyColor(UITheme.YELLOW);
         archived.setMyPadding(UITheme.PAD_3MM);
-        archived.addActionListener(e->goArchive());
+        archived.addActionListener(e->UIManager.goArchive());
 
         UIComponents.ButtonObject addTask = new UIComponents.ButtonObject();
         addTask.setMyIcon(FontImage.MATERIAL_ADD);
         addTask.setMyColor(UITheme.YELLOW);
         addTask.setMyPadding(UITheme.PAD_3MM);
-        addTask.addActionListener(e->goEdit());
+        addTask.addActionListener(e->UIManager.goNew());
 
         Footer.add(BorderLayout.WEST, archived);
         Footer.add(BorderLayout.EAST, addTask);
@@ -88,23 +88,6 @@ public class homeScreen extends Form{
             TaskMenu.add(task);
         }
     }
-
-    private void goSummary() {
-        new summaryScreen();
-        log("go summary");
-    }
-
-    private void goArchive() {
-//        new archiveUI();
-        log("go archive");
-    }
-
-    private void goEdit() {
-        log("go edit");
-
-        new editTask();
-    }
-
     private void filter(UIComponents.ButtonObject b) {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());

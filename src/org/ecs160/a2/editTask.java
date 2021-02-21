@@ -17,11 +17,12 @@ import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
-import com.codename1.ui.plaf.UIManager;
 import com.codename1.ui.validation.LengthConstraint;
 import com.codename1.ui.validation.Validator;
 
 import java.awt.*;
+
+import static com.codename1.ui.CN.log;
 
 
 // TODO: in tagElement(), add event listener for delete button
@@ -66,7 +67,7 @@ public class editTask extends Form {
 
     private Container TitleRow = new Container();
     private Container TagRow = new Container();
-    private Container DescRow = new Container();
+    private TextComponent DescRow = new TextComponent();
     private Container Header = new Container();
     private Container Footer = new Container();
 
@@ -90,9 +91,11 @@ public class editTask extends Form {
         createTagRow(tagsTemp);
 
         // description row
-        TextComponent descRow = new TextComponent().label("Description").multiline(true);
+        DescRow.label("Description").multiline(true);
+        DescRow.onTopMode(true);
+        DescRow.text(descriptionTemp);
 
-        body.addAll(TitleRow, TagRow, descRow);
+        body.addAll(TitleRow, TagRow, DescRow);
 
         currentPage.add(BorderLayout.NORTH, Header);
         currentPage.add(BorderLayout.SOUTH, Footer);
@@ -136,7 +139,11 @@ public class editTask extends Form {
         doneButton.setMyText("Done");
         doneButton.setMyPadding(UITheme.PAD_3MM);
 
-        doneButton.addActionListener(e -> goDone());
+        doneButton.addActionListener(e -> {
+            log(DescRow.getText());
+            UIManager.goBackAndSave(prevPage);
+
+        });
 
         Header.add(BorderLayout.EAST, doneButton);
     }
@@ -151,27 +158,19 @@ public class editTask extends Form {
         Footer.add(BorderLayout.EAST, deleteButton);
 
         // listener
-        deleteButton.addActionListener(e -> goDelete(deleteButton));
+        deleteButton.addActionListener(e -> deletePrompt(deleteButton));
     }
-
-    private void goDone() {
-        prevPage.showBack();
-    }
-
-    private void goDelete(UIComponents.ButtonObject b) {
+    private void deletePrompt(UIComponents.ButtonObject b) {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
 
         UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
 
-        // CONFIRM
+        // CONFIRM (GO BACK AND SAVE)
         confirm.setMyColor(UITheme.RED);
         confirm.setMyPadding(UITheme.PAD_1MM);
         confirm.setMyText("Confirm");
-        confirm.addActionListener(x -> {
-            // TODO: DELETE!
-            prevPage.showBack();
-        });
+        confirm.addActionListener(e -> UIManager.goDelete(prevPage));
 
         // CANCEL
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
@@ -184,72 +183,6 @@ public class editTask extends Form {
         d.addComponent(confirm);
         d.addComponent(cancel);
         d.showPopupDialog(b);
-    }
-}
-
-class EditHeader extends Container {
-    public EditHeader() {
-        setLayout(new BorderLayout());
-        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
-        doneButton.setMyColor(UITheme.YELLOW);
-        doneButton.setMyText("Done");
-
-        NavigationCommand doneNav = new NavigationCommand("Back to Details Page");
-        doneNav.setNextForm(new taskDetails());
-
-        doneButton.addActionListener(e -> {
-            doneNav.getNextForm().show();
-        });
-
-        add(BorderLayout.EAST, doneButton);
-    }
-}
-class EditFooter extends Container {
-    public EditFooter() {
-        setLayout(new BorderLayout());
-        UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
-        deleteButton.setMyColor(UITheme.RED);
-        deleteButton.setMyText("Delete");
-        deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
-        deleteButton.setMyPadding(UITheme.PAD_3MM);
-
-        add(BorderLayout.EAST, deleteButton);
-
-        // delete button functionality
-        deleteButton.addActionListener(e -> {
-            Dialog d = new Dialog();
-
-            UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
-            confirm.setMyColor(UITheme.RED);
-            confirm.setMyPadding(UITheme.PAD_1MM);
-            confirm.setMyText("Confirm");
-
-
-            NavigationCommand confirmNav = new NavigationCommand("Deleting Task");
-            confirmNav.setNextForm(new homeScreen());
-
-            confirm.addActionListener(conf -> {
-                // TODO: DELETE!
-                confirmNav.getNextForm().show();
-            });
-
-            UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
-            cancel.setMyColor(UITheme.LIGHT_GREY);
-            cancel.setMyPadding(UITheme.PAD_3MM);
-            cancel.setMyText("Cancel");
-
-
-            cancel.addActionListener(canc -> {
-                d.dispose();
-            });
-
-
-            d.setLayout(BoxLayout.y());
-            d.addComponent(new SpanLabel("Permanently delete this task?"));
-            d.addComponent(confirm);
-            d.addComponent(cancel);
-            d.showPopupDialog(deleteButton);
-        });
     }
 }
 
@@ -288,5 +221,3 @@ class SizeMultiButton extends MultiButton {
 
     }
 }
-
-
