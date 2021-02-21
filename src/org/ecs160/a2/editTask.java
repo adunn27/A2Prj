@@ -60,6 +60,129 @@ class tagEditObject extends Container {
     }
 }
 
+public class editTask extends Form {
+    Form prevPage;
+    Form currentPage;
+
+    private Container TitleRow = new Container();
+    private Container TagRow = new Container();
+    private Container DescRow = new Container();
+    private Container Header = new Container();
+    private Container Footer = new Container();
+
+    // TODO: get NAME, SIZE, DESCRIPTION
+    private String nameTemp = "[Name]";
+    private String sizeTemp = "[Size]";
+    private String descriptionTemp = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
+    private String[] tagsTemp = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
+
+    editTask() {
+        prevPage = Display.getInstance().getCurrent();
+
+        currentPage = new Form("Edit Task");
+        currentPage.setLayout(new BorderLayout());
+
+        createHeader();
+        createFooter();
+        Container body = new Container(BoxLayout.y());
+
+        createTitleRow(nameTemp, sizeTemp);
+        createTagRow(tagsTemp);
+
+        // description row
+        TextComponent descRow = new TextComponent().label("Description").multiline(true);
+
+        body.addAll(TitleRow, TagRow, descRow);
+
+        currentPage.add(BorderLayout.NORTH, Header);
+        currentPage.add(BorderLayout.SOUTH, Footer);
+        currentPage.add(BorderLayout.CENTER, body);
+
+        currentPage.show();
+    }
+
+    private void createTitleRow(String name, String size) {
+        // title row
+        TitleRow = new Container(new BorderLayout());
+        TextField nameField = new TextField(name, "Name");
+
+        TitleRow.add(BorderLayout.CENTER,nameField);
+        TitleRow.add(BorderLayout.EAST, new SizeMultiButton(size));
+    }
+    private void createTagRow(String[] tags) {
+        // tag row
+        TagRow.setLayout(BoxLayout.y());
+
+        Container tagList = new Container();
+        UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
+        addButton.setMyIcon(FontImage.MATERIAL_ADD);
+        addButton.setMyColor(UITheme.GREEN);
+        addButton.setMyMargin(UITheme.PAD_1MM);
+        addButton.setMyPadding(UITheme.PAD_3MM);
+
+        for (int i = 0; i < tags.length; i++) {
+            tagList.add(new tagEditObject());
+        }
+        tagList.add(addButton);
+
+        TagRow.add(new Label("Tags"));
+        TagRow.add(tagList);
+    }
+    private void createHeader() {
+        Header.setLayout(new BorderLayout());
+        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
+        doneButton.setMyColor(UITheme.YELLOW);
+        doneButton.setMyText("Done");
+
+        doneButton.addActionListener(e -> goDone());
+        Header.add(BorderLayout.EAST, doneButton);
+    }
+
+    private void createFooter() {
+        Footer.setLayout(new BorderLayout());
+        UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
+        deleteButton.setMyColor(UITheme.RED);
+        deleteButton.setMyText("Delete");
+        deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
+        deleteButton.setMyPadding(UITheme.PAD_3MM);
+
+        add(BorderLayout.EAST, deleteButton);
+
+        // listener
+        deleteButton.addActionListener(e -> goDelete(deleteButton));
+    }
+
+    private void goDone() {
+        prevPage.showBack();
+    }
+
+    private void goDelete(UIComponents.ButtonObject b) {
+        Dialog d = new Dialog();
+        UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
+
+        // CONFIRM
+        confirm.setMyColor(UITheme.RED);
+        confirm.setMyPadding(UITheme.PAD_1MM);
+        confirm.setMyText("Confirm");
+        confirm.addActionListener(x -> {
+            // TODO: DELETE!
+            prevPage.showBack();
+        });
+
+        // CANCEL
+        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+        cancel.setMyColor(UITheme.LIGHT_GREY);
+        cancel.setMyPadding(UITheme.PAD_3MM);
+        cancel.setMyText("Cancel");
+        cancel.addActionListener(y -> { d.dispose(); });
+
+        d.setLayout(BoxLayout.y());
+        d.addComponent(new SpanLabel("Permanently delete this task?"));
+        d.addComponent(confirm);
+        d.addComponent(cancel);
+        d.showPopupDialog(b);
+    }
+}
 
 class EditHeader extends Container {
     public EditHeader() {
@@ -67,6 +190,13 @@ class EditHeader extends Container {
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
         doneButton.setMyColor(UITheme.YELLOW);
         doneButton.setMyText("Done");
+
+        NavigationCommand doneNav = new NavigationCommand("Back to Details Page");
+        doneNav.setNextForm(new taskDetails());
+
+        doneButton.addActionListener(e -> {
+            doneNav.getNextForm().show();
+        });
 
         add(BorderLayout.EAST, doneButton);
     }
@@ -91,8 +221,13 @@ class EditFooter extends Container {
             confirm.setMyPadding(UITheme.PAD_1MM);
             confirm.setMyText("Confirm");
 
+
+            NavigationCommand confirmNav = new NavigationCommand("Deleting Task");
+            confirmNav.setNextForm(new homeScreen());
+
             confirm.addActionListener(conf -> {
                 // TODO: DELETE!
+                confirmNav.getNextForm().show();
             });
 
             UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
@@ -151,58 +286,4 @@ class SizeMultiButton extends MultiButton {
     }
 }
 
-public class editTask extends Form {
 
-    public editTask() {
-        setLayout(new BorderLayout());
-        setTitle("Edit Task");
-
-        Container header = new EditHeader();
-        Container footer = new EditFooter();
-        Container body = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-
-        // title row
-        Container titleRow = new Container(new BorderLayout());
-        titleRow.add(BorderLayout.CENTER,
-                     new TextComponent().label("Name"));
-
-        titleRow.add(BorderLayout.EAST,
-                     new SizeMultiButton("Size"));
-        body.add(titleRow);
-
-        // description row
-        TextComponent descRow = new TextComponent().label("Description").multiline(true);
-        body.add(descRow);
-
-        // tag row
-        Container tagRow = new Container(new BoxLayout(BoxLayout.Y_AXIS));
-        Container tagList = new Container();
-        UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
-        addButton.setMyIcon(FontImage.MATERIAL_ADD);
-        addButton.setMyColor(UITheme.GREEN);
-
-        for (int i = 0; i < 9; i++) {
-            tagList.add(new tagEditObject());
-        }
-        tagList.add(addButton);
-
-        tagRow.add(new Label("Tags"));
-        tagRow.add(tagList);
-        body.add(tagRow);
-
-        add(BorderLayout.NORTH, header);
-        add(BorderLayout.CENTER, body);
-        add(BorderLayout.SOUTH, footer);
-
-    }
-
-    private int mmToPixels(double mm) {
-        double pixelsPerMM = ((double)Display.getInstance().convertToPixels(10, true)) / 10.0;
-        return (int)(mm * pixelsPerMM);
-    }
-
-    private int getRandomNumber(int min, int max) {
-        return (int) ((Math.random() * (max - min)) + min);
-    }
-
-}
