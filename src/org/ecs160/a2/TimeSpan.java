@@ -24,21 +24,14 @@ public class TimeSpan {
         return time.format(timeFormat);
     }
 
-    public String getTimeAsString(String whichTime){
-        if (whichTime.equals("startTime")) {
-            return startTime.format(timeFormat);
-        } else if (whichTime.equals("endTime")){
-            return endTime.format(timeFormat);
-        } else {
-            return startTime.format(timeFormat);
-        }
-    }
-
     public String getStartTimeAsString(){
         return startTime.format(timeFormat);
     }
 
     public String getEndTimeAsString(){
+        if (endTime == null){
+            return LocalDateTime.now().format(timeFormat);
+        }
         return endTime.format(timeFormat);
     }
 
@@ -50,8 +43,8 @@ public class TimeSpan {
 
     public Duration getTimeSpanDuration(){
         if (endTime == null){
-            LocalDateTime endTime = LocalDateTime.now();
-            return Duration.between(startTime, endTime);
+            LocalDateTime nowTime = LocalDateTime.now();
+            return Duration.between(startTime, nowTime);
         }
         return Duration.between(startTime, endTime);
     }
