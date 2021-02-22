@@ -1,6 +1,5 @@
 package org.ecs160.a2;
 
-import com.codename1.components.ButtonList;
 import com.codename1.components.MultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
@@ -11,7 +10,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
-import com.codename1.ui.table.TableLayout;
 
 import static com.codename1.ui.CN.*;
 
@@ -294,6 +292,36 @@ public class UIComponents {
 
         private void goDescription(String name) {
             log("go description: " + name);
+        }
+    }
+
+    static class HistoryTaskObject extends Container {
+        public HistoryTaskObject(String startTime, String stopTime){
+            setLayout(new BorderLayout());
+            Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
+            getAllStyles().setBorder(simpleBorder);
+
+            Label startLabel = new Label("Start: " + startTime);
+            Label stopLabel = new Label("Stop: " + stopTime);
+
+
+            UIComponents.ButtonObject Delete = new UIComponents.ButtonObject();
+            Delete.setMyIcon(FontImage.MATERIAL_DELETE);
+            Delete.setMyColor(UITheme.WHITE);
+            Delete.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.RED));
+
+            UIComponents.ButtonObject Edit = new UIComponents.ButtonObject();
+            Edit.setMyIcon(FontImage.MATERIAL_EDIT);
+            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+
+            Container EastSide = new Container(BoxLayout.x());
+
+            EastSide.add(stopLabel);
+            EastSide.add(Edit);
+            EastSide.add(Delete);
+
+            add(WEST, startLabel);
+            add(EAST, EastSide);
         }
     }
 }
