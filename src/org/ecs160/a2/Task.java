@@ -13,14 +13,14 @@ public class Task {
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
-    private List<TimePeriod> allTimes; //TODO better name
+    private List<TimeSpan> allTimes; //TODO better name
     private Set<String> tags; //TODO does order matter? Do tags need color also?
 
     private void construct(String newTaskName, TaskSize newTaskSize) {
         this.name = newTaskName;
         this.size = newTaskSize;
         this.tags = new HashSet<>();
-        this.allTimes = new Vector<TimePeriod>();
+        this.allTimes = new Vector<TimeSpan>();
 
     }
 
@@ -79,13 +79,13 @@ public class Task {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
 
-        allTimes.add(new TimePeriod());
+        allTimes.add(new TimeSpan(LocalDateTime.now())); //TODO make all now have same time
         isActive = true;
     }
 
     public void stop() {
         assert (isActive == true): "Cannot stop an inactive task";
-        allTimes.get(allTimes.size() - 1).stop();
+        allTimes.get(allTimes.size() - 1).setEndTime(LocalDateTime.now());
         isActive = false;
     }
 
@@ -105,11 +105,13 @@ public class Task {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
-    public long getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+    public Duration getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO return type?
         Duration totalTime = Duration.ofMillis(0);
-        for (TimePeriod timeSpan: allTimes) {
-            totalTime = totalTime.addTo(timeSpan.getTime(start, stop));
+        for (TimeSpan timeSpan: allTimes) {
+            totalTime = totalTime.plus(
+                    timeSpan.getTimeSpanDurationBetween(start, stop)
+            );
         }
-        return totalTime.toMillis();
+        return totalTime;
     }
 }
