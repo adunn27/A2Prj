@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -89,7 +90,7 @@ public class TaskContainer implements Iterable<Task>{
     public TaskContainer getTasksThatOccurred(LocalDateTime start,
                                               LocalDateTime stop) {
         Set filteredSet = taskSet.stream()
-                .filter(task -> task.getTotalTime(start, stop) > 0)
+                .filter(task -> task.occurredBetween(start, stop))
                 .collect(Collectors.toSet());
 
         return new TaskContainer(filteredSet);
@@ -98,7 +99,8 @@ public class TaskContainer implements Iterable<Task>{
     private LongSummaryStatistics getTimeStatistics(LocalDateTime start,
                                                     LocalDateTime stop) {
         return taskSet.stream()
-                .mapToLong(task -> task.getTotalTime(start, stop))
+                .map(task -> task.getTotalTime(start, stop))
+                .mapToLong(Duration::toMillis)
                 .summaryStatistics();
     }
 
