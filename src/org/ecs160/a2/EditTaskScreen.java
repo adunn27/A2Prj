@@ -133,7 +133,7 @@ public class EditTaskScreen extends Form {
 
         doneButton.addActionListener(e -> {
             log(DescRow.getText());
-            UIManager.goBackAndSave(prevPage);
+            UINavigator.goBackAndSave(prevPage);
 
         });
 
@@ -162,7 +162,7 @@ public class EditTaskScreen extends Form {
         confirm.setMyColor(UITheme.RED);
         confirm.setMyPadding(UITheme.PAD_1MM);
         confirm.setMyText("Confirm");
-        confirm.addActionListener(e -> UIManager.goDelete(prevPage));
+        confirm.addActionListener(e -> UINavigator.goDelete(prevPage));
 
         // CANCEL
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();

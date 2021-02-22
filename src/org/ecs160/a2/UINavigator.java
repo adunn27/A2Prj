@@ -4,7 +4,7 @@ import com.codename1.ui.Form;
 
 import static com.codename1.ui.CN.log;
 
-public class UIManager {
+public class UINavigator {
     // navigation
     public static void goBack(Form prevPage) {
         log("go back");

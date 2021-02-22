@@ -239,8 +239,8 @@ public class UIComponents {
             add(BorderLayout.EAST, new SizeLabelObject(size));
 
             // LISTENERS
-            taskButton.addActionListener(e->UIManager.goStart(name));
-            taskButton.addLongPressListener(e->UIManager.goDetails());
+            taskButton.addActionListener(e-> UINavigator.goStart(name));
+            taskButton.addLongPressListener(e-> UINavigator.goDetails());
         }
     }
 

@@ -52,19 +52,19 @@ public class HomeScreen extends Form{
         summary.setMyIcon(FontImage.MATERIAL_LEADERBOARD);
         summary.setMyColor(UITheme.YELLOW);
         summary.setMyPadding(UITheme.PAD_3MM);
-        summary.addActionListener(e->UIManager.goSummary());
+        summary.addActionListener(e-> UINavigator.goSummary());
 
         UIComponents.ButtonObject archived = new UIComponents.ButtonObject();
         archived.setMyIcon(FontImage.MATERIAL_INBOX);
         archived.setMyColor(UITheme.YELLOW);
         archived.setMyPadding(UITheme.PAD_3MM);
-        archived.addActionListener(e->UIManager.goArchive());
+        archived.addActionListener(e-> UINavigator.goArchive());
 
         UIComponents.ButtonObject addTask = new UIComponents.ButtonObject();
         addTask.setMyIcon(FontImage.MATERIAL_ADD);
         addTask.setMyColor(UITheme.YELLOW);
         addTask.setMyPadding(UITheme.PAD_3MM);
-        addTask.addActionListener(e->UIManager.goNew());
+        addTask.addActionListener(e-> UINavigator.goNew());
 
         Footer.add(BorderLayout.WEST, archived);
         Footer.add(BorderLayout.EAST, addTask);

@@ -3,8 +3,6 @@ package org.ecs160.a2;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
-import com.codename1.ui.plaf.RoundBorder;
-import com.codename1.ui.plaf.Style;
 
 // TODO: needs list of tags
 
@@ -98,7 +96,7 @@ public class SummaryScreen extends Form {
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.addActionListener(e->UIManager.goBack(prevPage));
+        backButton.addActionListener(e-> UINavigator.goBack(prevPage));
 
         Header.add(BorderLayout.EAST, filterButton);
         Header.add(BorderLayout.WEST, backButton);

@@ -145,14 +145,14 @@ public class TaskDetailsScreen extends Form {
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
         backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e->UIManager.goBack(prevPage));
+        backButton.addActionListener(e-> UINavigator.goBack(prevPage));
 
         // edit button
         UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
         editButton.setMyColor(UITheme.YELLOW);
         editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
         editButton.setMyPadding(UITheme.PAD_3MM);
-        editButton.addActionListener(e->UIManager.goEdit());
+        editButton.addActionListener(e-> UINavigator.goEdit());
 
         Header.add(BorderLayout.EAST, editButton);
         Header.add(BorderLayout.WEST, backButton);
@@ -167,7 +167,7 @@ public class TaskDetailsScreen extends Form {
         historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
         historyButton.setMyColor(UITheme.LIGHT_GREY);
         historyButton.setMyPadding(UITheme.PAD_3MM);
-        historyButton.addActionListener(e->UIManager.goHistory());
+        historyButton.addActionListener(e-> UINavigator.goHistory());
 
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
@@ -175,7 +175,7 @@ public class TaskDetailsScreen extends Form {
         archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
         archiveButton.setMyColor(UITheme.LIGHT_GREY);
         archiveButton.setMyPadding(UITheme.PAD_3MM);
-        archiveButton.addActionListener(e->UIManager.goArchive());
+        archiveButton.addActionListener(e-> UINavigator.goArchive());
 
         // add to container
         Footer.add(historyButton);
