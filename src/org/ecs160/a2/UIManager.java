@@ -18,7 +18,7 @@ public class UIManager {
 
     public static void goDelete(Form prevPage) {
         log("go back and delete");
-        new homeScreen();
+        new HomeScreen();
     }
 
     public static void goStart(String taskName) {
@@ -27,31 +27,31 @@ public class UIManager {
 
     public static void goDetails() {
         log("go details");
-        new taskDetails();
+        new TaskDetailsScreen();
     }
 
     public static void goEdit() {
         log("go edit");
-        new editTask();
+        new EditTaskScreen();
     }
 
     public static void goNew() {
         log("go new");
-        new editTask(); // new
+        new EditTaskScreen(); // new
     }
 
     public static void goArchive() {
         log("go archive");
-        new archiveUI();
+        new ArchiveScreen();
     }
 
     public static void goHistory() {
         log("go history");
-        new taskHistory();
+        new TaskHistoryScreen();
     }
 
     public static void goSummary() {
         log("go summary");
-        new summaryScreen();
+        new SummaryScreen();
     }
 }
