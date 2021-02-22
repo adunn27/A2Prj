@@ -23,6 +23,10 @@ public class TaskContainer implements Iterable<Task>{
         return taskSet.iterator(); //TODO check
     }
 
+    public Boolean isEmpty() {
+        return taskSet.isEmpty();
+    }
+
     public void addTask(Task newTask) {
         taskSet.add(newTask);
     }

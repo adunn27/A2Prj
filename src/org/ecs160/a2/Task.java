@@ -105,7 +105,7 @@ public class Task {
         tags.remove(tag);
     }
 
-    public List<String> getAllTags() {
+    public List<String> getTags() {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
