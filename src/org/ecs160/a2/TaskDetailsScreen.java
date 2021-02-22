@@ -30,7 +30,11 @@ public class TaskDetailsScreen extends Form {
     private String weekTimeTemp = "[HH:mm:ss]"; // TODO: get weekTimeData
     private String dayTimeTemp = "[HH:mm:ss]"; // TODO: get dayTimeData
 
-    TaskDetailsScreen() {
+    Task taskData;
+
+    TaskDetailsScreen(Task task) {
+        taskData =  task;
+
         prevPage = Display.getInstance().getCurrent();
 
         currentPage = new Form("Details");
@@ -44,12 +48,16 @@ public class TaskDetailsScreen extends Form {
         Container Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
-        // add rows to body
-        createTitleRow(nameTemp, sizeTemp);
-        createTimeRow(allTimeTemp, weekTimeTemp, dayTimeTemp);
-        createTagRow(tagsTemp);
-        createDescRow(descriptionTemp);
-        Body.addAll(titleRow, timeRow, tagRow, descRow);
+        if (taskData != null) {
+            // add rows to body
+            createTitleRow();
+            createTimeRow();
+            createTagRow();
+            createDescRow();
+            Body.addAll(titleRow, timeRow, tagRow, descRow);
+        } else {
+            Body.add("Task not found...");
+        }
 
         // add components
         currentPage.add(BorderLayout.NORTH, Header);
@@ -60,14 +68,14 @@ public class TaskDetailsScreen extends Form {
     }
 
     // create rows
-    private void createDescRow(String description) {
+    private void createDescRow() {
         descRow.setLayout(BoxLayout.y());
 
         UIComponents.TitleObject descTitle = new UIComponents.TitleObject("Description");
         descTitle.setSize(SIZE_SMALL);
 
         SpanLabel descData = new SpanLabel();
-        descData.setText(description);
+        descData.setText(taskData.getDescription());
         Style descDataStyle = descData.getTextAllStyles();
         descDataStyle.setFgColor(UITheme.BLACK);
         descDataStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
@@ -76,13 +84,13 @@ public class TaskDetailsScreen extends Form {
         descRow.add(descTitle);
         descRow.add(descData);
     }
-    private void createTitleRow(String name, String size) {
+    private void createTitleRow() {
         titleRow.setLayout(BoxLayout.x());
         titleRow.setScrollableY(false);
         titleRow.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
 
         // task name
-        Label nameLabel = new Label(name);
+        Label nameLabel = new Label(taskData.getName());
         Style nameStyle = nameLabel.getAllStyles();
         nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE)));
         nameStyle.setFgColor(UITheme.BLACK);
@@ -90,13 +98,13 @@ public class TaskDetailsScreen extends Form {
         nameStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
 
         // task size
-        UIComponents.SizeLabelObject sizeLabel = new UIComponents.SizeLabelObject(size);
+        UIComponents.SizeLabelObject sizeLabel = new UIComponents.SizeLabelObject(taskData.getTaskSizeString());
 
         // add components
         titleRow.add(nameLabel);
         titleRow.add(sizeLabel);
     }
-    private void createTagRow(String[] tags) {
+    private void createTagRow() {
         tagRow.setLayout(BoxLayout.y());
 
         UIComponents.TitleObject tagTitle = new UIComponents.TitleObject("Tags");
@@ -104,14 +112,14 @@ public class TaskDetailsScreen extends Form {
 
         // add tags
         Container tagObject = new Container();
-        for (int i = 0; i < tags.length; i++) {
-            tagObject.add(new UIComponents.TagObject(tags[i]));
+        for (String tag : taskData.getTags()) {
+            tagObject.add(new UIComponents.TagObject(tag));
         }
 
         tagRow.add(tagTitle);
         tagRow.add(tagObject);
     }
-    private void createTimeRow(String allTime, String weekTime, String dayTime) {
+    private void createTimeRow() {
         timeRow.setLayout(BoxLayout.y());
 
         // time title
@@ -121,11 +129,11 @@ public class TaskDetailsScreen extends Form {
         // times
         SpanLabel timeData = new SpanLabel(
                 "All Time:\t" +
-                        allTime + "\n"+
+                        allTimeTemp + "\n"+
                         "This Week:\t" +
-                        weekTime + "\n" +
+                        weekTimeTemp + "\n" +
                         "Today:\t" +
-                        dayTime
+                        dayTimeTemp
         );
 
         timeData.getTextAllStyles().setFgColor(UITheme.BLACK);

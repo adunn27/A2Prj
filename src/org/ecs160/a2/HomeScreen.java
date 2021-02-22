@@ -87,16 +87,12 @@ public class HomeScreen extends Form{
         TaskMenu.setScrollableY(true);
 
         if (activeTask != null) {
-            UIComponents.ActiveTaskObject t = new UIComponents.ActiveTaskObject(activeTask.getName(),
-                    activeTask.getTaskSizeString(),
-                    activeTask.getTags());
+            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask);
             TaskMenu.add(t);
         }
 
         for (Task taskObj : unarchivedTasks) {
-            UIComponents.StandardTaskObject task = new UIComponents.StandardTaskObject(taskObj.getName(),
-                    taskObj.getTaskSizeString(),
-                    taskObj.getTags());
+            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj);
             TaskMenu.add(task);
         }
     }

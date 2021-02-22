@@ -68,7 +68,11 @@ public class SummaryScreen extends Form {
     private String size = "S";
     private String duration = "HH:mm:ss";
 
-    public SummaryScreen() {
+    private TaskContainer allTaskData;
+
+    public SummaryScreen(TaskContainer allTasks) {
+        allTaskData = allTasks;
+
         prevPage = Display.getInstance().getCurrent();
         currentPage = new Form("Summary");
         currentPage.setLayout(new BorderLayout());
@@ -77,9 +81,12 @@ public class SummaryScreen extends Form {
         currentPage.add(BorderLayout.NORTH, Header);
 
         Container taskList = new Container(BoxLayout.y());
-        taskList.add(new UIComponents.SummaryTaskObject(name, size, duration)); //TODO: add all tasks
+        if (allTaskData.isEmpty()) {
+        } else {
+            taskList.add(new UIComponents.SummaryTaskObject(name, size, duration)); //TODO: add all tasks
+        }
 
-        currentPage.add(taskList);
+        currentPage.add(BorderLayout.SOUTH, taskList);
         currentPage.show();
     }
 

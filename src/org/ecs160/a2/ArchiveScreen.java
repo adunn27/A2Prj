@@ -40,10 +40,10 @@ public class ArchiveScreen extends Form {
 //    private String sizeTemp = "S";
 //    private String[] tagsTemp = {"tag1", "tag2","tag3"};
 
-    private TaskContainer taskObjects;
+    private TaskContainer tasks;
 
-    public ArchiveScreen(TaskContainer tasksObj){
-        taskObjects = tasksObj;
+    public ArchiveScreen(TaskContainer archivedTasks) {
+        tasks = archivedTasks;
 
         prevPage = Display.getInstance().getCurrent();
         currentPage = new Form("Archive");
@@ -64,8 +64,8 @@ public class ArchiveScreen extends Form {
         setLayout(BoxLayout.y());
         setScrollableY(true);
 
-        for (int i = 0 ; i < 20; i++){
-            UIComponents.StandardTaskObject taskObject = new UIComponents.StandardTaskObject(nameTemp, sizeTemp, tagsTemp);
+        for (Task taskObj : tasks) {
+            UIComponents.TaskObject taskObject = new UIComponents.TaskObject(taskObj);
             TaskList.add(taskObject);
         }
     }

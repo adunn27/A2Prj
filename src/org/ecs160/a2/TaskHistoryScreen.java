@@ -7,6 +7,8 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BoxLayout;
 
+import java.util.ArrayList;
+
 
 public class TaskHistoryScreen extends Form {
     Form currentPage;
@@ -16,12 +18,38 @@ public class TaskHistoryScreen extends Form {
     Container Footer = new Container();
     Container TaskList = new Container();
 
-    private String nameTemp = "[Task Name]";
-    private String sizeTemp = "S";
-    private String[] tagsTemp = {"tag1", "tag2","tag3"};
-    private String[] timesTemp = {"1:00", "2:00"};
-    public TaskHistoryScreen(){
+    private String name;
+    private String size;
+    private java.util.List<String> tags = new ArrayList<>();
+    private java.util.List<String> times = new ArrayList<>();
+
+    Task taskData;
+
+    private void initData(Task taskData) {
+        if (taskData == null) {
+            name = "[Task Name]";
+            size = "S";
+            tags.add("tag1");
+            times.add("1:00");
+            times.add("2:00");
+        } else {
+            name = taskData.getName();
+            size = taskData.getTaskSizeString();
+            tags = taskData.getTags();
+//            times = task.getTotalTime(); // TODO: needs total time
+            times.add("1:00");
+            times.add("2:00");
+        }
+    }
+
+
+
+    public TaskHistoryScreen(Task task){
         prevPage = Display.getInstance().getCurrent();
+
+        taskData = task;
+        initData(taskData);
+
         currentPage = new Form("Task History");
         currentPage.setLayout(new BorderLayout());
 
@@ -39,7 +67,7 @@ public class TaskHistoryScreen extends Form {
         TaskList.setScrollableY(true);
 
         for (int i = 0 ; i < 20; i++){
-            UIComponents.HistoryTaskObject newHTO = new UIComponents.HistoryTaskObject(timesTemp[0],timesTemp[1]);
+            UIComponents.HistoryTaskObject newHTO = new UIComponents.HistoryTaskObject(times.get(0), times.get(1));
             TaskList.add(newHTO);
         }
     }

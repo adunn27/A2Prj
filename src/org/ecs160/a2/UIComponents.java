@@ -12,6 +12,7 @@ import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
 import java.util.*;
+import java.util.List;
 
 import static com.codename1.ui.CN.*;
 
@@ -188,31 +189,83 @@ public class UIComponents {
         }
     }
 
-    // args: name, size, list of tag names
-    // used in: homeScreen, archivePage
 
-    static class ActiveTaskObject extends Container {
-        public ActiveTaskObject(String name, String size, java.util.List<String> tags) {
+    static class TaskObject extends Container {
+        Task taskData;
+        public TaskObject(Task task) {
+            taskData = task;
             setLayout(new BorderLayout());
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMarginBottom(UITheme.PAD_3MM);
 
-            add(BorderLayout.NORTH, new Label("Now Playing"));
+            MultiButton taskButton = new MultiButton(taskData.getName());
 
+            Container taskElement = new Container(new BorderLayout());
+            Container tagsContainer = new Container();
+            for (String t : taskData.getTags()) {
+                tagsContainer.add(t);
+            }
+
+            taskElement.add(BorderLayout.CENTER, taskButton);
+            taskElement.add(BorderLayout.SOUTH, tagsContainer);
+
+            taskButton.setIconPosition(BorderLayout.WEST);
+            add(BorderLayout.CENTER, taskElement);
+
+            // LISTENERS
+            taskButton.addActionListener(e-> shortPressEvent());
+            taskButton.addLongPressListener(e-> longPressEvent());
+        }
+
+        private void longPressEvent() {
+            log("go to details " + taskData.getName());
+        }
+
+        private void shortPressEvent() {
+            if (taskData.isActive()) {
+                log("stop " + taskData.getName());
+            } else {
+                log("start " + taskData.getName());
+            }
+        }
+
+        private void setActionStart() {
+            log("start task " + taskData.getName());
+        }
+
+        private void setActionStop() {
+            log("stop task " + taskData.getName());
+        }
+    }
+
+    // args: name, size, list of tag names
+    // used in: homeScreen, archivePage
+    static class ActiveTaskObject extends Container {
+        public ActiveTaskObject(String name, String size, List<String> tags) {
+            setLayout(new BorderLayout());
+            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
+
+            // NOW PLAYING
+            TitleObject NowPlaying = new TitleObject("Now Playing");
+            NowPlaying.setSize(SIZE_LARGE);
+            add(BorderLayout.NORTH, NowPlaying);
+
+            // TASK BUTTON
             Container taskElement = new Container(new BorderLayout());
             MultiButton button = new MultiButton(name);
             button.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
             button.addActionListener(e->stop(name));
 
-
+            // TAGS
             Container tagsContainer = new Container();
             for (String t : tags) {
-                tagsContainer.add(t);
+                TagObject tagObj = new TagObject(t);
+                tagsContainer.add(tagsContainer);
             }
 
             taskElement.add(BorderLayout.CENTER, button);
             taskElement.add(BorderLayout.SOUTH, tagsContainer);
-
             add(BorderLayout.CENTER, taskElement);
         }
 

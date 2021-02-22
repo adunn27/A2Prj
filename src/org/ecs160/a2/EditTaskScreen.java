@@ -15,7 +15,10 @@ import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
+import java.util.ArrayList;
+
 import static com.codename1.ui.CN.log;
+import static com.codename1.ui.CN.setDarkMode;
 
 
 // TODO: in tagElement(), add event listener for delete button
@@ -64,28 +67,55 @@ public class EditTaskScreen extends Form {
     private Container Footer = new Container();
 
     // TODO: get NAME, SIZE, DESCRIPTION
-    private String nameTemp = "[Name]";
-    private String sizeTemp = "[Size]";
-    private String descriptionTemp = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
-    private String[] tagsTemp = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
+//    private String name = "[Name]";
+//    private String size = "[Size]";
+//    private String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
+//    private String[] tags = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
 
-    EditTaskScreen() {
+
+    private Task taskData;
+    private String nameData;
+    private String sizeData;
+    private String descriptionData;
+    private java.util.List<String> tagsData = new ArrayList<>();
+
+    private void initData(Task task) {
+        if (task == null) {
+            nameData = "";
+            sizeData = "S";
+            descriptionData = "";
+        } else {
+            nameData = task.getName();
+            sizeData = task.getTaskSizeString();
+            descriptionData = task.getDescription();
+            tagsData = taskData.getTags();
+        }
+    }
+
+
+    EditTaskScreen(Task task) {
+
+        initData(task);
+
+
+        taskData = task;
+
         prevPage = Display.getInstance().getCurrent();
 
         currentPage = new Form("Edit Task");
         currentPage.setLayout(new BorderLayout());
+        setDarkMode(true);
 
         createHeader();
         createFooter();
         Container body = new Container(BoxLayout.y());
 
-        createTitleRow(nameTemp, sizeTemp);
-        createTagRow(tagsTemp);
-
+        createTitleRow();
+        createTagRow();
         // description row
         DescRow.label("Description").multiline(true);
         DescRow.onTopMode(true);
-        DescRow.text(descriptionTemp);
+        DescRow.text(descriptionData);
 
         body.addAll(TitleRow, TagRow, DescRow);
 
@@ -96,15 +126,15 @@ public class EditTaskScreen extends Form {
         currentPage.show();
     }
 
-    private void createTitleRow(String name, String size) {
+    private void createTitleRow() {
         // title row
         TitleRow.setLayout(new BorderLayout());
-        TextField nameField = new TextField(name, "Name");
+        TextField nameField = new TextField(nameData, "Name");
 
         TitleRow.add(BorderLayout.CENTER,nameField);
-        TitleRow.add(BorderLayout.EAST, new SizeMultiButton(size));
+        TitleRow.add(BorderLayout.EAST, new SizeMultiButton(sizeData));
     }
-    private void createTagRow(String[] tags) {
+    private void createTagRow() {
         // tag row
         TagRow.setLayout(BoxLayout.y());
 
@@ -115,12 +145,14 @@ public class EditTaskScreen extends Form {
         addButton.setMyMargin(UITheme.PAD_1MM);
         addButton.setMyPadding(UITheme.PAD_3MM);
 
-        for (int i = 0; i < tags.length; i++) {
-            tagList.add(new tagEditObject());
+        for (String tag : tagsData) {
+            UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
+            tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
+            tagList.add(tagObj);
         }
         tagList.add(addButton);
 
-        TagRow.add(new Label("Tags"));
+        TagRow.add(new UIComponents.TitleObject("Tags"));
         TagRow.add(tagList);
     }
 
