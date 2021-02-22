@@ -5,6 +5,17 @@ import com.codename1.ui.Form;
 import static com.codename1.ui.CN.log;
 
 public class UINavigator {
+    private BusinessLogic backend;
+
+    public UINavigator(BusinessLogic backendLogic) {
+        backend = backendLogic;
+
+        Task activeTask = backend.getActiveTask();
+        TaskContainer unarchivedTasks = backend.getUnarchivedTasks();
+
+        new HomeScreen(activeTask, unarchivedTasks);
+    }
+
     // navigation
     public static void goBack(Form prevPage) {
         log("go back");
