@@ -192,24 +192,28 @@ public class UIComponents {
     // used in: homeScreen, archivePage
 
     static class ActiveTaskObject extends Container {
-        public ActiveTaskObject(String name, String size, String[] tags) {
+        public ActiveTaskObject(String name, String size, java.util.List<String> tags) {
             setLayout(new BorderLayout());
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMarginBottom(UITheme.PAD_3MM);
 
             add(BorderLayout.NORTH, new Label("Now Playing"));
 
-            MultiButton test = new MultiButton(name);
-            test.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
-            test.addActionListener(e->stop(name));
+            Container taskElement = new Container(new BorderLayout());
+            MultiButton button = new MultiButton(name);
+            button.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
+            button.addActionListener(e->stop(name));
 
-            String tagsTemp = tags[0];
-            for (int i = 1; i < 2; i++) { //TODO: wraparound!
-                tagsTemp += '\t' + tags[i];
+
+            Container tagsContainer = new Container();
+            for (String t : tags) {
+                tagsContainer.add(t);
             }
 
-            test.setTextLine2(tagsTemp);
-            add(BorderLayout.CENTER, test);
+            taskElement.add(BorderLayout.CENTER, button);
+            taskElement.add(BorderLayout.SOUTH, tagsContainer);
+
+            add(BorderLayout.CENTER, taskElement);
         }
 
         private void stop(String name) {
@@ -221,24 +225,24 @@ public class UIComponents {
 
 
     static class StandardTaskObject extends Container {
-        public StandardTaskObject(String name, String size, String[] tags){
+        public StandardTaskObject(String name, String size, java.util.List<String> tags){
             setLayout(new BorderLayout());
             getAllStyles().setBorder(Border.createLineBorder(UITheme.PAD_1MM,UITheme.DARK_GREY));
             getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
 
             MultiButton taskButton = new MultiButton(name);
 
-
-            String tagsTemp = tags[0];
-            for (int i = 1; i < 5; i++) { //TODO: wraparound!
-                tagsTemp += '\t' + tags[i];
+            Container taskElement = new Container(new BorderLayout());
+            Container tagsContainer = new Container();
+            for (String t : tags) {
+                tagsContainer.add(t);
             }
 
-            taskButton.setTextLine2(tagsTemp);
-            taskButton.setIcon(FontImage.createMaterial(FontImage.MATERIAL_ALARM, getUnselectedStyle()));
+            taskElement.add(BorderLayout.CENTER, taskButton);
+            taskElement.add(BorderLayout.SOUTH, tagsContainer);
+
             taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskButton);
-            add(BorderLayout.EAST, new SizeLabelObject(size));
+            add(BorderLayout.CENTER, taskElement);
 
             // LISTENERS
             taskButton.addActionListener(e-> UINavigator.goStart(name));

@@ -11,11 +11,22 @@ public class HomeScreen extends Form{
     private Container Footer = new Container();
     private Container TaskMenu = new Container();
 
-    private String[] tasksTemp = {"task1","task2","task3","task4","task5","task6"};
-    private String[] sizesTemp = {"S","M","L","XL","L","M"};
-    private String[] tagsTemp = {"tag1","tag2","tag3","tag4"};
+//    private String[] tasksTemp = {"task1","task2","task3","task4","task5","task6"};
+//    private String[] sizesTemp = {"S","M","L","XL","L","M"};
+//    private String[] tagsTemp = {"tag1","tag2","tag3","tag4"};
 
-    public HomeScreen() {
+
+    private Task activeTask;
+    private TaskContainer unarchivedTasks;
+
+
+    public HomeScreen(Task activeTask, TaskContainer unarchivedTasks) {
+        this.activeTask = activeTask;
+        this.unarchivedTasks = unarchivedTasks;
+        createHomeScreen();
+    }
+
+    private void createHomeScreen() {
         currentPage = new Form("Home");
         currentPage.setLayout(new BorderLayout());
 
@@ -75,12 +86,17 @@ public class HomeScreen extends Form{
         TaskMenu.setLayout(BoxLayout.y());
         TaskMenu.setScrollableY(true);
 
-        UIComponents.ActiveTaskObject t = new UIComponents.ActiveTaskObject("task0", "S", tagsTemp);
+        if (activeTask != null) {
+            UIComponents.ActiveTaskObject t = new UIComponents.ActiveTaskObject(activeTask.getName(),
+                    activeTask.getTaskSizeString(),
+                    activeTask.getTags());
+            TaskMenu.add(t);
+        }
 
-        TaskMenu.add(t);
-
-        for (int i = 0; i < tasksTemp.length; i++) {
-            UIComponents.StandardTaskObject task = new UIComponents.StandardTaskObject(tasksTemp[i], sizesTemp[i], tagsTemp);
+        for (Task taskObj : unarchivedTasks) {
+            UIComponents.StandardTaskObject task = new UIComponents.StandardTaskObject(taskObj.getName(),
+                    taskObj.getTaskSizeString(),
+                    taskObj.getTags());
             TaskMenu.add(task);
         }
     }
@@ -96,9 +112,9 @@ public class HomeScreen extends Form{
         sizeButtons.addAll(sizeS,sizeM,sizeL,sizeXL);
 
         Container tagButtons = new Container();
-        for (int i = 0; i < tagsTemp.length; i++) {
-            tagButtons.add(new UIComponents.TagObject(tagsTemp[i]));
-        }
+//        for (int i = 0; i < archive.length; i++) {
+//            tagButtons.add(new UIComponents.TagObject(tagsTemp[i]));
+//        }
 
         d.addAll(new Label("Sizes"), sizeButtons);
         d.addAll(new Label("Tags"), tagButtons);

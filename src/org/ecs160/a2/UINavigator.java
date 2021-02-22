@@ -17,6 +17,7 @@ public class UINavigator {
     }
 
     // navigation
+
     public static void goBack(Form prevPage) {
         log("go back");
         prevPage.showBack();
@@ -29,7 +30,7 @@ public class UINavigator {
 
     public static void goDelete(Form prevPage) {
         log("go back and delete");
-        new HomeScreen();
+//        new HomeScreen(activeTask, unarchivedTasks);
     }
 
     public static void goStart(String taskName) {

@@ -9,19 +9,6 @@ import com.codename1.ui.plaf.*;
 
 import com.codename1.ui.layouts.BoxLayout;
 
-class TaskList extends Container {
-    public TaskList(){
-        setLayout(BoxLayout.y());
-        setScrollableY(true);
-        //Component TagObject = new UIComponents.TagObject("Name");
-        //add(TagObject);
-        for (int iter = 0 ; iter < 20; iter++){
-            Container newTask = new taskItem();
-            add(newTask);
-        }
-    }
-}
-
 class SearchBar extends Container{
     public SearchBar(){
         setLayout(BoxLayout.xRight());
@@ -49,11 +36,15 @@ public class ArchiveScreen extends Form {
     Container Header = new Container();
     Container Footer = new Container();
 
-    private String nameTemp = "[Task Name]";
-    private String sizeTemp = "S";
-    private String[] tagsTemp = {"tag1", "tag2","tag3"};
+//    private String nameTemp = "[Task Name]";
+//    private String sizeTemp = "S";
+//    private String[] tagsTemp = {"tag1", "tag2","tag3"};
 
-    public ArchiveScreen(){
+    private TaskContainer taskObjects;
+
+    public ArchiveScreen(TaskContainer tasksObj){
+        taskObjects = tasksObj;
+
         prevPage = Display.getInstance().getCurrent();
         currentPage = new Form("Archive");
 
