@@ -44,6 +44,10 @@ public class Task {
         return size;
     }
 
+    public String getTaskSizeString() {
+        return size.toString();
+    }
+
     public void setTaskSize(String newTaskSizeString) {
         size = TaskSize.parse(newTaskSizeString);
     }
