@@ -1,5 +1,7 @@
 package org.ecs160.a2;
 
+import java.util.List;
+
 public class BuisnessLogic {
     private TaskContainer everyTask;
 
@@ -8,6 +10,17 @@ public class BuisnessLogic {
         everyTask = new TaskContainer();
     }
 
+    public void newTask(String name,
+                        String size,
+                        String description,
+                        List<String> tags) {
+        Task aNewTask = new Task(name, size);
+        aNewTask.setDescription(description);
+        for(String aTag: tags) {
+            aNewTask.addTag(aTag);
+        }
+        everyTask.addTask(aNewTask);
+    }
 
     /*
     newTask(name, size, description, tags)
