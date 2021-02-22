@@ -27,7 +27,7 @@ public class TaskHistoryScreen extends Form {
     private String[] timesTemp = {"1:00", "2:00"};
     public TaskHistoryScreen(){
         prevPage = Display.getInstance().getCurrent();
-        currentPage = new Form("Archive");
+        currentPage = new Form("Task History");
         currentPage.setLayout(new BorderLayout());
 
         createHeader();
