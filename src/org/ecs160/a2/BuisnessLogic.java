@@ -14,7 +14,7 @@ public class BuisnessLogic {
                         String size,
                         String description,
                         List<String> tags) {
-        Task aNewTask = new Task(name, size);
+        Task aNewTask = new Task(name, TaskSize.parse(size));
         aNewTask.setDescription(description);
         for(String aTag: tags) {
             aNewTask.addTag(aTag);
