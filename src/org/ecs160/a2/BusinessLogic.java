@@ -2,10 +2,10 @@ package org.ecs160.a2;
 
 import java.util.List;
 
-public class BuisnessLogic {
+public class BusinessLogic {
     private TaskContainer everyTask;
 
-    public BuisnessLogic() {
+    public BusinessLogic() {
         //TODO load it in somehow
         everyTask = new TaskContainer();
     }
