@@ -97,6 +97,7 @@ public class SummaryScreen extends Form {
     }
 
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
         UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
         filterButton.setMyColor(UITheme.YELLOW);
@@ -115,6 +116,7 @@ public class SummaryScreen extends Form {
     }
 
     private void createTaskList() {
+        TaskList = new Container(BoxLayout.y());
         if (allTaskData.isEmpty()) {
             TaskList.add("No Tasks to Display");
         } else {
@@ -125,6 +127,7 @@ public class SummaryScreen extends Form {
     }
 
     private void showFilterDialog() {
+        FilterDialog = new Dialog(BoxLayout.y());
         Container sizeOptions = new Container(BoxLayout.x());
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
