@@ -5,8 +5,6 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 
 public class HomeScreen extends Form{
-    Form currentPage;
-
     private Container Header = new Container();
     private Container Footer = new Container();
     private Container TaskMenu = new Container();
@@ -18,26 +16,40 @@ public class HomeScreen extends Form{
 
     private Task activeTask;
     private TaskContainer unarchivedTasks;
+    private UINavigator ui;
 
 
-    public HomeScreen(Task activeTask, TaskContainer unarchivedTasks) {
-        this.activeTask = activeTask;
-        this.unarchivedTasks = unarchivedTasks;
+    public HomeScreen(UINavigator ui) {
+        this.ui = ui;
+    }
+
+    @Override
+    public void show() {
         createHomeScreen();
+        super.show();
+    }
+
+    @Override
+    public void showBack() {
+        createHomeScreen();
+        super.showBack();
     }
 
     private void createHomeScreen() {
-        currentPage = new Form("Home");
-        currentPage.setLayout(new BorderLayout());
+        setTitle("Home");
+        setLayout(new BorderLayout());
+
+        this.activeTask = ui.backend.getActiveTask();
+        this.unarchivedTasks = ui.backend.getUnarchivedTasks();
 
         createHeader();
         createFooter();
         createTaskMenu();
 
 //        currentPage.add(BorderLayout.NORTH, Header); TODO: figure out header
-        currentPage.add(BorderLayout.SOUTH, Footer);
-        currentPage.add(BorderLayout.CENTER, TaskMenu);
-        currentPage.show();
+        add(BorderLayout.SOUTH, Footer);
+        add(BorderLayout.CENTER, TaskMenu);
+        //super.show();
     }
 
     private void createHeader() {
@@ -56,6 +68,7 @@ public class HomeScreen extends Form{
     }
 
     private void createFooter() {
+        Footer = new Container();
         Footer.setLayout(new BorderLayout());
 
         UIComponents.ButtonObject summary = new UIComponents.ButtonObject();
@@ -83,6 +96,7 @@ public class HomeScreen extends Form{
     }
 
     private void createTaskMenu() {
+        TaskMenu = new Container();
         TaskMenu.setLayout(BoxLayout.y());
         TaskMenu.setScrollableY(true);
 

@@ -16,11 +16,7 @@ public class UINavigator {
     public UINavigator(BusinessLogic backendLogic) {
         backend = backendLogic;
 
-        Task activeTask = backend.getActiveTask();
-        TaskContainer unarchivedTasks = backend.getUnarchivedTasks();
-        TaskContainer archivedTasks = backend.getUnarchivedTasks();
-
-        new HomeScreen(activeTask, unarchivedTasks);
+        (new HomeScreen(this)).show();
         previousForm = new ArrayDeque<>();
         previousForm.push(Display.getInstance().getCurrent());
 //        new TaskDetailsScreen(activeTask);
@@ -57,11 +53,13 @@ public class UINavigator {
     }
 
     public static void goEdit() {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go edit");
 //        new EditTaskScreen();
     }
 
     public static void goNew() {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go new");
         // TODO: implement create edit
         new EditTaskScreen(backend.getActiveTask()); // new
