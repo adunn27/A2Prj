@@ -164,7 +164,9 @@ public class UIComponents {
     // used in: taskDetails, homeScreen, archivePage
     static class TagObject extends Container {
         Button tagLabel;
+        String name;
         public TagObject (String tagName) {
+            name = tagName;
             setLayout(new BorderLayout());
             tagLabel = new Button(tagName);
             tagLabel.getAllStyles().setFgColor(UITheme.BLACK);
@@ -180,6 +182,10 @@ public class UIComponents {
             );
 
             add(BorderLayout.CENTER, tagLabel);
+        }
+
+        public String getName() {
+            return name;
         }
 
         public void resetColor(int col) {
@@ -208,6 +214,7 @@ public class UIComponents {
 
             taskElement.add(BorderLayout.CENTER, taskButton);
             taskElement.add(BorderLayout.SOUTH, tagsContainer);
+            taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
 
             taskButton.setIconPosition(BorderLayout.WEST);
             add(BorderLayout.CENTER, taskElement);

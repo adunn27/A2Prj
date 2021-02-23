@@ -63,7 +63,6 @@ public class EditTaskScreen extends Form {
 
     private Container TitleRow = new Container();
     private Container TagRow = new Container();
-    private TextComponent DescRow = new TextComponent();
     private Container Header = new Container();
     private Container Footer = new Container();
 
@@ -72,6 +71,12 @@ public class EditTaskScreen extends Form {
 //    private String size = "[Size]";
 //    private String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
 //    private String[] tags = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
+
+    // IMPORTANT DATA FIELDS
+    private TextField nameField;
+    private TextComponent descField = new TextComponent();
+    private Container tagList;
+    private java.util.List<UIComponents.TagObject> tagObjs;
 
 
     private Task taskData;
@@ -134,7 +139,7 @@ public class EditTaskScreen extends Form {
     private void createTitleRow() {
         // title row
         TitleRow.setLayout(new BorderLayout());
-        TextField nameField = new TextField(nameData, "Name");
+        nameField = new TextField(nameData, "Name");
 
         TitleRow.add(BorderLayout.CENTER,nameField);
         TitleRow.add(BorderLayout.EAST, new SizeMultiButton(sizeData));
@@ -144,12 +149,13 @@ public class EditTaskScreen extends Form {
         // tag row
         TagRow.setLayout(BoxLayout.y());
 
-        Container tagList = new Container();
+        tagList = new Container();
         UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
         addButton.setMyIcon(FontImage.MATERIAL_ADD);
         addButton.setMyColor(UITheme.GREEN);
         addButton.setMyMargin(UITheme.PAD_1MM);
         addButton.setMyPadding(UITheme.PAD_3MM);
+        addButton.addActionListener(e->newTagPrompt());
 
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
@@ -234,6 +240,41 @@ public class EditTaskScreen extends Form {
         d.addComponent(confirm);
         d.addComponent(cancel);
         d.showPopupDialog(b);
+    }
+
+    private void newTagPrompt() {
+        Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+        TextField tagNameField = new TextField("Name");
+        d.add(tagNameField);
+
+
+        // CONFIRM (GO BACK AND SAVE)
+        UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
+        confirm.setMyColor(UITheme.YELLOW);
+        confirm.setMyPadding(UITheme.PAD_1MM);
+        confirm.setMyText("Confirm");
+        confirm.addActionListener(e -> {
+            String newTagName = tagNameField.getText();
+            UIComponents.TagObject newTagObj = new UIComponents.TagObject(newTagName);
+            tagList.add(new UIComponents.TagObject(newTagName));
+            tagObjs.add(newTagObj);
+            d.dispose();
+        });
+
+        // CANCEL
+        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+        cancel.setMyColor(UITheme.LIGHT_GREY);
+        cancel.setMyPadding(UITheme.PAD_3MM);
+        cancel.setMyText("Cancel");
+        cancel.addActionListener(y -> { d.dispose(); });
+
+
+
+        d.add(confirm);
+        d.add(cancel);
+        d.show();
+
     }
 }
 
