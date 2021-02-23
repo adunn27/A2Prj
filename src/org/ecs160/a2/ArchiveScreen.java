@@ -14,7 +14,6 @@ class SearchBar extends Container{
         setLayout(BoxLayout.xRight());
         getAllStyles().setMarginLeft(100);
         TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
-//        add("           ");
         searchBar.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
         searchBar.getAllStyles().setFgColor(UITheme.BLACK);
         add(searchBar);
@@ -36,10 +35,6 @@ public class ArchiveScreen extends Form {
     Container Header = new Container();
     Container Footer = new Container();
 
-//    private String nameTemp = "[Task Name]";
-//    private String sizeTemp = "S";
-//    private String[] tagsTemp = {"tag1", "tag2","tag3"};
-
     private TaskContainer tasks;
 
     public ArchiveScreen(TaskContainer archivedTasks) {
@@ -55,9 +50,8 @@ public class ArchiveScreen extends Form {
         createHeader();
         createTaskList();
 
-        currentPage.add(NORTH, Header);
-        currentPage.add(CENTER, TaskList);
-        currentPage.show();
+        add(NORTH, Header);
+        add(CENTER, TaskList);
     }
 
     private void createTaskList(){
@@ -78,7 +72,7 @@ public class ArchiveScreen extends Form {
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
         backButton.setMyPadding(UITheme.PAD_3MM);
 
-        backButton.addActionListener(e-> UINavigator.goBack(prevPage));
+        backButton.addActionListener(e-> ui.goBack());
 
         Header.add(BorderLayout.WEST, backButton);
     }
