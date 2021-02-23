@@ -49,9 +49,6 @@ public class AppMain {
             current.show();
             return;
         }
-        Form hi = new Form("Hi World", BoxLayout.y());
-        hi.add(new Label("Hi World"));
-        hi.show();
 
         BusinessLogic backend = new BusinessLogic();
         UINavigator frontend = new UINavigator(backend);
