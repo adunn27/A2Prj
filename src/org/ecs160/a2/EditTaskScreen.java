@@ -122,6 +122,7 @@ public class EditTaskScreen extends Form {
         createTitleRow();
         createTagRow();
         // description row
+        descField = new TextComponent();
         descField.label("Description").multiline(true);
         descField.onTopMode(true);
         descField.text(descriptionData);
@@ -156,6 +157,7 @@ public class EditTaskScreen extends Form {
         addButton.setMyPadding(UITheme.PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
+        tagObjs = new ArrayList<UIComponents.TagObject>();
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
             tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });

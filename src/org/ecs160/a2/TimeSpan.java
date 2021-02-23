@@ -57,8 +57,15 @@ public class TimeSpan {
         if (startTime.isAfter(startDate)){
             trueStartTime = startTime;
         }
-        if (endTime.isBefore(endDate)){
-            trueEndTime = endTime;
+
+        LocalDateTime tempEndTime;
+        if (endTime == null)
+            tempEndTime = LocalDateTime.now();
+        else
+            tempEndTime = endTime;
+
+        if (tempEndTime.isBefore(endDate)){
+            trueEndTime = tempEndTime;
         }
         return Duration.between(trueStartTime, trueEndTime);
     }
