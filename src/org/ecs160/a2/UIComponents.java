@@ -38,6 +38,10 @@ public class UIComponents {
             );
         }
 
+        public void setMyFg(int color) {
+            getAllStyles().setFgColor(color);
+        }
+
         // pass in FontImage.[icon]
         public void setMyIcon(char icon) {
             this.setIcon(

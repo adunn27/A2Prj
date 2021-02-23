@@ -11,6 +11,7 @@ import com.codename1.ui.TextComponent;
 import com.codename1.ui.TextField;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
@@ -152,19 +153,25 @@ public class EditTaskScreen extends Form {
         UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
         addButton.setMyIcon(FontImage.MATERIAL_ADD);
         addButton.setMyColor(UITheme.GREEN);
-        addButton.setMyMargin(UITheme.PAD_1MM);
-        addButton.setMyPadding(UITheme.PAD_3MM);
+        addButton.setMyPadding(UITheme.PAD_1MM);
         addButton.addActionListener(e->newTagPrompt());
 
         tagObjs = new ArrayList<>();
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
             tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
+
+            UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
+            deleteButton.setMyIcon(FontImage.MATERIAL_CLOSE);
+            deleteButton.setMyColor(UITheme.RED);
+            deleteButton.addActionListener(event -> RemoveTag(tagObj));
+            tagObj.add(BorderLayout.EAST, deleteButton);
+
             tagField.add(tagObj);
             tagObjs.add(tagObj);
         }
 
-        TagRow.add(NORTH, BoxLayout.encloseX(
+        TagRow.add(BoxLayout.encloseX(
                 new UIComponents.TitleObject("Tags"), addButton)
         );
         TagRow.add(tagField);
@@ -256,7 +263,8 @@ public class EditTaskScreen extends Form {
     private void newTagPrompt() {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
-        TextField tagNameField = new TextField("Name");
+        TextField tagNameField = new TextField("", "Name");
+        tagNameField.setWidth(12);
         d.add(tagNameField);
 
         // CONFIRM (ADD TAG)
@@ -270,7 +278,10 @@ public class EditTaskScreen extends Form {
             UIComponents.TagObject newTagObj = new UIComponents.TagObject(newTagName);
 
             // Delete
-            Button deleteButton = new Button("Delete");
+//            Button deleteButton = new Button("Delete");
+            UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
+            deleteButton.setMyIcon(FontImage.MATERIAL_CLOSE);
+            deleteButton.setMyColor(UITheme.RED);
             deleteButton.addActionListener(event -> RemoveTag(newTagObj));
 
             newTagObj.add(BorderLayout.EAST, deleteButton);
@@ -294,7 +305,10 @@ public class EditTaskScreen extends Form {
         cancel.setMyText("Cancel");
         cancel.addActionListener(y -> { d.dispose(); });
 
-        d.add(BoxLayout.encloseX(cancel,confirm));
+        Container buttons = new Container(new GridLayout(2));
+        buttons.addAll(cancel, confirm);
+
+        d.add(buttons);
         d.show();
 
     }
@@ -310,9 +324,9 @@ public class EditTaskScreen extends Form {
         confirmButton.setMyPadding(UITheme.PAD_3MM);
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
-        confirmButton.setMyColor(UITheme.LIGHT_GREY);
-        confirmButton.setMyText("Cancel");
-        confirmButton.setMyPadding(UITheme.PAD_3MM);
+        cancelButton.setMyColor(UITheme.LIGHT_GREY);
+        cancelButton.setMyText("Cancel");
+        cancelButton.setMyPadding(UITheme.PAD_3MM);
 
         confirmButton.addActionListener(e -> {
             System.out.println("REMOVING TAG");
@@ -326,7 +340,10 @@ public class EditTaskScreen extends Form {
             d.dispose();
         });
 
-        d.add(BoxLayout.encloseX(cancelButton, confirmButton));
+        Container buttons = new Container(new GridLayout(2));
+        buttons.addAll(cancelButton, confirmButton);
+
+        d.add(buttons);
         d.show();
     }
 }
