@@ -271,11 +271,16 @@ public class UIComponents {
     // args: name, size, duration
     // used in: summaryScreen
     static class SummaryTaskObject extends Container {
-        public SummaryTaskObject(String name, String size, String duration) {
+        Task taskObj;
+        UINavigator ui;
+        public SummaryTaskObject(Task task, UINavigator ui) {
+            this.taskObj = task;
+            this.ui = ui;
+
             setLayout(new BorderLayout());
             // left side (size, name)
-            Label sizeLabel = new SizeLabelObject(size);
-            Label nameLabel = new Label(name);
+            Label sizeLabel = new SizeLabelObject(taskObj.getTaskSizeString());
+            Label nameLabel = new Label(taskObj.getName());
             nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
 
             Container leftContainer = new Container(new BorderLayout());
@@ -283,18 +288,19 @@ public class UIComponents {
             leftContainer.add(BorderLayout.CENTER, nameLabel);
 
             // right side (time)
-            Label durationLabel = new Label(duration);
+            Label durationLabel = new Label(taskObj.getTotalTimeString());
 
             add(BorderLayout.WEST, leftContainer);
             add(BorderLayout.EAST, durationLabel);
 
             Button myButton = new Button();
-            myButton.addActionListener(e->goDescription(name));
+            myButton.addActionListener(e->goDetails());
             setLeadComponent(myButton);
         }
 
-        private void goDescription(String name) {
-            log("go description: " + name);
+        private void goDetails() {
+            log("go description: " + taskObj.getName());
+            ui.goDetails(taskObj.getName());
         }
     }
 

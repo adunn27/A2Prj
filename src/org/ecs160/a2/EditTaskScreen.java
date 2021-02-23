@@ -18,8 +18,7 @@ import com.codename1.ui.plaf.Style;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import static com.codename1.ui.CN.log;
-import static com.codename1.ui.CN.setDarkMode;
+import static com.codename1.ui.CN.*;
 
 
 // TODO: in tagElement(), add event listener for delete button
@@ -157,16 +156,17 @@ public class EditTaskScreen extends Form {
         addButton.setMyPadding(UITheme.PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
-        tagObjs = new ArrayList<UIComponents.TagObject>();
+        tagObjs = new ArrayList<>();
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
             tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
             tagField.add(tagObj);
             tagObjs.add(tagObj);
         }
-        tagField.add(addButton);
 
-        TagRow.add(new UIComponents.TitleObject("Tags"));
+        TagRow.add(NORTH, BoxLayout.encloseX(
+                new UIComponents.TitleObject("Tags"), addButton)
+        );
         TagRow.add(tagField);
     }
 
@@ -294,8 +294,7 @@ public class EditTaskScreen extends Form {
         cancel.setMyText("Cancel");
         cancel.addActionListener(y -> { d.dispose(); });
 
-        d.add(confirm);
-        d.add(cancel);
+        d.add(BoxLayout.encloseX(cancel,confirm));
         d.show();
 
     }
@@ -305,8 +304,15 @@ public class EditTaskScreen extends Form {
         d.setLayout(BoxLayout.y());
         d.add("Are you sure?");
 
-        Button confirmButton = new Button("Confirm");
-        Button cancelButton = new Button("Cancel");
+        UIComponents.ButtonObject confirmButton = new UIComponents.ButtonObject();
+        confirmButton.setMyColor(UITheme.RED);
+        confirmButton.setMyText("Confirm");
+        confirmButton.setMyPadding(UITheme.PAD_3MM);
+
+        UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
+        confirmButton.setMyColor(UITheme.LIGHT_GREY);
+        confirmButton.setMyText("Cancel");
+        confirmButton.setMyPadding(UITheme.PAD_3MM);
 
         confirmButton.addActionListener(e -> {
             System.out.println("REMOVING TAG");
@@ -320,9 +326,7 @@ public class EditTaskScreen extends Form {
             d.dispose();
         });
 
-        d.add(confirmButton);
-        d.add(cancelButton);
-
+        d.add(BoxLayout.encloseX(cancelButton, confirmButton));
         d.show();
     }
 }
