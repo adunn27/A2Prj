@@ -1,7 +1,11 @@
 package org.ecs160.a2;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.Duration;
+import java.time.temporal.TemporalAdjusters;
+
 public class TimeSpan {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
@@ -70,10 +74,31 @@ public class TimeSpan {
         return Duration.between(trueStartTime, trueEndTime);
     }
 
+    public static LocalDateTime getStartOfDay(LocalDateTime present) {
+        return present.with(LocalTime.MIN);
+    }
+
+    public static LocalDateTime getEndOfDay(LocalDateTime present) {
+        return present.with(LocalTime.MAX);
+    }
+
+    // Decided that since this tool will be mainly for work related purposes
+    // a week should start with the work week on Monday rather than the calendar
+    // week on Sunday
+    public static LocalDateTime getStartOfWeek(LocalDateTime present) {
+        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
+                .with(LocalDateTime.MIN);
+    }
+
+    public static LocalDateTime getEndOfWeek(LocalDateTime present) {
+        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+                .with(LocalDateTime.MAX);
+    }
+
     public static void main(String[] args){
         LocalDateTime start = LocalDateTime.now().minusSeconds(5);
         LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
         TimeSpan span = new TimeSpan(start);
-        System.out.println(span.getTimeSpanDuration().toSeconds());
+
     }
 }
