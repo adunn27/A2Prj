@@ -9,6 +9,7 @@ import com.codename1.ui.Dialog;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextComponent;
 import com.codename1.ui.TextField;
+import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
@@ -18,8 +19,7 @@ import com.codename1.ui.plaf.Style;
 import java.util.ArrayList;
 import java.util.Vector;
 
-import static com.codename1.ui.CN.log;
-import static com.codename1.ui.CN.setDarkMode;
+import static com.codename1.ui.CN.*;
 
 
 // TODO: in tagElement(), add event listener for delete button
@@ -42,11 +42,11 @@ class tagElement extends Container {
 
         add(BorderLayout.CENTER, tagName);
         add(BorderLayout.EAST, tagDelete);
+
         getAllStyles().setBorder(Border.createDashedBorder(6, UITheme.LIGHT_GREY));
         getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
         getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
     }
-
 }
 
 class tagEditObject extends Container {
@@ -257,7 +257,16 @@ public class EditTaskScreen extends Form {
         confirm.addActionListener(e -> {
             String newTagName = tagNameField.getText();
             UIComponents.TagObject newTagObj = new UIComponents.TagObject(newTagName);
-            tagList.add(new UIComponents.TagObject(newTagName));
+
+            Button deleteButton = new Button("Delete");
+            newTagObj.add(BorderLayout.EAST, deleteButton);
+
+            deleteButton.addActionListener(event -> {
+                System.out.println("Deleting object");
+                RemoveTag(newTagObj);
+            });
+            //new UIComponents.TagObject(newTagName)
+            tagList.add(newTagObj);
             tagObjs.add(newTagObj);
             d.dispose();
         });
@@ -275,6 +284,32 @@ public class EditTaskScreen extends Form {
         d.add(cancel);
         d.show();
 
+    }
+
+    private void RemoveTag(Component deletedComponent) {
+        Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+        d.add("Are you sure?");
+
+        Button confirmButton = new Button("Confirm");
+        Button cancelButton = new Button("Cancel");
+
+        confirmButton.addActionListener(e -> {
+            System.out.println("REMOVING TAG");
+            tagObjs.remove(deletedComponent);
+            tagList.removeComponent(deletedComponent);
+            d.dispose();
+        });
+
+        cancelButton.addActionListener(e -> {
+            System.out.println("CANCEL DELETE");
+            d.dispose();
+        });
+
+        d.add(confirmButton);
+        d.add(cancelButton);
+
+        d.show();
     }
 }
 
