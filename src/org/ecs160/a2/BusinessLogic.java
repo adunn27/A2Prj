@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessLogic {
@@ -9,6 +10,19 @@ public class BusinessLogic {
         //TODO load it in somehow
         everyTask = new TaskContainer();
         everyTask.addTask(new Task("temp"));
+    }
+
+    public List<String> getAllTags() {
+        java.util.List<String> allTags = new ArrayList<>();
+        for (Task task : everyTask) { // TODO: archive vs unarchived?
+            for (String tagName : task.getTags()) {
+                if (!allTags.contains(tagName)) {
+                    allTags.add(tagName);
+                }
+
+            }
+        }
+        return allTags;
     }
 
     public void newTask(String name,

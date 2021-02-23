@@ -7,25 +7,21 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Style;
 
+import java.time.LocalDateTime;
+
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
-    private Container titleRow;
-    private Container descRow;
-    private Container tagRow;
-    private Container timeRow;
-    private Container Header;
-    private Container Footer;
+    private Container titleRow = new Container();
+    private Container descRow = new Container();
+    private Container tagRow = new Container();
+    private Container timeRow = new Container();
+    private Container Header = new Container();
+    private Container Footer = new Container();
 
-    // TODO: SET NAME, SIZE, DESCRIPTION, ARRAY of TAGS
-    private String nameTemp = "[Task Name]";
-    private String sizeTemp = "S";
-    private String descriptionTemp = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
-    private String[] tagsTemp = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
-
-    private String allTimeTemp = "[HH:mm:ss]"; // TODO: get allTimeData
-    private String weekTimeTemp = "[HH:mm:ss]"; // TODO: get weekTimeData
-    private String dayTimeTemp = "[HH:mm:ss]"; // TODO: get dayTimeData
+    private String allTime; // TODO: get allTimeData
+    private String weekTime; // TODO: get weekTimeData
+    private String dayTime; // TODO: get dayTimeData
 
     private Task taskData;
     private UINavigator ui;
@@ -67,7 +63,6 @@ public class TaskDetailsScreen extends Form {
         } else {
             Body.add("Task not found...");
         }
-
 
         // create header, footer
         createHeader();
@@ -143,10 +138,14 @@ public class TaskDetailsScreen extends Form {
         timeTitle.setSize(SIZE_SMALL);
 
         // times
+        allTime = taskData.getTotalTimeString(); // end time?;
+        weekTime = taskData.getTotalTimeString(); // end time?;
+        dayTime = taskData.getTotalTimeString(); // end time?;
+
         SpanLabel timeData = new SpanLabel(
-        "All Time:\t" + allTimeTemp + "\n"+
-            "This Week:\t" + weekTimeTemp + "\n" +
-            "Today:\t" + dayTimeTemp
+        "All Time:\t" + allTime + "\n"+
+            "This Week:\t" + weekTime + "\n" +
+            "Today:\t" + dayTime
         );
 
         timeData.getTextAllStyles().setFgColor(UITheme.BLACK);
@@ -157,7 +156,7 @@ public class TaskDetailsScreen extends Form {
         timeRow.add(timeData);
     }
 
-    // header
+    // header/footer
     private void createHeader() {
         Header = new Container();
         Header.setLayout(new BorderLayout());

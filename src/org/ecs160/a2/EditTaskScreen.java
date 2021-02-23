@@ -78,6 +78,8 @@ public class EditTaskScreen extends Form {
 
     private UINavigator ui;
 
+    private UINavigator ui;
+
     private void initData(Task task) {
         this.task = task;
         if (task == null) {
@@ -246,27 +248,32 @@ public class EditTaskScreen extends Form {
         TextField tagNameField = new TextField("Name");
         d.add(tagNameField);
 
-
-        // CONFIRM (GO BACK AND SAVE)
+        // CONFIRM (ADD TAG)
         UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
         confirm.setMyColor(UITheme.YELLOW);
         confirm.setMyPadding(UITheme.PAD_1MM);
         confirm.setMyText("Confirm");
+
         confirm.addActionListener(e -> {
             String newTagName = tagNameField.getText();
             UIComponents.TagObject newTagObj = new UIComponents.TagObject(newTagName);
 
+            // Delete
             Button deleteButton = new Button("Delete");
-
-            deleteButton.addActionListener(event -> {
-                RemoveTag(newTagObj);
-            });
+            deleteButton.addActionListener(event -> RemoveTag(newTagObj));
 
             newTagObj.add(BorderLayout.EAST, deleteButton);
 
-            tagField.add(newTagObj);
-            tagObjs.add(newTagObj);
-            d.dispose();
+            // Error if tag exists
+            if (task.hasTag(tagNameField.getText())) {
+                Dialog error = new Dialog("Tag already exists!");
+                error.show();
+                error.dispose();
+            } else {
+                tagField.add(newTagObj);
+                tagObjs.add(newTagObj);
+                d.dispose();
+            }
         });
 
         // CANCEL
@@ -275,8 +282,6 @@ public class EditTaskScreen extends Form {
         cancel.setMyPadding(UITheme.PAD_3MM);
         cancel.setMyText("Cancel");
         cancel.addActionListener(y -> { d.dispose(); });
-
-
 
         d.add(confirm);
         d.add(cancel);

@@ -49,6 +49,7 @@ public class TimeSpan {
         return Duration.between(startTime, endTime);
     }
 
+
     public Duration getTimeSpanDurationBetween
             (LocalDateTime startDate, LocalDateTime endDate){
         LocalDateTime trueStartTime = startDate;

@@ -114,7 +114,6 @@ public class ArchiveScreen extends Form {
                 )
         );
 
-
         // add to container
         add(historyButton);
         add(archiveButton);

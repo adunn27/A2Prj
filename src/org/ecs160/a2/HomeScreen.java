@@ -4,6 +4,8 @@ import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 
+import java.util.ArrayList;
+
 public class HomeScreen extends Form{
     private Container Header = new Container();
     private Container Footer = new Container();
@@ -116,9 +118,13 @@ public class HomeScreen extends Form{
         sizeButtons.addAll(sizeS,sizeM,sizeL,sizeXL);
 
         Container tagButtons = new Container();
-//        for (int i = 0; i < archive.length; i++) {
-//            tagButtons.add(new UIComponents.TagObject(tagsTemp[i]));
-//        }
+        java.util.List<String> allTags = ui.backend.getAllTags();
+        for (String tagName : allTags) {
+            UIComponents.ButtonObject tagB = new UIComponents.ButtonObject();
+            tagB.setMyText(tagName);
+            tagB.setMyColor(UITheme.LIGHT_GREY);
+            tagButtons.add(tagB);
+        }
 
         d.addAll(new Label("Sizes"), sizeButtons);
         d.addAll(new Label("Tags"), tagButtons);

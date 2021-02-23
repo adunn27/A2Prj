@@ -4,8 +4,6 @@ import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 
-// TODO: needs list of tags
-
 //class SummaryHeader extends Container {
 //    public SummaryHeader() {
 //        setLayout(new BorderLayout());
@@ -35,7 +33,6 @@ class FilterDialogue extends Dialog {
         UIComponents.SizeButtonObject sizeM = new UIComponents.SizeButtonObject("M");
         UIComponents.SizeButtonObject sizeL = new UIComponents.SizeButtonObject("L");
         UIComponents.SizeButtonObject sizeXL = new UIComponents.SizeButtonObject("XL");
-
 
         sizeS.addMyListener();
         sizeM.addMyListener();
@@ -122,7 +119,6 @@ public class SummaryScreen extends Form {
             TaskList.add("No Tasks to Display");
         } else {
             for (Task taskObj : allTaskData) {
-                //TODO: add all tasks
                 TaskList.add(new UIComponents.SummaryTaskObject(taskObj.getName(), taskObj.getTaskSizeString(), duration));
             }
         }
