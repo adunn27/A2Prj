@@ -25,7 +25,7 @@ public class BusinessLogic {
         return allTags;
     }
 
-    public void newTask(String name,
+    public Task newTask(String name,
                         String size,
                         String description,
                         List<String> tags) {

@@ -193,13 +193,18 @@ public class TaskDetailsScreen extends Form {
 
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
-        archiveButton.setMyText("Archive");
+        String archiveText = (taskData.isArchived()) ? "Unarchive" : "Archive";
+        archiveButton.setMyText(archiveText);
         archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
         archiveButton.setMyColor(UITheme.LIGHT_GREY);
         archiveButton.setMyPadding(UITheme.PAD_3MM);
         archiveButton.addActionListener(e-> {
-            log("archiving task " + taskData.getName()); // TODO: remove log
-            taskData.archive();
+            if (taskData.isArchived()) {
+                ui.backend.getTaskByName(taskData.getName()).unarchive();
+            } else {
+                ui.backend.getTaskByName(taskData.getName()).archive();
+            }
+            ui.goBack();
         });
 
         // add to container

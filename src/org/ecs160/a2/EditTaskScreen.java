@@ -58,15 +58,15 @@ class tagEditObject extends Container {
 }
 
 public class EditTaskScreen extends Form {
-    private Container Header = new Container();
-    private Container Footer = new Container();
-    private Container TitleRow = new Container();
-    private Container TagRow = new Container();
+    private Container Header;
+    private Container Footer;
+    private Container TitleRow;
+    private Container TagRow;
 
     // IMPORTANT DATA FIELDS
     private TextField nameField;
     private Container tagField;
-    private TextComponent descField = new TextComponent();
+    private TextComponent descField;
     private java.util.List<UIComponents.TagObject> tagObjs;
 
     private Task task;
