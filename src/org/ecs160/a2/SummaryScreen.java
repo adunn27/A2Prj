@@ -59,35 +59,44 @@ class FilterDialogue extends Dialog {
 }
 
 public class SummaryScreen extends Form {
-    Form prevPage;
-    Form currentPage;
-
     Container Header = new Container();
+    Container TaskList = new Container(BoxLayout.y());
+    Dialog FilterDialog = new Dialog(BoxLayout.y());
 
     private String name = "Task Name";
     private String size = "S";
-    private String duration = "HH:mm:ss";
+    private String duration = "HH:mm:ss"; // TODO: replace with real duration
 
     private TaskContainer allTaskData;
+    private final UINavigator ui;
 
-    public SummaryScreen(TaskContainer allTasks) {
-        allTaskData = allTasks;
+    public SummaryScreen(UINavigator ui) {
+        this.ui = ui;
+    }
 
-        prevPage = Display.getInstance().getCurrent();
-        currentPage = new Form("Summary");
-        currentPage.setLayout(new BorderLayout());
+    @Override
+    public void show() {
+        createSummaryScreen();
+        super.show();
+    }
+
+    @Override
+    public void showBack() {
+        createSummaryScreen();
+        super.showBack();
+    }
+
+    public void createSummaryScreen() {
+        allTaskData = ui.backend.getUnarchivedTasks();
+
+        setTitle("Summary");
+        setLayout(new BorderLayout());
 
         createHeader();
-        currentPage.add(BorderLayout.NORTH, Header);
+        createTaskList();
 
-        Container taskList = new Container(BoxLayout.y());
-        if (allTaskData.isEmpty()) {
-        } else {
-            taskList.add(new UIComponents.SummaryTaskObject(name, size, duration)); //TODO: add all tasks
-        }
-
-        currentPage.add(BorderLayout.SOUTH, taskList);
-        currentPage.show();
+        add(BorderLayout.NORTH, Header);
+        add(BorderLayout.SOUTH, TaskList);
     }
 
     private void createHeader() {
@@ -96,16 +105,44 @@ public class SummaryScreen extends Form {
         filterButton.setMyColor(UITheme.YELLOW);
         filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
         filterButton.addActionListener(e->{
-            Dialog fd = new FilterDialogue();
-            fd.show();
+            showFilterDialog();
         });
 
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.addActionListener(e-> UINavigator.goBack(prevPage));
+        backButton.addActionListener(e-> ui.goBack());
 
         Header.add(BorderLayout.EAST, filterButton);
         Header.add(BorderLayout.WEST, backButton);
+    }
+
+    private void createTaskList() {
+        if (allTaskData.isEmpty()) {
+            TaskList.add("No Tasks to Display");
+        } else {
+            for (Task taskObj : allTaskData) {
+                //TODO: add all tasks
+                TaskList.add(new UIComponents.SummaryTaskObject(taskObj.getName(), taskObj.getTaskSizeString(), duration));
+            }
+        }
+    }
+
+    private void showFilterDialog() {
+        Container sizeOptions = new Container(BoxLayout.x());
+
+        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+        cancel.setMyText("Cancel");
+        cancel.setMyColor(UITheme.LIGHT_GREY);
+        cancel.setMyPadding(UITheme.PAD_3MM);
+
+        cancel.addActionListener(c -> {
+            FilterDialog.dispose();
+        });
+
+        FilterDialog.add(sizeOptions);
+        FilterDialog.add(cancel);
+
+        FilterDialog.show();
     }
 }

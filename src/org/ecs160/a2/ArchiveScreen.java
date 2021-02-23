@@ -28,22 +28,24 @@ class SearchBar extends Container{
 }
 
 public class ArchiveScreen extends Form {
-    Form prevPage;
-    Form currentPage;
-
     Container TaskList = new Container();
     Container Header = new Container();
     Container Footer = new Container();
 
     private TaskContainer tasks;
+    private final UINavigator ui;
 
-    public ArchiveScreen(TaskContainer archivedTasks) {
-        tasks = archivedTasks;
+    public ArchiveScreen(UINavigator ui) {
+        this.ui = ui;
+    }
 
-        prevPage = Display.getInstance().getCurrent();
-        currentPage = new Form("Archive");
 
-        currentPage.setLayout(new BorderLayout());
+    public void createArchiveScreen(TaskContainer archivedTasks) {
+        tasks = ui.backend.getArchivedTasks();
+
+        setTitle("Archive");
+
+        setLayout(new BorderLayout());
 
         Container newSearchBar = new SearchBar();
 

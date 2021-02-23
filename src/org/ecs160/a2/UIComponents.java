@@ -184,6 +184,10 @@ public class UIComponents {
             add(BorderLayout.CENTER, tagLabel);
         }
 
+        public String getName() {
+            return name;
+        }
+
         public void resetColor(int col) {
             this.getAllStyles().setBorder(
                     RoundBorder.create().rectangle(true).color(col)
@@ -194,8 +198,11 @@ public class UIComponents {
 
     static class TaskObject extends Container {
         Task taskData;
-        public TaskObject(Task task) {
-            taskData = task;
+        UINavigator ui;
+
+        public TaskObject(Task task, UINavigator ui) {
+            this.taskData = task;
+            this.ui = ui;
             setLayout(new BorderLayout());
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMarginBottom(UITheme.PAD_3MM);
@@ -221,23 +228,21 @@ public class UIComponents {
         }
 
         private void longPressEvent() {
-            log("go to details " + taskData.getName());
+//            log("go to details " + taskData.getName()); // TODO: navigate to details
+             ui.goDetails(taskData.getName());
         }
-
         private void shortPressEvent() {
             if (taskData.isActive()) {
-                log("stop " + taskData.getName());
+                //ui.goStop(taskData); // TODO: fix
+                taskData.stop();
             } else {
-                log("start " + taskData.getName());
+                //ui.goStart(taskData.getName());
+                Task activeTask = ui.backend.getActiveTask();
+                if (activeTask != null) {
+                    activeTask.stop();
+                }
+                taskData.start();
             }
-        }
-
-        private void setActionStart() {
-            log("start task " + taskData.getName());
-        }
-
-        private void setActionStop() {
-            log("stop task " + taskData.getName());
         }
     }
 

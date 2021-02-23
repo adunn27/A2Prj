@@ -9,11 +9,6 @@ public class HomeScreen extends Form{
     private Container Footer = new Container();
     private Container TaskMenu = new Container();
 
-//    private String[] tasksTemp = {"task1","task2","task3","task4","task5","task6"};
-//    private String[] sizesTemp = {"S","M","L","XL","L","M"};
-//    private String[] tagsTemp = {"tag1","tag2","tag3","tag4"};
-
-
     private Task activeTask;
     private TaskContainer unarchivedTasks;
     private final UINavigator ui;
@@ -48,7 +43,6 @@ public class HomeScreen extends Form{
 //        currentPage.add(BorderLayout.NORTH, Header); TODO: figure out header
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, TaskMenu);
-        //super.show();
     }
 
     private void createHeader() {

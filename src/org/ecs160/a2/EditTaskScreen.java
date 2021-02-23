@@ -58,16 +58,15 @@ class tagEditObject extends Container {
 }
 
 public class EditTaskScreen extends Form {
-    Form prevPage;
-    Form currentPage;
-
+    private Container Header = new Container();
+    private Container Footer = new Container();
     private Container TitleRow = new Container();
     private Container TagRow = new Container();
 
     // IMPORTANT DATA FIELDS
     private TextField nameField;
+    private Container tagField;
     private TextComponent descField = new TextComponent();
-    private Container tagList;
     private java.util.List<UIComponents.TagObject> tagObjs;
 
     private Task task;
@@ -77,7 +76,10 @@ public class EditTaskScreen extends Form {
     private java.util.List<String> tagsData = new ArrayList<>();
     private Boolean isNewTask = false;
 
+    private UINavigator ui;
+
     private void initData(Task task) {
+        this.task = task;
         if (task == null) {
             nameData = "";
             sizeData = "S";
@@ -87,25 +89,31 @@ public class EditTaskScreen extends Form {
             nameData = task.getName();
             sizeData = task.getTaskSizeString();
             descriptionData = task.getDescription();
-            tagsData = taskData.getTags();
+            tagsData = task.getTags();
         }
     }
 
+    @Override
+    public void show() {
+        createEditTaskScreen();
+        super.show();
+    }
 
-    EditTaskScreen(Task task) {
-        tagObjs = new Vector<>();
-        taskData = task;
-        prevPage = Display.getInstance().getCurrent();
+    @Override
+    public void showBack() {
+        createEditTaskScreen();
+        super.showBack();
+    }
 
+    public EditTaskScreen(Task taskObj, UINavigator ui) {
+        this.ui = ui;
+        initData(taskObj); // save data so it may be rewritten
         createEditTaskScreen();
     }
 
     private void createEditTaskScreen() {
-        initData(taskData);
-
-        currentPage = new Form("Edit Task");
-        currentPage.setLayout(new BorderLayout());
-        setDarkMode(true);
+        setTitle("Edit Task");
+        setLayout(new BorderLayout());
 
         createHeader();
         createFooter();
@@ -120,11 +128,9 @@ public class EditTaskScreen extends Form {
 
         body.addAll(TitleRow, TagRow, descField);
 
-        currentPage.add(BorderLayout.NORTH, Header);
-        currentPage.add(BorderLayout.SOUTH, Footer);
-        currentPage.add(BorderLayout.CENTER, body);
-
-        currentPage.show();
+        add(BorderLayout.NORTH, Header);
+        add(BorderLayout.SOUTH, Footer);
+        add(BorderLayout.CENTER, body);
     }
 
     private void createTitleRow() {
@@ -140,7 +146,7 @@ public class EditTaskScreen extends Form {
         // tag row
         TagRow.setLayout(BoxLayout.y());
 
-        tagList = new Container();
+        tagField = new Container();
         UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
         addButton.setMyIcon(FontImage.MATERIAL_ADD);
         addButton.setMyColor(UITheme.GREEN);
@@ -151,13 +157,38 @@ public class EditTaskScreen extends Form {
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
             tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
-            tagList.add(tagObj);
+            tagField.add(tagObj);
             tagObjs.add(tagObj);
         }
-        tagList.add(addButton);
+        tagField.add(addButton);
 
         TagRow.add(new UIComponents.TitleObject("Tags"));
-        TagRow.add(tagList);
+        TagRow.add(tagField);
+    }
+
+    private void saveChanges() {
+        nameData = nameField.getText();
+        sizeData = "S"; //TODO
+        descriptionData = descField.getText();
+        tagsData = new Vector<String>();
+        for (UIComponents.TagObject tagButton : tagObjs) {
+            tagsData.add(tagButton.getName());
+        }
+
+        if (isNewTask) {
+            if (nameData == "") {
+                ui.goBack();
+                return;
+            }
+
+            ui.backend.newTask(
+                    nameData,
+                    sizeData,
+                    descriptionData,
+                    tagsData
+            );
+        }
+        ui.goBack();
     }
 
     private void createHeader() {
@@ -167,31 +198,7 @@ public class EditTaskScreen extends Form {
         doneButton.setMyText("Done");
         doneButton.setMyPadding(UITheme.PAD_3MM);
 
-        doneButton.addActionListener(e -> {
-            log(descField.getText());
-            nameData = nameField.getText();
-            sizeData = "S"; //TODO
-            descriptionData = descField.getText();
-            tagsData = new Vector<String>();
-            for (UIComponents.TagObject tagButton : tagObjs) {
-                tagsData.add(tagButton.getName());
-            }
-
-            if (isNewTask) {
-                if (nameData == "") {
-                    UINavigator.goBack(prevPage);
-                    return;
-                }
-                UINavigator.backend.newTask(
-                        nameData,
-                        sizeData,
-                        descriptionData,
-                        tagsData
-                );
-            }
-            UINavigator.goBackAndSave(prevPage);
-
-        });
+        doneButton.addActionListener(e ->  saveChanges());
 
         Header.add(BorderLayout.EAST, doneButton);
     }
@@ -218,7 +225,7 @@ public class EditTaskScreen extends Form {
         confirm.setMyColor(UITheme.RED);
         confirm.setMyPadding(UITheme.PAD_1MM);
         confirm.setMyText("Confirm");
-        confirm.addActionListener(e -> UINavigator.goDelete(prevPage));
+        confirm.addActionListener(e -> ui.goDelete(task));
 
         // CANCEL
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
@@ -257,7 +264,7 @@ public class EditTaskScreen extends Form {
 
             newTagObj.add(BorderLayout.EAST, deleteButton);
 
-            tagList.add(newTagObj);
+            tagField.add(newTagObj);
             tagObjs.add(newTagObj);
             d.dispose();
         });
@@ -288,7 +295,7 @@ public class EditTaskScreen extends Form {
         confirmButton.addActionListener(e -> {
             System.out.println("REMOVING TAG");
             tagObjs.remove(deletedComponent);
-            tagList.removeComponent(deletedComponent);
+            tagField.removeComponent(deletedComponent);
             d.dispose();
         });
 

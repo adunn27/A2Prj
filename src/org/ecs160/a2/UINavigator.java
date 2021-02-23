@@ -23,7 +23,7 @@ public class UINavigator {
 
     // navigation
 
-    public static void goBack(Form prevPage) {
+    public void goBack() {
         log("go back");
         previousForm.pop().showBack();
     }
