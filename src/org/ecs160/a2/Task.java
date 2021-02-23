@@ -109,7 +109,7 @@ public class Task {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
-    public Duration getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) { //TODO return type?
         Duration totalTime = Duration.ofMillis(0);
         for (TimeSpan timeSpan: allTimes) {
             totalTime = totalTime.plus(
@@ -119,7 +119,15 @@ public class Task {
         return totalTime;
     }
 
+    public String getTotalTimeString() {
+        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+    }
+
+    public String getTotalTimeTodayString() {
+        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+    }
+
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
-        return !getTotalTime(start, stop).isZero();
+        return !getTimeBetween(start, stop).isZero();
     }
 }

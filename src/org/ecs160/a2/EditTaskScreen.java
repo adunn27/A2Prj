@@ -78,8 +78,6 @@ public class EditTaskScreen extends Form {
 
     private UINavigator ui;
 
-    private UINavigator ui;
-
     private void initData(Task task) {
         this.task = task;
         if (task == null) {
@@ -137,6 +135,7 @@ public class EditTaskScreen extends Form {
 
     private void createTitleRow() {
         // title row
+        TitleRow = new Container();
         TitleRow.setLayout(new BorderLayout());
         nameField = new TextField(nameData, "Name");
 
@@ -146,6 +145,7 @@ public class EditTaskScreen extends Form {
 
     private void createTagRow() {
         // tag row
+        TagRow = new Container();
         TagRow.setLayout(BoxLayout.y());
 
         tagField = new Container();
@@ -194,6 +194,7 @@ public class EditTaskScreen extends Form {
     }
 
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
         doneButton.setMyColor(UITheme.YELLOW);
@@ -205,6 +206,7 @@ public class EditTaskScreen extends Form {
         Header.add(BorderLayout.EAST, doneButton);
     }
     private void createFooter() {
+        Footer = new Container();
         Footer.setLayout(new BorderLayout());
         UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
         deleteButton.setMyColor(UITheme.RED);
