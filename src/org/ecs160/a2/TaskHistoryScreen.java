@@ -200,13 +200,14 @@ public class TaskHistoryScreen extends Form {
         d.setLayout(BoxLayout.y());
         d.add("Edit Task History Dialog");
 
-        SimpleDateFormat DateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        SimpleDateFormat DateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
 
         //TODO ADD Editing code within here
         d.add("Select Start Time");
         Picker startTimePicker = new Picker();
         startTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
         startTimePicker.setFormatter(DateFormat);
+
         d.add(startTimePicker);
 
         d.add("Select End Time");
@@ -230,11 +231,11 @@ public class TaskHistoryScreen extends Form {
             Date endDate = endTimePicker.getDate();
             Date startDate = endTimePicker.getDate();
 
-            System.out.println(endDate.toString().format("dd-MM-YYYY"));
+            String formattedStartDate = DateFormat.format(startDate);
+            String formattedEndDate = DateFormat.format(endDate);
 
-
-            System.out.println("End Date: " + endTimePicker.getDate().toString());
-            System.out.println("Start Date: " + startTimePicker.getDate().toString());
+            System.out.println("End Date: " + formattedStartDate);
+            System.out.println("Start Date: " + formattedEndDate);
             d.dispose();
         });
 
