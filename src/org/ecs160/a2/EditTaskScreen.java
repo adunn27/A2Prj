@@ -257,7 +257,16 @@ public class EditTaskScreen extends Form {
         confirm.addActionListener(e -> {
             String newTagName = tagNameField.getText();
             UIComponents.TagObject newTagObj = new UIComponents.TagObject(newTagName);
-            tagList.add(new UIComponents.TagObject(newTagName));
+
+            Button deleteButton = new Button("Delete");
+
+            deleteButton.addActionListener(event -> {
+                RemoveTag(newTagObj);
+            });
+
+            newTagObj.add(BorderLayout.EAST, deleteButton);
+
+            tagList.add(newTagObj);
             tagObjs.add(newTagObj);
             d.dispose();
         });
@@ -275,6 +284,32 @@ public class EditTaskScreen extends Form {
         d.add(cancel);
         d.show();
 
+    }
+
+    private void RemoveTag(Component deletedComponent) {
+        Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+        d.add("Are you sure?");
+
+        Button confirmButton = new Button("Confirm");
+        Button cancelButton = new Button("Cancel");
+
+        confirmButton.addActionListener(e -> {
+            System.out.println("REMOVING TAG");
+            tagObjs.remove(deletedComponent);
+            tagList.removeComponent(deletedComponent);
+            d.dispose();
+        });
+
+        cancelButton.addActionListener(e -> {
+            System.out.println("CANCEL DELETE");
+            d.dispose();
+        });
+
+        d.add(confirmButton);
+        d.add(cancelButton);
+
+        d.show();
     }
 }
 
