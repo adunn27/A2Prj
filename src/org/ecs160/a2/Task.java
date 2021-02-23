@@ -143,4 +143,8 @@ public class Task {
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();
     }
+
+    public List<TimeSpan> getAllTimeSpans() {
+        return allTimes;
+    }
 }
