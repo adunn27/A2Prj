@@ -9,8 +9,8 @@ import java.util.Deque;
 import static com.codename1.ui.CN.log;
 
 public class UINavigator {
-    public static BusinessLogic backend;
-    public static Deque<Form> previousForm;
+    public BusinessLogic backend;
+    public Deque<Form> previousForm;
 //    private BusinessLogic backend;
 
     public UINavigator(BusinessLogic backendLogic) {
@@ -19,11 +19,6 @@ public class UINavigator {
         (new HomeScreen(this)).show();
         previousForm = new ArrayDeque<>();
         previousForm.push(Display.getInstance().getCurrent());
-//        new TaskDetailsScreen(activeTask);
-//        new EditTaskScreen(activeTask);
-//        new TaskHistoryScreen(activeTask);
-//        new ArchiveScreen(archivedTasks);
-//        new SummaryScreen(unarchivedTasks);
     }
 
     // navigation
@@ -33,50 +28,56 @@ public class UINavigator {
         previousForm.pop().showBack();
     }
 
-    public static void goBackAndSave(Form prevPage) {
+    public void goBackAndSave() {
         log("go back and save");
-        goBack(prevPage);
+        goBack();
     }
 
-    public static void goDelete(Form prevPage) {
-        log("go back and delete");
-//        new HomeScreen(activeTask, unarchivedTasks);
+    public void goDelete(Task task) {
+        backend.deleteTask(task);
+        goBack();
     }
 
-    public static void goStart(String taskName) {
+    public void goStart(String taskName) {
         log("start " + taskName);
+        //TODO
     }
 
-    public static void goDetails() {
+    public void goDetails(String taskName) {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go details");
-//        new TaskDetailsScreen();
+        (new TaskDetailsScreen(backend.getTaskByName(taskName), this)).show();
     }
 
-    public static void goEdit() {
+    public void goEdit(String taskName) {
         previousForm.push(Display.getInstance().getCurrent());
         log("go edit");
-//        new EditTaskScreen();
+        (new EditTaskScreen(backend.getTaskByName(taskName), this)).show();
     }
 
-    public static void goNew() {
+    public void goNew() {
         previousForm.push(Display.getInstance().getCurrent());
         log("go new");
         // TODO: implement create edit
-        new EditTaskScreen(backend.getActiveTask()); // new
+        (new EditTaskScreen(null, this)).show(); // new
     }
 
-    public static void goArchive() {
+    public void goArchive() {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go archive");
-//        new ArchiveScreen();
+        (new ArchiveScreen(this)).show();
     }
 
-    public static void goHistory() {
+    public void goHistory(String taskName) {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go history");
-//        new TaskHistoryScreen();
+        //TODO
+        (new TaskHistoryScreen(backend.getTaskByName(taskName), this)).show();
     }
 
-    public static void goSummary() {
+    public void goSummary() {
+        previousForm.push(Display.getInstance().getCurrent());
         log("go summary");
-//        new SummaryScreen();
+        (new SummaryScreen(this)).show();
     }
 }

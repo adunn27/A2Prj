@@ -16,8 +16,7 @@ public class HomeScreen extends Form{
 
     private Task activeTask;
     private TaskContainer unarchivedTasks;
-    private UINavigator ui;
-
+    private final UINavigator ui;
 
     public HomeScreen(UINavigator ui) {
         this.ui = ui;
@@ -53,6 +52,7 @@ public class HomeScreen extends Form{
     }
 
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
 
         TextField SearchBar = new TextField("", "Search", 14, TextArea.ANY);
@@ -76,19 +76,19 @@ public class HomeScreen extends Form{
         summary.setMyIcon(FontImage.MATERIAL_LEADERBOARD);
         summary.setMyColor(UITheme.YELLOW);
         summary.setMyPadding(UITheme.PAD_3MM);
-        summary.addActionListener(e-> UINavigator.goSummary());
+        summary.addActionListener(e-> ui.goSummary());
 
         UIComponents.ButtonObject archived = new UIComponents.ButtonObject();
         archived.setMyIcon(FontImage.MATERIAL_INBOX);
         archived.setMyColor(UITheme.YELLOW);
         archived.setMyPadding(UITheme.PAD_3MM);
-        archived.addActionListener(e-> UINavigator.goArchive());
+        archived.addActionListener(e-> ui.goArchive());
 
         UIComponents.ButtonObject addTask = new UIComponents.ButtonObject();
         addTask.setMyIcon(FontImage.MATERIAL_ADD);
         addTask.setMyColor(UITheme.YELLOW);
         addTask.setMyPadding(UITheme.PAD_3MM);
-        addTask.addActionListener(e-> UINavigator.goNew());
+        addTask.addActionListener(e-> ui.goNew());
 
         Footer.add(BorderLayout.WEST, archived);
         Footer.add(BorderLayout.EAST, addTask);
@@ -101,12 +101,12 @@ public class HomeScreen extends Form{
         TaskMenu.setScrollableY(true);
 
         if (activeTask != null) {
-            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask);
+            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
         }
 
         for (Task taskObj : unarchivedTasks) {
-            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj);
+            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             TaskMenu.add(task);
         }
     }

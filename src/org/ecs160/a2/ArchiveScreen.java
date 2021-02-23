@@ -65,7 +65,7 @@ public class ArchiveScreen extends Form {
         setScrollableY(true);
 
         for (Task taskObj : tasks) {
-            UIComponents.TaskObject taskObject = new UIComponents.TaskObject(taskObj);
+            UIComponents.TaskObject taskObject = new UIComponents.TaskObject(taskObj, ui);
             TaskList.add(taskObject);
         }
     }

@@ -31,6 +31,18 @@ public class BusinessLogic {
         return everyTask.getUnarchivedTasks().getInactiveTasks();
     }
 
+    public TaskContainer getArchivedTasks() {
+        return everyTask.getArchivedTasks();
+    }
+
+    public Task getTaskByName(String taskName) {
+        return everyTask.getTaskByName(taskName);
+    }
+
+    public void deleteTask(Task task) {
+        everyTask.removeTask(task);
+    }
+
     /*
     newTask(name, size, description, tags)
 

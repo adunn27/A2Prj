@@ -85,11 +85,11 @@ public class UIComponents {
 
         }
         private int setColor(String size) {
-            if (size == "XL") {
+            if (size.equals("XL")) {
                 return UITheme.COL_SIZE_XL;
-            } else if (size == "L") {
+            } else if (size.equals("L")) {
                 return UITheme.COL_SIZE_L;
-            } else if (size == "M") {
+            } else if (size.equals("M")) {
                 return UITheme.COL_SIZE_M;
             } else {
                 return UITheme.COL_SIZE_S;
@@ -184,10 +184,6 @@ public class UIComponents {
             add(BorderLayout.CENTER, tagLabel);
         }
 
-        public String getName() {
-            return name;
-        }
-
         public void resetColor(int col) {
             this.getAllStyles().setBorder(
                     RoundBorder.create().rectangle(true).color(col)
@@ -245,70 +241,6 @@ public class UIComponents {
         }
     }
 
-    // args: name, size, list of tag names
-    // used in: homeScreen, archivePage
-    static class ActiveTaskObject extends Container {
-        public ActiveTaskObject(String name, String size, List<String> tags) {
-            setLayout(new BorderLayout());
-            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
-
-            // NOW PLAYING
-            TitleObject NowPlaying = new TitleObject("Now Playing");
-            NowPlaying.setSize(SIZE_LARGE);
-            add(BorderLayout.NORTH, NowPlaying);
-
-            // TASK BUTTON
-            Container taskElement = new Container(new BorderLayout());
-            MultiButton button = new MultiButton(name);
-            button.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
-            button.addActionListener(e->stop(name));
-
-            // TAGS
-            Container tagsContainer = new Container();
-            for (String t : tags) {
-                TagObject tagObj = new TagObject(t);
-                tagsContainer.add(tagsContainer);
-            }
-
-            taskElement.add(BorderLayout.CENTER, button);
-            taskElement.add(BorderLayout.SOUTH, tagsContainer);
-            add(BorderLayout.CENTER, taskElement);
-        }
-
-        private void stop(String name) {
-            // TODO: stop task
-            log("stop " + name);
-        }
-
-    }
-
-
-    static class StandardTaskObject extends Container {
-        public StandardTaskObject(String name, String size, java.util.List<String> tags){
-            setLayout(new BorderLayout());
-            getAllStyles().setBorder(Border.createLineBorder(UITheme.PAD_1MM,UITheme.DARK_GREY));
-            getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
-
-            MultiButton taskButton = new MultiButton(name);
-
-            Container taskElement = new Container(new BorderLayout());
-            Container tagsContainer = new Container();
-            for (String t : tags) {
-                tagsContainer.add(t);
-            }
-
-            taskElement.add(BorderLayout.CENTER, taskButton);
-            taskElement.add(BorderLayout.SOUTH, tagsContainer);
-
-            taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskElement);
-
-            // LISTENERS
-            taskButton.addActionListener(e-> UINavigator.goStart(name));
-            taskButton.addLongPressListener(e-> UINavigator.goDetails());
-        }
-    }
 
     // args: N/A
     // used in: homeScreen, archivePage

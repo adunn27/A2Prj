@@ -10,15 +10,12 @@ import com.codename1.ui.plaf.Style;
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
-    Form prevPage;
-    Form currentPage;
-
-    private Container titleRow = new Container();
-    private Container descRow = new Container();
-    private Container tagRow = new Container();
-    private Container timeRow = new Container();
-    private Container Header = new Container();
-    private Container Footer = new Container();
+    private Container titleRow;
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container Header;
+    private Container Footer;
 
     // TODO: SET NAME, SIZE, DESCRIPTION, ARRAY of TAGS
     private String nameTemp = "[Task Name]";
@@ -30,19 +27,30 @@ public class TaskDetailsScreen extends Form {
     private String weekTimeTemp = "[HH:mm:ss]"; // TODO: get weekTimeData
     private String dayTimeTemp = "[HH:mm:ss]"; // TODO: get dayTimeData
 
-    Task taskData;
+    private Task taskData;
+    private UINavigator ui;
 
-    TaskDetailsScreen(Task task) {
+    TaskDetailsScreen(Task task, UINavigator ui) {
         taskData =  task;
+        this.ui = ui;
+        createDetailsScreen();
+    }
 
-        prevPage = Display.getInstance().getCurrent();
+    @Override
+    public void show() {
+        createDetailsScreen();
+        super.show();
+    }
 
-        currentPage = new Form("Details");
-        currentPage.setLayout(new BorderLayout());
+    @Override
+    public void showBack() {
+        createDetailsScreen();
+        super.showBack();
+    }
 
-        // create header, footer
-        createHeader();
-        createFooter();
+    private void createDetailsScreen() {
+        setTitle("Details");
+        setLayout(new BorderLayout());
 
         // create body
         Container Body = new Container(BoxLayout.y());
@@ -54,21 +62,26 @@ public class TaskDetailsScreen extends Form {
             createTimeRow();
             createTagRow();
             createDescRow();
+            Body = new Container();
             Body.addAll(titleRow, timeRow, tagRow, descRow);
         } else {
             Body.add("Task not found...");
         }
 
-        // add components
-        currentPage.add(BorderLayout.NORTH, Header);
-        currentPage.add(BorderLayout.SOUTH, Footer);
-        currentPage.add(BorderLayout.CENTER, Body);
 
-        currentPage.show();
+        // create header, footer
+        createHeader();
+        createFooter();
+
+        // add components
+        add(BorderLayout.NORTH, Header);
+        add(BorderLayout.SOUTH, Footer);
+        add(BorderLayout.CENTER, Body);
     }
 
     // create rows
     private void createDescRow() {
+        descRow = new Container();
         descRow.setLayout(BoxLayout.y());
 
         UIComponents.TitleObject descTitle = new UIComponents.TitleObject("Description");
@@ -85,6 +98,7 @@ public class TaskDetailsScreen extends Form {
         descRow.add(descData);
     }
     private void createTitleRow() {
+        titleRow = new Container();
         titleRow.setLayout(BoxLayout.x());
         titleRow.setScrollableY(false);
         titleRow.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
@@ -105,6 +119,7 @@ public class TaskDetailsScreen extends Form {
         titleRow.add(sizeLabel);
     }
     private void createTagRow() {
+        tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 
         UIComponents.TitleObject tagTitle = new UIComponents.TitleObject("Tags");
@@ -120,6 +135,7 @@ public class TaskDetailsScreen extends Form {
         tagRow.add(tagObject);
     }
     private void createTimeRow() {
+        timeRow = new Container();
         timeRow.setLayout(BoxLayout.y());
 
         // time title
@@ -128,12 +144,9 @@ public class TaskDetailsScreen extends Form {
 
         // times
         SpanLabel timeData = new SpanLabel(
-                "All Time:\t" +
-                        allTimeTemp + "\n"+
-                        "This Week:\t" +
-                        weekTimeTemp + "\n" +
-                        "Today:\t" +
-                        dayTimeTemp
+        "All Time:\t" + allTimeTemp + "\n"+
+            "This Week:\t" + weekTimeTemp + "\n" +
+            "Today:\t" + dayTimeTemp
         );
 
         timeData.getTextAllStyles().setFgColor(UITheme.BLACK);
@@ -146,6 +159,7 @@ public class TaskDetailsScreen extends Form {
 
     // header
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
 
         // back button
@@ -153,19 +167,20 @@ public class TaskDetailsScreen extends Form {
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
         backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e-> UINavigator.goBack(prevPage));
+        backButton.addActionListener(e-> ui.goBack());
 
         // edit button
         UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
         editButton.setMyColor(UITheme.YELLOW);
         editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
         editButton.setMyPadding(UITheme.PAD_3MM);
-        editButton.addActionListener(e-> UINavigator.goEdit());
+        editButton.addActionListener(e-> ui.goEdit(taskData.getName()));
 
         Header.add(BorderLayout.EAST, editButton);
         Header.add(BorderLayout.WEST, backButton);
     }
     private void createFooter() {
+        Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));
         Footer.setScrollableY(false);
 
@@ -175,7 +190,7 @@ public class TaskDetailsScreen extends Form {
         historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
         historyButton.setMyColor(UITheme.LIGHT_GREY);
         historyButton.setMyPadding(UITheme.PAD_3MM);
-        historyButton.addActionListener(e-> UINavigator.goHistory());
+        historyButton.addActionListener(e-> ui.goHistory(taskData.getName()));
 
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
@@ -183,7 +198,10 @@ public class TaskDetailsScreen extends Form {
         archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
         archiveButton.setMyColor(UITheme.LIGHT_GREY);
         archiveButton.setMyPadding(UITheme.PAD_3MM);
-        archiveButton.addActionListener(e-> UINavigator.goArchive());
+        archiveButton.addActionListener(e-> {
+            log("archiving task " + taskData.getName()); // TODO: remove log
+            taskData.archive();
+        });
 
         // add to container
         Footer.add(historyButton);

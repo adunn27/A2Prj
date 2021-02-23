@@ -63,14 +63,6 @@ public class EditTaskScreen extends Form {
 
     private Container TitleRow = new Container();
     private Container TagRow = new Container();
-    private Container Header = new Container();
-    private Container Footer = new Container();
-
-    // TODO: get NAME, SIZE, DESCRIPTION
-//    private String name = "[Name]";
-//    private String size = "[Size]";
-//    private String description = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."; // TODO: get description data
-//    private String[] tags = {"tag1", "tag2", "tag3","tag4", "tag5", "tag6","tag7", "tag8", "tag9"};
 
     // IMPORTANT DATA FIELDS
     private TextField nameField;
@@ -78,8 +70,7 @@ public class EditTaskScreen extends Form {
     private Container tagList;
     private java.util.List<UIComponents.TagObject> tagObjs;
 
-
-    private Task taskData;
+    private Task task;
     private String nameData;
     private String sizeData;
     private String descriptionData;
