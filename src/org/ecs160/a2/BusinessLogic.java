@@ -8,6 +8,7 @@ public class BusinessLogic {
     public BusinessLogic() {
         //TODO load it in somehow
         everyTask = new TaskContainer();
+        everyTask.addTask(new Task("temp"));
     }
 
     public void newTask(String name,

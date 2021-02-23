@@ -16,6 +16,7 @@ import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
 import java.util.ArrayList;
+import java.util.Vector;
 
 import static com.codename1.ui.CN.log;
 import static com.codename1.ui.CN.setDarkMode;
@@ -78,12 +79,14 @@ public class EditTaskScreen extends Form {
     private String sizeData;
     private String descriptionData;
     private java.util.List<String> tagsData = new ArrayList<>();
+    private Boolean isNewTask = false;
 
     private void initData(Task task) {
         if (task == null) {
             nameData = "";
             sizeData = "S";
             descriptionData = "";
+            isNewTask = true;
         } else {
             nameData = task.getName();
             sizeData = task.getTaskSizeString();
@@ -94,13 +97,15 @@ public class EditTaskScreen extends Form {
 
 
     EditTaskScreen(Task task) {
-
-        initData(task);
-
-
+        tagObjs = new Vector<>();
         taskData = task;
-
         prevPage = Display.getInstance().getCurrent();
+
+        createEditTaskScreen();
+    }
+
+    private void createEditTaskScreen() {
+        initData(taskData);
 
         currentPage = new Form("Edit Task");
         currentPage.setLayout(new BorderLayout());
@@ -113,11 +118,11 @@ public class EditTaskScreen extends Form {
         createTitleRow();
         createTagRow();
         // description row
-        DescRow.label("Description").multiline(true);
-        DescRow.onTopMode(true);
-        DescRow.text(descriptionData);
+        descField.label("Description").multiline(true);
+        descField.onTopMode(true);
+        descField.text(descriptionData);
 
-        body.addAll(TitleRow, TagRow, DescRow);
+        body.addAll(TitleRow, TagRow, descField);
 
         currentPage.add(BorderLayout.NORTH, Header);
         currentPage.add(BorderLayout.SOUTH, Footer);
@@ -134,6 +139,7 @@ public class EditTaskScreen extends Form {
         TitleRow.add(BorderLayout.CENTER,nameField);
         TitleRow.add(BorderLayout.EAST, new SizeMultiButton(sizeData));
     }
+
     private void createTagRow() {
         // tag row
         TagRow.setLayout(BoxLayout.y());
@@ -149,6 +155,7 @@ public class EditTaskScreen extends Form {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
             tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
             tagList.add(tagObj);
+            tagObjs.add(tagObj);
         }
         tagList.add(addButton);
 
@@ -164,7 +171,27 @@ public class EditTaskScreen extends Form {
         doneButton.setMyPadding(UITheme.PAD_3MM);
 
         doneButton.addActionListener(e -> {
-            log(DescRow.getText());
+            log(descField.getText());
+            nameData = nameField.getText();
+            sizeData = "S"; //TODO
+            descriptionData = descField.getText();
+            tagsData = new Vector<String>();
+            for (UIComponents.TagObject tagButton : tagObjs) {
+                tagsData.add(tagButton.getName());
+            }
+
+            if (isNewTask) {
+                if (nameData == "") {
+                    UINavigator.goBack(prevPage);
+                    return;
+                }
+                UINavigator.backend.newTask(
+                        nameData,
+                        sizeData,
+                        descriptionData,
+                        tagsData
+                );
+            }
             UINavigator.goBackAndSave(prevPage);
 
         });

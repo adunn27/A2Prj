@@ -5,7 +5,7 @@ import com.codename1.ui.Form;
 import static com.codename1.ui.CN.log;
 
 public class UINavigator {
-    private static BusinessLogic backend;
+    public static BusinessLogic backend;
 //    private BusinessLogic backend;
 
     public UINavigator(BusinessLogic backendLogic) {
@@ -15,24 +15,27 @@ public class UINavigator {
         TaskContainer unarchivedTasks = backend.getUnarchivedTasks();
         TaskContainer archivedTasks = backend.getUnarchivedTasks();
 
-//        new HomeScreen(activeTask, unarchivedTasks);
+        new HomeScreen(activeTask, unarchivedTasks);
 //        new TaskDetailsScreen(activeTask);
 //        new EditTaskScreen(activeTask);
 //        new TaskHistoryScreen(activeTask);
 //        new ArchiveScreen(archivedTasks);
-        new SummaryScreen(unarchivedTasks);
+//        new SummaryScreen(unarchivedTasks);
     }
 
     // navigation
 
     public static void goBack(Form prevPage) {
         log("go back");
-//        prevPage.showBack();
+        prevPage.showBack();
     }
 
     public static void goBackAndSave(Form prevPage) {
         log("go back and save");
-//        prevPage.showBack();
+        Task activeTask = backend.getActiveTask();
+        TaskContainer unarchivedTasks = backend.getUnarchivedTasks();
+        new HomeScreen(activeTask, unarchivedTasks); //TODO
+        //prevPage.showBack();
     }
 
     public static void goDelete(Form prevPage) {
@@ -57,7 +60,7 @@ public class UINavigator {
     public static void goNew() {
         log("go new");
         // TODO: implement create edit
-//        new EditTaskScreen(backend.getActiveTask()); // new
+        new EditTaskScreen(backend.getActiveTask()); // new
     }
 
     public static void goArchive() {
