@@ -119,7 +119,7 @@ public class SummaryScreen extends Form {
             TaskList.add("No Tasks to Display");
         } else {
             for (Task taskObj : allTaskData) {
-                TaskList.add(new UIComponents.SummaryTaskObject(taskObj.getName(), taskObj.getTaskSizeString(), duration));
+                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, ui));
             }
         }
     }
