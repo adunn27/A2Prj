@@ -59,7 +59,13 @@ public class TaskDetailsScreen extends Form {
             createTagRow();
             createDescRow();
             Body = new Container();
-            Body.addAll(titleRow, timeRow, tagRow, descRow);
+            Body.addAll(titleRow,timeRow);
+
+            if (!taskData.getTags().isEmpty())
+                Body.add(tagRow);
+            if (!taskData.getDescription().isEmpty())
+                Body.add(descRow);
+
         } else {
             Body.add("Task not found...");
         }
@@ -114,6 +120,10 @@ public class TaskDetailsScreen extends Form {
         titleRow.add(sizeLabel);
     }
     private void createTagRow() {
+        if (taskData.getTags().size() == 0) {
+            return;
+        }
+
         tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 

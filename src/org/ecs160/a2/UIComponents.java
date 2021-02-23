@@ -218,10 +218,12 @@ public class UIComponents {
             for (String t : taskData.getTags()) {
                 tagsContainer.add(t);
             }
+            Label durationLabel = new Label(taskData.getTotalTimeString());
 
             taskElement.add(BorderLayout.CENTER, taskButton);
             taskElement.add(BorderLayout.SOUTH, tagsContainer);
             taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
+            taskElement.add(BorderLayout.EAST, durationLabel);
 
             taskButton.setIconPosition(BorderLayout.WEST);
             add(BorderLayout.CENTER, taskElement);
@@ -250,6 +252,71 @@ public class UIComponents {
         }
     }
 
+
+    static class newTaskObject extends Container {
+        Task taskData;
+        UINavigator ui;
+        boolean active;
+
+        public newTaskObject(Task task, UINavigator ui) {
+            Form currPage = Display.getInstance().getCurrent();
+            setLayout(BoxLayout.y());
+            this.taskData = task;
+            this.ui = ui;
+            active = (taskData.isActive()) ? true : false;
+
+            // TASK container
+            MultiButton taskContainer = new MultiButton(taskData.getName());
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
+            taskContainer.setLinesTogetherMode(true);
+
+            // LISTENERS
+            taskContainer.addActionListener(e-> shortPressEvent());
+            taskContainer.addLongPressListener(e-> longPressEvent());
+
+            // OPTIONS container
+            ButtonObject edit = new ButtonObject();
+            edit.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
+            edit.setMyColor(UITheme.YELLOW);
+            edit.addActionListener(e->{ui.goEdit(taskData.getName());});
+            ButtonObject archive = new ButtonObject();
+            archive.setMyIcon(FontImage.MATERIAL_SAVE);
+            archive.setMyColor(UITheme.LIGHT_GREY);
+            archive.addActionListener(e->{
+                if (taskData.isArchived())
+                    ui.backend.getTaskByName(taskData.getName()).unarchive();
+                else
+                    ui.backend.getTaskByName(taskData.getName()).archive();
+//                currPage.animate();
+                log("archived/unarchived task");
+            });
+            Container options = new Container(BoxLayout.x());
+            options.addAll(edit, archive);
+
+            // taskPanel: TASK + OPTIONS
+            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
+            add(taskPanel);
+        }
+
+        private void longPressEvent() {
+//            log("go to details " + taskData.getName()); // TODO: navigate to details
+            ui.goDetails(taskData.getName());
+        }
+        private void shortPressEvent() {
+            if (active) {
+                //ui.goStop(taskData); // TODO: fix
+                taskData.stop();
+            } else {
+                //ui.goStart(taskData.getName());
+                Task activeTask = ui.backend.getActiveTask();
+                if (activeTask != null) {
+                    activeTask.stop();
+                }
+                taskData.start();
+            }
+            active = (active)? !active : active;
+        }
+    }
 
     // args: N/A
     // used in: homeScreen, archivePage
