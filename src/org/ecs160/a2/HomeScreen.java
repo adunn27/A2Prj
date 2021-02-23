@@ -32,6 +32,7 @@ public class HomeScreen extends Form{
     }
 
     private void createHomeScreen() {
+        removeAll();
         setTitle("Home");
         setLayout(new BorderLayout());
 

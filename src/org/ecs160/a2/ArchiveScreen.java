@@ -28,9 +28,9 @@ class SearchBar extends Container{
 }
 
 public class ArchiveScreen extends Form {
-    Container TaskList = new Container();
-    Container Header = new Container();
-    Container Footer = new Container();
+    Container TaskList;
+    Container Header;
+    Container Footer;
 
     private TaskContainer tasks;
     private final UINavigator ui;
@@ -39,8 +39,19 @@ public class ArchiveScreen extends Form {
         this.ui = ui;
     }
 
+    @Override
+    public void show() {
+        createArchiveScreen();
+        super.show();
+    }
 
-    public void createArchiveScreen(TaskContainer archivedTasks) {
+    @Override
+    public void showBack() {
+        createArchiveScreen();
+        super.showBack();
+    }
+
+    public void createArchiveScreen() {
         tasks = ui.backend.getArchivedTasks();
 
         setTitle("Archive");
@@ -57,8 +68,9 @@ public class ArchiveScreen extends Form {
     }
 
     private void createTaskList(){
-        setLayout(BoxLayout.y());
-        setScrollableY(true);
+        TaskList = new Container();
+        TaskList.setLayout(BoxLayout.y());
+        TaskList.setScrollableY(true);
 
         for (Task taskObj : tasks) {
             UIComponents.TaskObject taskObject = new UIComponents.TaskObject(taskObj, ui);
@@ -67,6 +79,7 @@ public class ArchiveScreen extends Form {
     }
 
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
 
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
@@ -79,8 +92,9 @@ public class ArchiveScreen extends Form {
         Header.add(BorderLayout.WEST, backButton);
     }
     private void createFooter(){
-        setLayout(new GridLayout(1,2));
-        setScrollableY(false);
+        Footer = new Container();
+        Footer.setLayout(new GridLayout(1,2));
+        Footer.setScrollableY(false);
 
         // history
         Button historyButton = new Button("History");
@@ -115,7 +129,7 @@ public class ArchiveScreen extends Form {
         );
 
         // add to container
-        add(historyButton);
-        add(archiveButton);
+        Footer.add(historyButton);
+        Footer.add(archiveButton);
     }
 }

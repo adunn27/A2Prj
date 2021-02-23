@@ -179,18 +179,25 @@ public class EditTaskScreen extends Form {
             tagsData.add(tagButton.getName());
         }
 
-        if (isNewTask) {
-            if (nameData == "") {
-                ui.goBack();
-                return;
-            }
+        if (nameData.isEmpty()) { //TODO check if name already taken
+            ui.goBack();
+            return;
+        }
 
-            ui.backend.newTask(
+        if (isNewTask) {
+            task = ui.backend.newTask(
                     nameData,
                     sizeData,
                     descriptionData,
                     tagsData
             );
+            isNewTask = false;
+        } else {
+            // Update Task
+            task.setName(nameData);
+            task.setTaskSize(sizeData);
+            task.addAllTags(tagsData);
+            task.setDescription(descriptionData);
         }
         ui.goBack();
     }

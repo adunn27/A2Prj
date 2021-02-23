@@ -70,6 +70,8 @@ public class Task {
 
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
+        if (isActive)
+            stop();
         isArchived = true;
     }
 

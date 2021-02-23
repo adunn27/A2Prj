@@ -35,6 +35,7 @@ public class BusinessLogic {
             aNewTask.addTag(aTag);
         }
         everyTask.addTask(aNewTask);
+        return aNewTask;
     }
 
     public Task getActiveTask() {
