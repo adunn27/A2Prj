@@ -128,7 +128,12 @@ public class Task {
     }
 
     public String getTotalTimeString() {
-        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+        Duration diff = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        String hms = String.format("%d:%02d:%02d",
+                diff.toHours(),
+                diff.toMinutesPart(),
+                diff.toSecondsPart());
+        return hms;
     }
 
     public String getTotalTimeTodayString() {
