@@ -12,6 +12,10 @@ public class TaskContainer implements Iterable<Task>{
         taskSet = new HashSet<>();
     }
 
+    public int getNumberOfTasks() {
+        return taskSet.size();
+    }
+
     private TaskContainer(Set<Task> newTaskSet) {
         taskSet = newTaskSet;
     }
