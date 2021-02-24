@@ -101,7 +101,7 @@ public class Task {
 
     public void addAllTags(List<String> tags) {
         for (String t : tags) {
-            addTag(t);
+            if (!hasTag(t)) addTag(t);
         }
     }
 
