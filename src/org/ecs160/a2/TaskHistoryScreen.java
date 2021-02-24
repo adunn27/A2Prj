@@ -64,28 +64,15 @@ public class TaskHistoryScreen extends Form {
     private Task taskData;
     private UINavigator ui;
 
-    private void initData(Task taskData) {
+    private void initData(Task taskData) throws Error{
         if (taskData == null) {
             name = "[Task Name]";
             size = "S";
-            times.add("1:00");
-            times.add("2:00");
-            times.add("3:00");
-            times.add("4:00");
-            times.add("5:00");
-            times.add("6:00");
+            throw new Error("Task is not null");
         } else {
             name = taskData.getName();
             size = taskData.getTaskSizeString();
 //            times = task.getTotalTime(); // TODO: needs total time
-            times.add("1:00");
-            times.add("2:00");
-            times.add("1:00");
-            times.add("2:00");
-            times.add("3:00");
-            times.add("4:00");
-            times.add("5:00");
-            times.add("6:00");
         }
     }
 
@@ -162,7 +149,7 @@ public class TaskHistoryScreen extends Form {
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
             deleteButton.setMyColor(UITheme.RED);
             deleteButton.addActionListener(e -> {
-                DeleteTask(thisTimeSpan, newHTO);
+                DeleteTimeSpan(thisTimeSpan, newHTO);
             });
 
             newHTO.add(editButton);
@@ -171,7 +158,7 @@ public class TaskHistoryScreen extends Form {
         }
     }
 
-    private void DeleteTask(TimeSpan deletedTimeSpan, Component deletedComponent) {
+    private void DeleteTimeSpan(TimeSpan deletedTimeSpan, Component deletedComponent) {
         System.out.println("DELETING UI Component");
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());

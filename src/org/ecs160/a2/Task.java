@@ -145,10 +145,6 @@ public class Task {
         return !getTimeBetween(start, stop).isZero();
     }
 
-    public void addTimeSpan (TimeSpan addedTimeSpan){
-        allTimes.add(addedTimeSpan);
-    }
-
     public List<TimeSpan> getAllTimeSpans() {
         return allTimes;
     }
