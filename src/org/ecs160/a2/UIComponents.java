@@ -227,7 +227,7 @@ public class UIComponents {
             add(BorderLayout.CENTER, taskElement);
 
             // LISTENERS
-            taskButton.addActionListener(e-> shortPressEvent());
+            taskButton.addActionListener(e-> shortPressEvent(ui));
             taskButton.addLongPressListener(e-> longPressEvent());
         }
 
@@ -235,7 +235,7 @@ public class UIComponents {
 //            log("go to details " + taskData.getName()); // TODO: navigate to details
              ui.goDetails(taskData.getName());
         }
-        private void shortPressEvent() {
+        private void shortPressEvent(UINavigator ui) {
             if (taskData.isActive()) {
                 //ui.goStop(taskData); // TODO: fix
                 taskData.stop();
@@ -247,6 +247,7 @@ public class UIComponents {
                 }
                 taskData.start();
             }
+            ui.refreshScreen();
         }
     }
 
