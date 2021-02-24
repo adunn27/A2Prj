@@ -23,6 +23,11 @@ public class UINavigator {
 
     // navigation
 
+    public void refreshScreen() {
+        log("go back");
+        Display.getInstance().getCurrent().show();
+    }
+
     public void goBack() {
         log("go back");
         previousForm.pop().showBack();

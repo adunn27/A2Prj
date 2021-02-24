@@ -49,26 +49,7 @@ public class TaskDetailsScreen extends Form {
         setLayout(new BorderLayout());
 
         // create body
-        Container Body = new Container(BoxLayout.y());
-        Body.setScrollableY(true);
-
-        if (taskData != null) {
-            // add rows to body
-            createTitleRow();
-            createTimeRow();
-            createTagRow();
-            createDescRow();
-            Body = new Container();
-            Body.addAll(titleRow,timeRow);
-
-            if (!taskData.getTags().isEmpty())
-                Body.add(tagRow);
-            if (!taskData.getDescription().isEmpty())
-                Body.add(descRow);
-
-        } else {
-            Body.add("Task not found...");
-        }
+        Container Body = createBody();
 
         // create header, footer
         createHeader();
@@ -78,6 +59,28 @@ public class TaskDetailsScreen extends Form {
         add(BorderLayout.NORTH, Header);
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, Body);
+    }
+
+    private Container createBody() {
+        Container Body = new Container(BoxLayout.y());
+        Body.setScrollableY(true);
+
+        if (taskData != null) {
+            // add rows to body
+            createTitleRow();
+            createTimeRow();
+            createTagRow();
+            createDescRow();
+            Body.addAll(titleRow,timeRow);
+
+            if (!taskData.getTags().isEmpty())
+                Body.add(tagRow);
+            if (!taskData.getDescription().isEmpty())
+                Body.add(descRow);
+        } else {
+            Body.add("Task not found...");
+        }
+        return Body;
     }
 
     // create rows
