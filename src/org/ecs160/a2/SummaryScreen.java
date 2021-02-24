@@ -147,10 +147,8 @@ public class SummaryScreen extends Form {
         long minTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
-        long maxTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
+        long maxTime = allTaskData.getMaximumTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
-
-
 
         Container total = new Container(new GridLayout(2));
         total.addAll(new Label("Total Time Elapsed"),
@@ -174,7 +172,7 @@ public class SummaryScreen extends Form {
 
     private String formatDuration(long dur) {
         Date date = new Date(dur);
-        DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
         String dateFormatted = formatter.format(date);
         return dateFormatted;
