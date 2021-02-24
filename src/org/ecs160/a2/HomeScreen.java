@@ -18,6 +18,9 @@ public class HomeScreen extends Form{
     private final UINavigator ui;
 
     public HomeScreen(UINavigator ui) {
+        getContentPane().addPullToRefresh(() -> {
+            log("pulled");
+        });
         this.ui = ui;
     }
 
@@ -48,7 +51,6 @@ public class HomeScreen extends Form{
 //        currentPage.add(BorderLayout.NORTH, Header); TODO: figure out header
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, TaskMenu);
-        this.getContentPane().addPullToRefresh(() -> refresh());
     }
 
     private void createHeader() {
@@ -98,8 +100,6 @@ public class HomeScreen extends Form{
         TaskMenu = new Container();
         TaskMenu.setLayout(BoxLayout.y());
         TaskMenu.setScrollableY(true);
-
-
 
         if (activeTask != null) {
             UIComponents.TitleObject activeHeader = new UIComponents.TitleObject("Now Playing");
