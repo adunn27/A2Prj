@@ -14,10 +14,15 @@ import java.util.Iterator;
 import java.util.List;
 
 public class SummaryGraph{
-    //int n;
+
+    private TaskContainer allTaskData;
+    private final UINavigator ui;
+
     private SummaryMode mode;
     private TimeSpan summaryPeriod;
-    public SummaryGraph(){
+    public SummaryGraph(UINavigator ui){
+        this.ui = ui;
+        allTaskData = ui.backend.getUnarchivedTasks();
         mode = SummaryMode.DAY; //default
     }
     public void setSummaryMode(SummaryMode m){
@@ -109,7 +114,7 @@ public class SummaryGraph{
     }
 
     private TaskContainer getTaskSet(){
-        TaskContainer result = new TaskContainer();
+        //TaskContainer result = new TaskContainer();
         LocalDateTime present = LocalDateTime.now();
         TimeSpan dummyTimeSpan = new TimeSpan(present);
 
@@ -131,6 +136,6 @@ public class SummaryGraph{
        summaryPeriod = new TimeSpan(start);
        summaryPeriod.setEndTime(stop);
 
-       return result.getTasksThatOccurred(start, stop);
+       return allTaskData.getTasksThatOccurred(start, stop);
    }
 }

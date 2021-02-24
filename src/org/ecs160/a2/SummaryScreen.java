@@ -75,14 +75,14 @@ public class SummaryScreen extends Form {
         setTitle("Summary");
         setLayout(new BorderLayout());
 
-        SummaryGraph g = new SummaryGraph();
+        SummaryGraph g = new SummaryGraph(ui);
         pieChart = g.createPieChart();
 
         createHeader();
         createTaskList();
 
         add(BorderLayout.NORTH, Header);
-        add(BorderLayout.NORTH, pieChart);
+        add(BorderLayout.CENTER, pieChart);
         add(BorderLayout.SOUTH, TaskList);
     }
 
