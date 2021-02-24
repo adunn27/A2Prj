@@ -61,10 +61,10 @@ class FilterDialogue extends Dialog {
 }
 
 public class SummaryScreen extends Form {
-    Container Header = new Container();
-    Container TaskList = new Container(BoxLayout.y());
-    Container StatsList = new Container(BoxLayout.y());
-    Dialog FilterDialog = new Dialog(BoxLayout.y());
+    Container Header;
+    Container TaskList;
+    Container StatsList;
+    Dialog FilterDialog;
 
     private String filterSize;
     private String tempFilterSize = "";
@@ -72,10 +72,13 @@ public class SummaryScreen extends Form {
     private String filterTag;
     private String tempFilterTag = "";
 
+    private String filter;
+
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
     public SummaryScreen(UINavigator ui) {
+        this.filter = "";
         this.ui = ui;
     }
 
@@ -92,7 +95,7 @@ public class SummaryScreen extends Form {
     }
 
     public void createSummaryScreen() {
-        allTaskData = ui.backend.getUnarchivedTasks();
+        allTaskData = getTaskContainer();
 
         setTitle("Summary");
         setLayout(new BorderLayout());
@@ -128,6 +131,7 @@ public class SummaryScreen extends Form {
     }
 
     private void createStatsList() {
+        StatsList = new Container(BoxLayout.y());
         long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
@@ -235,16 +239,33 @@ public class SummaryScreen extends Form {
     // TODO: filter
     private void setFilter(String filter) {
         if (filter.isEmpty())
-            return;
+            this.filter = filter;
         else if (isSize(filter)) {
             // TODO: filter by size
+            this.filter = filter;
+
         } else {
             // TODO: filter by tag
+            this.filter = filter;
         }
         log("FILTERING BY " + filter);
+        show();
     }
 
-    private boolean isSize(String s) {
+    private TaskContainer getTaskContainer() {
+        TaskContainer allTasks = ui.backend.getUnarchivedTasks();
+        if (isSize(filter))
+            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
+        else if (!filter.isEmpty()) {
+            // TODO: filter by size
+            return allTasks.getTasksWithTag(filter);
+        } else {
+            // TODO: filter by tag
+            return allTasks;
+        }
+    }
+
+    private boolean isSize(String s) { //TODO move this to TaskSize enum?
         if (s.equals("S") || s.equals("M") || s.equals("L") || s.equals("XL"))
             return true;
         return false;
