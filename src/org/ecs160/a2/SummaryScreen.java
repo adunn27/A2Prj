@@ -3,6 +3,7 @@ package org.ecs160.a2;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.GridLayout;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -90,9 +91,11 @@ public class SummaryScreen extends Form {
         setLayout(new BorderLayout());
 
         createHeader();
+        createStatsList();
         createTaskList();
 
         add(BorderLayout.NORTH, Header);
+        add(BorderLayout.CENTER, StatsList);
         add(BorderLayout.SOUTH, TaskList);
     }
 
@@ -116,21 +119,42 @@ public class SummaryScreen extends Form {
     }
 
     private void createStatsList() {
-        Container total = new Container(BoxLayout.x());
         long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
-        long avgTime = totalTime / allTaskData.getNumberOfTasks();
+        long avgTime = allTaskData.getAverageTime(LocalDateTime.MIN,
+                                                  LocalDateTime.MAX);
 
+        long minTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
+                                                  LocalDateTime.MAX);
+
+        long maxTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
+                                                  LocalDateTime.MAX);
+
+        Container total = new Container(new GridLayout(2));
         total.addAll(new Label("Total Time Elapsed"),
                      new Label(String.valueOf(totalTime)));
 
+        Container average = new Container(new GridLayout(2));
+        average.addAll(new Label("Average Time Elapsed"),
+                       new Label(String.valueOf(avgTime)));
 
+        Container minimum = new Container(new GridLayout(2));
+        minimum.addAll(new Label("Minimum Time Elapsed"),
+                       new Label(String.valueOf(minTime)));
+
+        Container maximum = new Container(new GridLayout(2));
+        maximum.addAll(new Label("Maximum Time Elapsed"),
+                       new Label(String.valueOf(maxTime)));
+
+        StatsList.addAll(total,average,minimum,maximum);
 
     }
 
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
+        TaskList.setScrollableY(true);
+
         if (allTaskData.isEmpty()) {
             TaskList.add("No Tasks to Display");
         } else {
