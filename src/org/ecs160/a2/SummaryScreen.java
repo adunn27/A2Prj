@@ -5,8 +5,9 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
+
+import static com.codename1.ui.CN.log;
 
 //class SummaryHeader extends Container {
 //    public SummaryHeader() {
@@ -65,6 +66,12 @@ public class SummaryScreen extends Form {
     Container StatsList = new Container(BoxLayout.y());
     Dialog FilterDialog = new Dialog(BoxLayout.y());
 
+    private String filterSize;
+    private String tempFilterSize = "";
+
+    private String filterTag;
+    private String tempFilterTag = "";
+
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
@@ -104,6 +111,7 @@ public class SummaryScreen extends Form {
         Header.setLayout(new BorderLayout());
         UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
         filterButton.setMyColor(UITheme.YELLOW);
+        filterButton.setMyPadding(UITheme.PAD_3MM);
         filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
         filterButton.addActionListener(e->{
             showFilterDialog();
@@ -112,6 +120,7 @@ public class SummaryScreen extends Form {
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
         backButton.setMyColor(UITheme.YELLOW);
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+        backButton.setMyPadding(UITheme.PAD_3MM);
         backButton.addActionListener(e-> ui.goBack());
 
         Header.add(BorderLayout.EAST, filterButton);
@@ -165,22 +174,46 @@ public class SummaryScreen extends Form {
     }
 
     private void showFilterDialog() {
+        String[] sizeList = {"S","M","L","XL"};
         FilterDialog = new Dialog(BoxLayout.y());
-        Container sizeOptions = new Container(BoxLayout.x());
+        FilterDialog.setScrollableY(true);
 
-        UIComponents.SizeLabelObject sizeS = new UIComponents.SizeLabelObject("S");
-        UIComponents.SizeLabelObject sizeM = new UIComponents.SizeLabelObject("M");
-        UIComponents.SizeLabelObject sizeL = new UIComponents.SizeLabelObject("L");
-        UIComponents.SizeLabelObject sizeXL = new UIComponents.SizeLabelObject("XL");
+        // SIZE BUTTONS
+        Container sizeButtons = new Container(new GridLayout(5));
+        for (String size : sizeList) {
+            UIComponents.ButtonObject button = new UIComponents.ButtonObject();
+            button.setMyText(size);
+            button.setMyColor(UITheme.LIGHT_YELLOW);
+            button.addActionListener(e->{
+                tempFilterSize=size;
+                setFilter(size);
+                FilterDialog.dispose();
+            });
+            sizeButtons.add(button);
+        }
 
-        UIComponents.ButtonObject filter = new UIComponents.ButtonObject();
-        filter.setMyText("Cancel");
-        filter.setMyColor(UITheme.YELLOW);
-        filter.setMyPadding(UITheme.PAD_3MM);
+        // TAGS
+        Container tagButtons = new Container();
+        java.util.List<String> tagData = ui.backend.getAllTags();
+        for (String tag : tagData) {
+            UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
+            tagButton.setMyText(tag);
+            tagButton.setMyColor(UITheme.LIGHT_GREEN);
+            tagButton.addActionListener(e->{
+                tempFilterTag = tag;
+                setFilter(tag);
+                FilterDialog.dispose();
+            });
+            tagButtons.add(tagButton);
+        }
 
-        filter.addActionListener(f -> {
-            // TODO: add filter
-            ui.refreshScreen();
+        UIComponents.ButtonObject none = new UIComponents.ButtonObject();
+        none.setMyText("None");
+        none.setMyColor(UITheme.YELLOW);
+        none.setMyPadding(UITheme.PAD_3MM);
+        none.addActionListener(c -> {
+            setFilter(""); // RESET FILTER
+            FilterDialog.dispose();
         });
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
@@ -192,9 +225,33 @@ public class SummaryScreen extends Form {
             FilterDialog.dispose();
         });
 
-        FilterDialog.add(sizeOptions);
+        FilterDialog.add(sizeButtons);
+        FilterDialog.add(tagButtons);
+        FilterDialog.add(none);
         FilterDialog.add(cancel);
-
         FilterDialog.show();
     }
+
+    // TODO: filter
+    private void setFilter(String filter) {
+        if (filter.isEmpty())
+            return;
+        else if (isSize(filter)) {
+            // TODO: filter by size
+        } else {
+            // TODO: filter by tag
+        }
+        log("FILTERING BY " + filter);
+    }
+
+    private boolean isSize(String s) {
+        if (s.equals("S") || s.equals("M") || s.equals("L") || s.equals("XL"))
+            return true;
+        return false;
+    }
+
+    private void setFilterSize(String size) {
+        tempFilterSize = size;
+    }
+
 }
