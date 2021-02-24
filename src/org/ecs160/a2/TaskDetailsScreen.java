@@ -1,18 +1,26 @@
 package org.ecs160.a2;
 
+import com.codename1.charts.ChartComponent;
+import com.codename1.charts.models.XYMultipleSeriesDataset;
+import com.codename1.charts.models.XYSeries;
+import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
+import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
     private Container titleRow = new Container();
+    private Container graphRow;
     private Container descRow = new Container();
     private Container tagRow = new Container();
     private Container timeRow = new Container();
@@ -68,11 +76,14 @@ public class TaskDetailsScreen extends Form {
         if (taskData != null) {
             // add rows to body
             createTitleRow();
+            createGraphRow();
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body.addAll(titleRow,timeRow);
+            Body.addAll(titleRow, timeRow);
 
+            if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
+                Body.add(graphRow);
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
             if (!taskData.getDescription().isEmpty())
@@ -168,6 +179,14 @@ public class TaskDetailsScreen extends Form {
         timeRow.add(timeTitle);
         timeRow.add(timeData);
     }
+    private void createGraphRow() {
+        graphRow = new Container(new BorderLayout());
+        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+        graphRow.add(CENTER, graphPlaceHolder);
+    }
+
+
 
     // header/footer
     private void createHeader() {
@@ -224,4 +243,6 @@ public class TaskDetailsScreen extends Form {
         Footer.add(historyButton);
         Footer.add(archiveButton);
     }
+
+
 }
