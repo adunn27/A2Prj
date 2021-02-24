@@ -7,11 +7,18 @@ import com.codename1.charts.renderers.SimpleSeriesRenderer;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.charts.views.PieChart;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+
 public class SummaryGraph{
     //int n;
     private SummaryMode mode;
+    private TimeSpan summaryPeriod;
     public SummaryGraph(){
-        mode = SummaryMode.WEEK; //default
+        mode = SummaryMode.DAY; //default
     }
     public void setSummaryMode(SummaryMode m){
         mode = m;
@@ -31,22 +38,24 @@ public class SummaryGraph{
     }
 
 
-    protected CategorySeries buildCategoryDataset(String title, double[] times) {
+    protected CategorySeries buildCategoryDataset(String title, double[] times, TaskContainer taskSet) {
         CategorySeries series = new CategorySeries(title);
-        int k = 0;
+        Iterator<Task> it = taskSet.iterator();
         for (double time : times) {
-            series.add("Task " + ++k, time);
+            while (it.hasNext()) {
+                Task t = it.next();
+                series.add("" + t.getName(), time);
+            }
         }
-
         return series;
     }
-
     public ChartComponent createPieChart() {
         // Generate the values
-        double[] setTimes = new double[]{123, 140, 121, 10, 109};
-
+        TaskContainer taskSet = getTaskSet(); //TODO change for modes
+        double[] setTimes = getSetTimes(taskSet);
+        int [] colors = getColorArray(setTimes.length);
         // Set up the renderer
-        int[] colors = new int[]{ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA, ColorUtil.YELLOW, ColorUtil.CYAN};
+        //int[] colors = new int[]{ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA, ColorUtil.YELLOW, ColorUtil.CYAN};
         DefaultRenderer renderer = buildCategoryRenderer(colors);
 
         renderer.setChartTitleTextSize(20);
@@ -55,12 +64,73 @@ public class SummaryGraph{
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
         // Create the chart ... pass the values and renderer to the chart object.
-        PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes), renderer);
+        PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
 
-        // Wrap the chart in a Component so we can add it to a form
         ChartComponent c = new ChartComponent(chart);
 
         return c;
 
     }
+
+    private int[] getColorArray(int numTasks) {
+        int[] allColors = new int[]{
+                ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA,
+                ColorUtil.YELLOW, ColorUtil.CYAN, ColorUtil.LTGRAY,
+                ColorUtil.GRAY
+        };
+        while(numTasks > allColors.length){
+            int len = allColors.length;
+            int[] temp = allColors;
+            allColors = Arrays.copyOf(allColors, len * 2);
+            System.arraycopy(temp, 0, allColors, len, len*2);
+        }
+        int[] result = Arrays.copyOfRange(allColors, 0, numTasks);
+        return result;
+    }
+
+    private double[] getSetTimes(TaskContainer taskSet) {
+        Iterator<Task> it = taskSet.iterator();
+        ArrayList<Double> timeSet = new ArrayList<Double>();
+        while(it.hasNext()){
+            double totalTime = getTotalTimeInPeriod(it.next());
+            timeSet.add(totalTime);
+        }
+        double[] result = new double[timeSet.size()];
+        for(int i = 0; i < result.length; i++){
+            result[i] = timeSet.get(i).doubleValue();
+        }
+        return result;
+    }
+
+    private double getTotalTimeInPeriod(Task t) {
+        double total = 0;
+        t.getTimeBetween(summaryPeriod.getStartTime(), summaryPeriod.getEndTime());
+        return total;
+    }
+
+    private TaskContainer getTaskSet(){
+        TaskContainer result = new TaskContainer();
+        LocalDateTime present = LocalDateTime.now();
+        TimeSpan dummyTimeSpan = new TimeSpan(present);
+
+        LocalDateTime start;
+        LocalDateTime stop;
+        if(this.mode == SummaryMode.DAY) {
+            start = dummyTimeSpan.getStartOfDay(present);
+            stop = dummyTimeSpan.getEndOfDay(present);
+        }
+       else if(this.mode == SummaryMode.WEEK) {
+           start = dummyTimeSpan.getStartOfDay(present);
+           stop = dummyTimeSpan.getEndOfDay(present);
+       }
+       else{
+           start = LocalDateTime.MIN; //TODO change
+           stop = present;
+        }
+
+       summaryPeriod = new TimeSpan(start);
+       summaryPeriod.setEndTime(stop);
+
+       return result.getTasksThatOccurred(start, stop);
+   }
 }

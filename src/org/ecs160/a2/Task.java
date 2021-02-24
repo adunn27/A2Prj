@@ -143,4 +143,5 @@ public class Task {
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();
     }
+
 }

@@ -24,6 +24,12 @@ public class TimeSpan {
         this.endTime = endTime;
     }
 
+    public LocalDateTime getStartTime(){
+        return startTime;
+    }
+    public LocalDateTime getEndTime(){
+        return endTime;
+    }
     public String getFormattedTimeAsString(LocalDateTime time){
         return time.format(timeFormat);
     }
