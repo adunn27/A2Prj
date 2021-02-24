@@ -7,6 +7,7 @@ import com.codename1.charts.renderers.SimpleSeriesRenderer;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.charts.views.PieChart;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -31,8 +32,8 @@ public class SummaryGraph{
 
     private DefaultRenderer buildCategoryRenderer(int[] colors) {
         DefaultRenderer renderer = new DefaultRenderer();
-        renderer.setLabelsTextSize(35);
-        renderer.setLegendTextSize(35);
+        renderer.setLabelsTextSize(50);
+        renderer.setLegendTextSize(50);
         //renderer.setMargins(new int[]{20, 30, 15, 0});
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
@@ -47,10 +48,11 @@ public class SummaryGraph{
         CategorySeries series = new CategorySeries(title);
         Iterator<Task> it = taskSet.iterator();
         for (double time : times) {
-            while (it.hasNext()) {
+            if (it.hasNext()) {
                 Task t = it.next();
                 series.add("" + t.getName(), time);
             }
+
         }
         return series;
     }
@@ -83,7 +85,7 @@ public class SummaryGraph{
                 ColorUtil.YELLOW, ColorUtil.CYAN, ColorUtil.LTGRAY,
                 ColorUtil.GRAY
         };
-        while(numTasks > allColors.length){
+        while(numTasks > allColors.length){ //TODO this causes error
             int len = allColors.length;
             int[] temp = allColors;
             allColors = Arrays.copyOf(allColors, len * 2);
@@ -109,7 +111,8 @@ public class SummaryGraph{
 
     private double getTotalTimeInPeriod(Task t) {
         double total = 0;
-        t.getTimeBetween(summaryPeriod.getStartTime(), summaryPeriod.getEndTime());
+        Duration d = t.getTimeBetween(summaryPeriod.getStartTime(), summaryPeriod.getEndTime());
+        total = (double)(d.toMillis() / 1000);
         return total;
     }
 
