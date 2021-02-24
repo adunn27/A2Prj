@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import com.codename1.components.MultiButton;
+import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
@@ -9,6 +10,7 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
+import com.codename1.ui.plaf.RoundRectBorder;
 import com.codename1.ui.plaf.Style;
 
 import java.util.*;
@@ -263,14 +265,22 @@ public class UIComponents {
             setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
-            active = (taskData.isActive()) ? true : false;
+            active = taskData.isActive();
 
             // TASK container
-            MultiButton taskContainer = new MultiButton(taskData.getName());
-            taskContainer.setTextLine2(taskData.getTotalTimeString());
-            taskContainer.setLinesTogetherMode(true);
+            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName());
+//            taskContainer.setTextLine2(taskData.getTotalTimeString());
+
+            String tags = "";
+            for (String t : taskData.getTags()) {
+                tags += "\t" + t;
+            }
+            taskContainer.setTextLine2(tags);
 
             // LISTENERS
+//            taskContainer.addActionListener(e-> shortPressEvent());
+//            taskContainer.addLongPressListener(e-> longPressEvent());
+
             taskContainer.addActionListener(e-> shortPressEvent());
             taskContainer.addLongPressListener(e-> longPressEvent());
 
@@ -294,6 +304,7 @@ public class UIComponents {
             options.addAll(edit, archive);
 
             // taskPanel: TASK + OPTIONS
+//            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
             SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
             add(taskPanel);
         }
