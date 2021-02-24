@@ -2,10 +2,7 @@ package org.ecs160.a2;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LongSummaryStatistics;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TaskContainer implements Iterable<Task>{
@@ -130,5 +127,15 @@ public class TaskContainer implements Iterable<Task>{
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getMax();
+    }
+
+    public List<String> getAllTags() {
+        Set<String> setOfAllTags = new HashSet<>();
+        for (Task aTask: taskSet) {
+            for (String aTag: aTask.getTags()) {
+                setOfAllTags.add(aTag); //TODO do this in streams?
+            }
+        }
+        return setOfAllTags.stream().sorted().collect(Collectors.toList());
     }
 }
