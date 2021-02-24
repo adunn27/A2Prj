@@ -49,6 +49,19 @@ public class TaskDetailsScreen extends Form {
         setLayout(new BorderLayout());
 
         // create body
+        Container Body = createBody();
+
+        // create header, footer
+        createHeader();
+        createFooter();
+
+        // add components
+        add(BorderLayout.NORTH, Header);
+        add(BorderLayout.SOUTH, Footer);
+        add(BorderLayout.CENTER, Body);
+    }
+
+    private Container createBody() {
         Container Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
@@ -62,15 +75,7 @@ public class TaskDetailsScreen extends Form {
         } else {
             Body.add("Task not found...");
         }
-
-        // create header, footer
-        createHeader();
-        createFooter();
-
-        // add components
-        add(BorderLayout.NORTH, Header);
-        add(BorderLayout.SOUTH, Footer);
-        add(BorderLayout.CENTER, Body);
+        return Body;
     }
 
     // create rows
