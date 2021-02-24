@@ -4,6 +4,9 @@ import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 //class SummaryHeader extends Container {
 //    public SummaryHeader() {
 //        setLayout(new BorderLayout());
@@ -58,11 +61,8 @@ class FilterDialogue extends Dialog {
 public class SummaryScreen extends Form {
     Container Header = new Container();
     Container TaskList = new Container(BoxLayout.y());
+    Container StatsList = new Container(BoxLayout.y());
     Dialog FilterDialog = new Dialog(BoxLayout.y());
-
-    private String name = "Task Name";
-    private String size = "S";
-    private String duration = "HH:mm:ss"; // TODO: replace with real duration
 
     private TaskContainer allTaskData;
     private final UINavigator ui;
@@ -115,6 +115,20 @@ public class SummaryScreen extends Form {
         Header.add(BorderLayout.WEST, backButton);
     }
 
+    private void createStatsList() {
+        Container total = new Container(BoxLayout.x());
+        long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
+                                                  LocalDateTime.MAX);
+
+        long avgTime = totalTime / allTaskData.getNumberOfTasks();
+
+        total.addAll(new Label("Total Time Elapsed"),
+                     new Label(String.valueOf(totalTime)));
+
+
+
+    }
+
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
         if (allTaskData.isEmpty()) {
@@ -129,6 +143,21 @@ public class SummaryScreen extends Form {
     private void showFilterDialog() {
         FilterDialog = new Dialog(BoxLayout.y());
         Container sizeOptions = new Container(BoxLayout.x());
+
+        UIComponents.SizeLabelObject sizeS = new UIComponents.SizeLabelObject("S");
+        UIComponents.SizeLabelObject sizeM = new UIComponents.SizeLabelObject("M");
+        UIComponents.SizeLabelObject sizeL = new UIComponents.SizeLabelObject("L");
+        UIComponents.SizeLabelObject sizeXL = new UIComponents.SizeLabelObject("XL");
+
+        UIComponents.ButtonObject filter = new UIComponents.ButtonObject();
+        filter.setMyText("Cancel");
+        filter.setMyColor(UITheme.YELLOW);
+        filter.setMyPadding(UITheme.PAD_3MM);
+
+        filter.addActionListener(f -> {
+            // TODO: add filter
+            ui.refreshScreen();
+        });
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
         cancel.setMyText("Cancel");
