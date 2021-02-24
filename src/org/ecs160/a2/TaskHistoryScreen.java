@@ -2,22 +2,18 @@ package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
 
-import com.codename1.components.InteractionDialog;
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Form;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
-import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.spinner.Picker;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Formatter;
 
 
 class HistoryTaskObject1 extends Container {
@@ -43,7 +39,7 @@ class HistoryTaskObject1 extends Container {
     }
 
     public void setStartLabel(String startDate){
-
+        startLabel = new Label(startDate);
     }
 }
 
@@ -146,12 +142,12 @@ public class TaskHistoryScreen extends Form {
             String endTimeString = endTime.format(timeFormatter);
 
             HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString);
-            int finalI = i;
+
             UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
             editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
             editButton.setMyColor(UITheme.LIGHT_GREY);
             editButton.addActionListener(e -> {
-                EditTask(finalI);
+                EditTask(thisTimeSpan, newHTO);
             });
 
             UIComponents.ButtonObject calendarButton = new UIComponents.ButtonObject();
@@ -159,7 +155,7 @@ public class TaskHistoryScreen extends Form {
             calendarButton.setMyColor(UITheme.LIGHT_GREY);
 
             calendarButton.addActionListener(e -> {
-                EditTask(finalI);
+                EditTask(thisTimeSpan, newHTO);
             });
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
@@ -204,24 +200,29 @@ public class TaskHistoryScreen extends Form {
         d.show();
     }
 
-    private void EditTask(int index) {
+    private void EditTask(TimeSpan editedTimeSpan, Component editedComponent) {
         System.out.println("editUI Component");
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Edit Task History Dialog");
 
-        //TODO ADD Editing code within here
+        LocalDateTime initStartDate = editedTimeSpan.getStartTimeAsDate();
+        LocalDateTime initEndDate = editedTimeSpan.getStartTimeAsDate();
+
         d.add("Select Start Time");
         Picker startTimePicker = new Picker();
         startTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        startTimePicker.setFormatter(dateFormat);
-
+        startTimePicker.setFormatter(dateTimeFormat);
+        Date StartDate = Date.from(initStartDate.atZone(ZoneId.systemDefault()).toInstant());
+        startTimePicker.setDate(StartDate);
         d.add(startTimePicker);
 
         d.add("Select End Time");
         Picker endTimePicker = new Picker();
         endTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        endTimePicker.setFormatter(dateFormat);
+        endTimePicker.setFormatter(dateTimeFormat);
+        Date EndDate = Date.from(initEndDate.atZone(ZoneId.systemDefault()).toInstant());
+        endTimePicker.setDate(EndDate);
         d.add(endTimePicker);
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
@@ -237,15 +238,30 @@ public class TaskHistoryScreen extends Form {
         submitButton.addActionListener(e -> {
             //TODO add changes here
             Date endDate = endTimePicker.getDate();
-            Date startDate = endTimePicker.getDate();
+            Date startDate = startTimePicker.getDate();
 
             String formattedStartDate = dateFormat.format(startDate);
             String formattedEndDate = dateFormat.format(endDate);
 
+            String formattedStartTime = timeFormat.format(startDate);
+            String formattedEndTime = timeFormat.format(endDate);
+
+            LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+            editedTimeSpan.setStartTime(startDateTime);
+            editedTimeSpan.setEndTime(endDateTime);
+            editedTimeSpan.setStartTime(startDateTime);
+
+            System.out.println("Start Time: " + formattedStartTime);
+            System.out.println("End Time: " + formattedEndTime);
             System.out.println("End Date: " + formattedStartDate);
             System.out.println("Start Date: " + formattedEndDate);
             d.dispose();
+            ui.refreshScreen();
+            ui.refreshScreen();
         });
+
 
         d.add(submitButton);
         d.add(cancelButton);
