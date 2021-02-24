@@ -143,7 +143,14 @@ public class Task {
     }
 
     public String getTotalTimeTodayString() {
-        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        Duration duration = getTimeBetween(TimeSpan.getStartOfDay(LocalDateTime.now()),
+                TimeSpan.getEndOfDay(LocalDateTime.now()));
+        return toString(duration);
+    }
+
+    public String getTotalTimeThisWeekString() {
+        Duration duration = getTimeBetween(TimeSpan.getStartOfWeek(LocalDateTime.now()),
+                TimeSpan.getEndOfWeek(LocalDateTime.now()));
         return toString(duration);
     }
 

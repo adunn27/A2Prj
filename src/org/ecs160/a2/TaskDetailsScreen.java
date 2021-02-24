@@ -152,8 +152,8 @@ public class TaskDetailsScreen extends Form {
 
         // times
         allTime = taskData.getTotalTimeString(); // end time?;
-        weekTime = taskData.getTotalTimeString(); // end time?;
-        dayTime = taskData.getTotalTimeString(); // end time?;
+        weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
+        dayTime = taskData.getTotalTimeTodayString(); // end time?;
 
         SpanLabel timeData = new SpanLabel(
         "All Time:\t" + allTime + "\n"+
