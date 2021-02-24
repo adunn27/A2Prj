@@ -106,7 +106,7 @@ public class HomeScreen extends Form{
             activeHeader.setSize(Font.SIZE_MEDIUM);
             TaskMenu.add(activeHeader);
 //            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
-            UIComponents.newTaskObject t = new UIComponents.newTaskObject(activeTask, ui);
+            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
         }
 
@@ -118,7 +118,7 @@ public class HomeScreen extends Form{
 
         for (Task taskObj : unarchivedTasks) {
 //            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
-            UIComponents.newTaskObject task = new UIComponents.newTaskObject(taskObj, ui);
+            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             TaskMenu.add(task);
         }
     }

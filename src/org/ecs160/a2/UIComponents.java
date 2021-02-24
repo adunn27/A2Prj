@@ -223,7 +223,7 @@ public class UIComponents {
             taskContainer.setTextLine2(tags);
 
             // LISTENERS
-            taskContainer.addActionListener(e-> shortPressEvent(ui;
+            taskContainer.addActionListener(e-> shortPressEvent(ui));
             taskContainer.addLongPressListener(e-> longPressEvent());
 
             // OPTIONS container
