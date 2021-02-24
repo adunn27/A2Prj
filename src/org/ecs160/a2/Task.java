@@ -145,6 +145,16 @@ public class Task {
         return toString(duration);
     }
 
+    public List<Duration> getAllTimeLogs() {
+        List<Duration> timeLogs = new ArrayList<>();
+        for (TimeSpan timeSpan : allTimes) {
+            timeLogs.add(timeSpan.getTimeSpanDuration());
+        }
+        return timeLogs;
+    }
+
+
+
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();
     }
