@@ -17,11 +17,11 @@ import java.util.Date;
 
 
 class HistoryTaskObject1 extends Container {
-    private Label startLabel;
-    private Label stopLabel;
-
-    public HistoryTaskObject1(String startTime, String stopTime){
-        setLayout(BoxLayout.x());
+    private Label startDateLabel;
+    private Label stopDateLabel;
+    public HistoryTaskObject1(String startTime, String stopTime,
+                              String startDate, String stopDate){
+        setLayout(new BorderLayout());
 
         Container LeftContainer = new Container();
         LeftContainer.setLayout(BoxLayout.y());
@@ -29,17 +29,13 @@ class HistoryTaskObject1 extends Container {
         Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
         getAllStyles().setBorder(simpleBorder);
 
-        startLabel = new Label("Start: " + startTime);
-        stopLabel = new Label("Stop: " + stopTime);
+        startDateLabel = new Label ("Start: " + startDate + " " + startTime);
+        stopDateLabel = new Label("Stop: " + stopDate + " " + stopTime);
 
-        LeftContainer.add(startLabel);
-        LeftContainer.add(stopLabel);
+        LeftContainer.add(startDateLabel);
+        LeftContainer.add(stopDateLabel);
 
-        add(LeftContainer);
-    }
-
-    public void setStartLabel(String startDate){
-        startLabel = new Label(startDate);
+        add(WEST, LeftContainer);
     }
 }
 
@@ -52,15 +48,16 @@ public class TaskHistoryScreen extends Form {
     private String size;
     private java.util.List<String> tags = new ArrayList<>();
     private java.util.List<String> times = new ArrayList<>();
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
     private SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
+    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
 
     private final DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("hh:mm:ss a");
     private final DateTimeFormatter dateFormatter =
-            DateTimeFormatter.ofPattern("dd-MM-yyyy");
-    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a");
+            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private final DateTimeFormatter dateTimeFormatter =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss a");
     private Task taskData;
     private UINavigator ui;
 
@@ -128,7 +125,8 @@ public class TaskHistoryScreen extends Form {
             LocalDateTime endTime = thisTimeSpan.getEndTimeAsDate();
             String endTimeString = endTime.format(timeFormatter);
 
-            HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString);
+            HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString,
+                    startTime.format(dateFormatter), endTime.format(dateFormatter));
 
             UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
             editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
@@ -152,8 +150,10 @@ public class TaskHistoryScreen extends Form {
                 DeleteTimeSpan(thisTimeSpan, newHTO);
             });
 
-            newHTO.add(editButton);
-            newHTO.add(deleteButton);
+            Container RightContainer = new Container(BoxLayout.y());
+            RightContainer.add(editButton);
+            RightContainer.add(deleteButton);
+            newHTO.add(EAST, RightContainer);
             TaskList.add(newHTO);
         }
     }
@@ -194,7 +194,7 @@ public class TaskHistoryScreen extends Form {
         d.add("Edit Task History Dialog");
 
         LocalDateTime initStartDate = editedTimeSpan.getStartTimeAsDate();
-        LocalDateTime initEndDate = editedTimeSpan.getStartTimeAsDate();
+        LocalDateTime initEndDate = editedTimeSpan.getEndTimeAsDate();
 
         d.add("Select Start Time");
         Picker startTimePicker = new Picker();
@@ -227,8 +227,10 @@ public class TaskHistoryScreen extends Form {
             Date endDate = endTimePicker.getDate();
             Date startDate = startTimePicker.getDate();
 
-            LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime startDateTime = startDate.toInstant().
+                    atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime endDateTime = endDate.toInstant().
+                    atZone(ZoneId.systemDefault()).toLocalDateTime();
 
             editedTimeSpan.setStartTime(startDateTime);
             editedTimeSpan.setEndTime(endDateTime);
