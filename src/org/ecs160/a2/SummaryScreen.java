@@ -59,6 +59,7 @@ public class SummaryScreen extends Form {
         createHeader();
         createStatsList();
         createTaskList();
+        createGraphRow();
 
         add(BorderLayout.NORTH, Header);
         add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
@@ -202,10 +203,10 @@ public class SummaryScreen extends Form {
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
-        graphRow = new Container(new BorderLayout());
+        graphRow = new Container(BoxLayout.y());
         SpanLabel graphPlaceHolder = new SpanLabel("Insert Chart of Time Spent\non Tasks by filter");
         graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-        graphRow.add(CENTER, graphPlaceHolder);
+        graphRow.add(graphPlaceHolder);
     }
 
     // TODO: filter
