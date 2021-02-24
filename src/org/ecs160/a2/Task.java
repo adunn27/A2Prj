@@ -128,16 +128,21 @@ public class Task {
     }
 
     public String getTotalTimeString() {
-        Duration diff = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        return toString(duration);
+    }
+
+    public String toString(Duration duration) {
         String hms = String.format("%d:%02d:%02d",
-                diff.toHours(),
-                diff.toMinutesPart(),
-                diff.toSecondsPart());
+                duration.toHours(),
+                duration.toMinutesPart(),
+                duration.toSecondsPart());
         return hms;
     }
 
     public String getTotalTimeTodayString() {
-        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        return toString(duration);
     }
 
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {

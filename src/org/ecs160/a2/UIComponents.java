@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import com.codename1.components.MultiButton;
+import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
@@ -9,6 +10,7 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
+import com.codename1.ui.plaf.RoundRectBorder;
 import com.codename1.ui.plaf.Style;
 
 import java.util.*;
@@ -199,42 +201,61 @@ public class UIComponents {
         }
     }
 
-
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
+        boolean active;
 
         public TaskObject(Task task, UINavigator ui) {
+            Form currPage = Display.getInstance().getCurrent();
+            setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
-            setLayout(new BorderLayout());
-            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
 
-            MultiButton taskButton = new MultiButton(taskData.getName());
+            // TASK container
+            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
 
-            Container taskElement = new Container(new BorderLayout());
-            Container tagsContainer = new Container();
+            String tags = "";
             for (String t : taskData.getTags()) {
-                tagsContainer.add(t);
+                tags += "\t " + t;
             }
-
-            taskElement.add(BorderLayout.CENTER, taskButton);
-            taskElement.add(BorderLayout.SOUTH, tagsContainer);
-            taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
-
-            taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskElement);
+            taskContainer.setTextLine3(tags);
 
             // LISTENERS
-            taskButton.addActionListener(e-> shortPressEvent(ui));
-            taskButton.addLongPressListener(e-> longPressEvent());
+            taskContainer.addActionListener(e-> shortPressEvent(ui));
+            taskContainer.addLongPressListener(e-> longPressEvent());
+
+            // OPTIONS container
+            ButtonObject edit = new ButtonObject();
+            edit.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
+            edit.setMyColor(UITheme.YELLOW);
+            edit.addActionListener(e->{ui.goEdit(taskData.getName());});
+            ButtonObject archive = new ButtonObject();
+            archive.setMyIcon(FontImage.MATERIAL_SAVE);
+            archive.setMyColor(UITheme.LIGHT_GREY);
+            archive.addActionListener(e->{
+                if (taskData.isArchived())
+                    ui.backend.getTaskByName(taskData.getName()).unarchive();
+                else
+                    ui.backend.getTaskByName(taskData.getName()).archive();
+//                currPage.animate();
+                log("archived/unarchived task");
+            });
+            Container options = new Container(BoxLayout.x());
+            options.addAll(edit, archive);
+
+            // taskPanel: TASK + OPTIONS
+//            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
+            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
+            add(taskPanel);
         }
 
         private void longPressEvent() {
 //            log("go to details " + taskData.getName()); // TODO: navigate to details
-             ui.goDetails(taskData.getName());
+            ui.goDetails(taskData.getName());
         }
+
         private void shortPressEvent(UINavigator ui) {
             if (taskData.isActive()) {
                 //ui.goStop(taskData); // TODO: fix
@@ -250,7 +271,6 @@ public class UIComponents {
             ui.refreshScreen();
         }
     }
-
 
     // args: N/A
     // used in: homeScreen, archivePage

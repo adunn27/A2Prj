@@ -153,13 +153,13 @@ public class EditTaskScreen extends Form {
         UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
         addButton.setMyIcon(FontImage.MATERIAL_ADD);
         addButton.setMyColor(UITheme.GREEN);
-        addButton.setMyPadding(UITheme.PAD_1MM);
+        addButton.setMyPadding(UITheme.PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
         tagObjs = new ArrayList<>();
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
-            tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
+            tagObj.addPointerPressedListener(e-> RemoveTag(tagObj));
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_CLOSE);
@@ -317,7 +317,6 @@ public class EditTaskScreen extends Form {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Are you sure?");
-
         UIComponents.ButtonObject confirmButton = new UIComponents.ButtonObject();
         confirmButton.setMyColor(UITheme.RED);
         confirmButton.setMyText("Confirm");

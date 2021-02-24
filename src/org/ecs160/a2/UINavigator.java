@@ -33,14 +33,17 @@ public class UINavigator {
         previousForm.pop().showBack();
     }
 
-    public void goBackAndSave() {
-        log("go back and save");
-        goBack();
+    public void goHome() {
+        for (int i = 1; i < previousForm.size(); i++) {
+            previousForm.pop();
+        }
+        previousForm.pop().showBack();
     }
 
     public void goDelete(Task task) {
         backend.deleteTask(task);
-        goBack();
+//        goBack();
+        goHome();
     }
 
     public void goStart(String taskName) {

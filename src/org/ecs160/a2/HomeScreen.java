@@ -6,6 +6,8 @@ import com.codename1.ui.layouts.BoxLayout;
 
 import java.util.ArrayList;
 
+import static com.codename1.ui.CN.log;
+
 public class HomeScreen extends Form{
     private Container Header = new Container();
     private Container Footer = new Container();
@@ -63,7 +65,6 @@ public class HomeScreen extends Form{
         Header.add(BorderLayout.CENTER, SearchBar);
         Header.add(BorderLayout.EAST, filterButton);
     }
-
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new BorderLayout());
@@ -97,20 +98,23 @@ public class HomeScreen extends Form{
         TaskMenu.setLayout(BoxLayout.y());
         TaskMenu.setScrollableY(true);
 
-        UIComponents.TitleObject activeHeader = new UIComponents.TitleObject("Now Playing");
-        activeHeader.setSize(Font.SIZE_MEDIUM);
-
-        UIComponents.TitleObject inactiveHeader =new UIComponents.TitleObject("My Tasks");
-        inactiveHeader.setSize(Font.SIZE_MEDIUM);
-
-        TaskMenu.add(activeHeader);
         if (activeTask != null) {
+            UIComponents.TitleObject activeHeader = new UIComponents.TitleObject("Now Playing");
+            activeHeader.setSize(Font.SIZE_MEDIUM);
+            TaskMenu.add(activeHeader);
+//            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
         }
 
-        TaskMenu.add(inactiveHeader);
+        if (!unarchivedTasks.isEmpty()) {
+            UIComponents.TitleObject inactiveHeader =new UIComponents.TitleObject("My Tasks");
+            inactiveHeader.setSize(Font.SIZE_MEDIUM);
+            TaskMenu.add(inactiveHeader);
+        }
+
         for (Task taskObj : unarchivedTasks) {
+//            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             TaskMenu.add(task);
         }
@@ -139,5 +143,9 @@ public class HomeScreen extends Form{
         d.addAll(new Label("Tags"), tagButtons);
         d.showPopupDialog(b);
         d.dispose();
+    }
+
+    private void refresh() {
+        log("pulled refresh");
     }
 }
