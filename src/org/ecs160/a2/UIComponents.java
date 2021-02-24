@@ -201,66 +201,12 @@ public class UIComponents {
         }
     }
 
-
     static class TaskObject extends Container {
-        Task taskData;
-        UINavigator ui;
-
-        public TaskObject(Task task, UINavigator ui) {
-            this.taskData = task;
-            this.ui = ui;
-            setLayout(new BorderLayout());
-            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
-
-            MultiButton taskButton = new MultiButton(taskData.getName());
-
-            Container taskElement = new Container(new BorderLayout());
-            Container tagsContainer = new Container();
-            for (String t : taskData.getTags()) {
-                tagsContainer.add(t);
-            }
-            Label durationLabel = new Label(taskData.getTotalTimeString());
-
-            taskElement.add(BorderLayout.CENTER, taskButton);
-            taskElement.add(BorderLayout.SOUTH, tagsContainer);
-            taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
-            taskElement.add(BorderLayout.EAST, durationLabel);
-
-            taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskElement);
-
-            // LISTENERS
-            taskButton.addActionListener(e-> shortPressEvent());
-            taskButton.addLongPressListener(e-> longPressEvent());
-        }
-
-        private void longPressEvent() {
-//            log("go to details " + taskData.getName()); // TODO: navigate to details
-             ui.goDetails(taskData.getName());
-        }
-        private void shortPressEvent() {
-            if (taskData.isActive()) {
-                //ui.goStop(taskData); // TODO: fix
-                taskData.stop();
-            } else {
-                //ui.goStart(taskData.getName());
-                Task activeTask = ui.backend.getActiveTask();
-                if (activeTask != null) {
-                    activeTask.stop();
-                }
-                taskData.start();
-            }
-        }
-    }
-
-
-    static class newTaskObject extends Container {
         Task taskData;
         UINavigator ui;
         boolean active;
 
-        public newTaskObject(Task task, UINavigator ui) {
+        public TaskObject(Task task, UINavigator ui) {
             Form currPage = Display.getInstance().getCurrent();
             setLayout(BoxLayout.y());
             this.taskData = task;
@@ -325,7 +271,8 @@ public class UIComponents {
                 }
                 taskData.start();
             }
-            active = (active)? !active : active;
+            active = !active;
+            ui.refreshPage();
         }
     }
 
