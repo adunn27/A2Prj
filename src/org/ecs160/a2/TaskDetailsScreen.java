@@ -193,7 +193,25 @@ public class TaskDetailsScreen extends Form {
         historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
         historyButton.setMyColor(UITheme.LIGHT_GREY);
         historyButton.setMyPadding(UITheme.PAD_3MM);
-        historyButton.addActionListener(e-> ui.goHistory(taskData.getName()));
+        historyButton.addActionListener(e-> {
+            if (taskData.isActive()){
+                System.out.println("This task is currently running");
+                Dialog errorMessage = new Dialog();
+                errorMessage.setLayout(BoxLayout.y());
+                errorMessage.add("This task is currently running");
+
+                Button closeDialog = new Button("Close");
+                closeDialog.addActionListener(event -> {
+                    errorMessage.dispose();
+                });
+
+                errorMessage.add(closeDialog);
+
+                errorMessage.show();
+            } else {
+                ui.goHistory(taskData.getName());
+            }
+        });
 
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
