@@ -211,7 +211,6 @@ public class UIComponents {
             setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
-            active = taskData.isActive();
 
             // TASK container
             SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName());
@@ -224,10 +223,7 @@ public class UIComponents {
             taskContainer.setTextLine2(tags);
 
             // LISTENERS
-//            taskContainer.addActionListener(e-> shortPressEvent());
-//            taskContainer.addLongPressListener(e-> longPressEvent());
-
-            taskContainer.addActionListener(e-> shortPressEvent());
+            taskContainer.addActionListener(e-> shortPressEvent(ui;
             taskContainer.addLongPressListener(e-> longPressEvent());
 
             // OPTIONS container
@@ -259,8 +255,9 @@ public class UIComponents {
 //            log("go to details " + taskData.getName()); // TODO: navigate to details
             ui.goDetails(taskData.getName());
         }
-        private void shortPressEvent() {
-            if (active) {
+
+        private void shortPressEvent(UINavigator ui) {
+            if (taskData.isActive()) {
                 //ui.goStop(taskData); // TODO: fix
                 taskData.stop();
             } else {
@@ -271,8 +268,7 @@ public class UIComponents {
                 }
                 taskData.start();
             }
-            active = !active;
-            ui.refreshPage();
+            ui.refreshScreen();
         }
     }
 
