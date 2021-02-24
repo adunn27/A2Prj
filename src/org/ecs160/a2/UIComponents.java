@@ -215,7 +215,7 @@ public class UIComponents {
                 taskContainer.setTextLine3(tags);
 
             // LISTENERS
-            taskContainer.addActionListener(e-> shortPressEvent(ui));
+            taskContainer.addActionListener(e-> shortPressEvent());
             taskContainer.addLongPressListener(e-> longPressEvent());
 
             // OPTIONS container
@@ -246,15 +246,20 @@ public class UIComponents {
         }
 
         private void longPressEvent() {
-//            log("go to details " + taskData.getName()); // TODO: navigate to details
-            ui.goDetails(taskData.getName());
+            if (taskData.isArchived()) {
+                taskData.unarchive();
+                ui.refreshScreen();
+            } else {
+                ui.goDetails(taskData.getName());
+            }
         }
-        private void shortPressEvent(UINavigator ui) {
-            if (taskData.isActive()) {
-                //ui.goStop(taskData); // TODO: fix
+        private void shortPressEvent() {
+            if (taskData.isArchived()) {
+                ui.goDetails(taskData.getName());
+                return;
+            } else if (taskData.isActive()) {
                 taskData.stop();
             } else {
-                //ui.goStart(taskData.getName());
                 Task activeTask = ui.backend.getActiveTask();
                 if (activeTask != null) {
                     activeTask.stop();
