@@ -2,6 +2,7 @@ package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
 
+import com.codename1.components.InteractionDialog;
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Form;
 import com.codename1.ui.layouts.BorderLayout;
@@ -11,6 +12,9 @@ import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.spinner.Picker;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Formatter;
@@ -20,19 +24,11 @@ class HistoryTaskObject1 extends Container {
     private Label startLabel;
     private Label stopLabel;
 
-    public HistoryTaskObject1(String startTime, String stopTime, String startDate, String endDate){
+    public HistoryTaskObject1(String startTime, String stopTime){
         setLayout(BoxLayout.x());
 
         Container LeftContainer = new Container();
         LeftContainer.setLayout(BoxLayout.y());
-
-        Label startDateLabel = new Label("Start: " + startDate);
-        Label endDateLabel = new Label("End: " + endDate);
-
-        LeftContainer.add(startDateLabel);
-        LeftContainer.add(endDateLabel);
-
-        Container TimeContainer = new Container(BoxLayout.x());
 
         Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
         getAllStyles().setBorder(simpleBorder);
@@ -40,10 +36,8 @@ class HistoryTaskObject1 extends Container {
         startLabel = new Label("Start: " + startTime);
         stopLabel = new Label("Stop: " + stopTime);
 
-        TimeContainer.add(startLabel);
-        TimeContainer.add(stopLabel);
-
-        LeftContainer.add(TimeContainer);
+        LeftContainer.add(startLabel);
+        LeftContainer.add(stopLabel);
 
         add(LeftContainer);
     }
@@ -62,7 +56,15 @@ public class TaskHistoryScreen extends Form {
     private String size;
     private java.util.List<String> tags = new ArrayList<>();
     private java.util.List<String> times = new ArrayList<>();
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+    private SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
+    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
 
+    private final DateTimeFormatter timeFormatter =
+            DateTimeFormatter.ofPattern("hh:mm:ss a");
+    private final DateTimeFormatter dateFormatter =
+            DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy hh:mm:ss a");
     private Task taskData;
     private UINavigator ui;
 
@@ -110,8 +112,6 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void createTaskHistoryScreen() {
-        initData(taskData);
-
         setTitle("Task History");
         setLayout(new BorderLayout());
 
@@ -134,30 +134,39 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
+        System.out.println(taskData.getAllTimeSpans().size());
 
-        for (int i = 0; i < times.size(); i = i + 2){
+        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
 
-            HistoryTaskObject1 newHTO = new HistoryTaskObject1(times.get(i), times.get(i+1), "1/2/22", "1/2/22");
+            TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
 
+            LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
+            String startTimeString = startTime.format(timeFormatter);
+            LocalDateTime endTime = thisTimeSpan.getEndTimeAsDate();
+            String endTimeString = endTime.format(timeFormatter);
+
+            HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString);
+            int finalI = i;
             UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
             editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
             editButton.setMyColor(UITheme.LIGHT_GREY);
             editButton.addActionListener(e -> {
-                EditTask(newHTO);
+                EditTask(finalI);
             });
 
             UIComponents.ButtonObject calendarButton = new UIComponents.ButtonObject();
             calendarButton.setMyIcon(FontImage.MATERIAL_PERM_CONTACT_CALENDAR);
             calendarButton.setMyColor(UITheme.LIGHT_GREY);
+
             calendarButton.addActionListener(e -> {
-                EditTask(newHTO);
+                EditTask(finalI);
             });
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
             deleteButton.setMyColor(UITheme.RED);
             deleteButton.addActionListener(e -> {
-                DeleteTask(newHTO);
+                DeleteTask(thisTimeSpan, newHTO);
             });
 
             newHTO.add(editButton);
@@ -166,7 +175,7 @@ public class TaskHistoryScreen extends Form {
         }
     }
 
-    private void DeleteTask(Component newHTO) {
+    private void DeleteTask(TimeSpan deletedTimeSpan, Component deletedComponent) {
         System.out.println("DELETING UI Component");
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
@@ -176,6 +185,9 @@ public class TaskHistoryScreen extends Form {
         cancelButton.setMyText("Yes");
         cancelButton.setMyColor(UITheme.RED);
         cancelButton.addActionListener(e -> {
+            //TODO add delete code right here
+            taskData.removeTimeSpanComponent(deletedTimeSpan);
+            TaskList.removeComponent(deletedComponent);
             d.dispose();
         });
 
@@ -183,8 +195,6 @@ public class TaskHistoryScreen extends Form {
         submitButton.setMyText("No");
         submitButton.setMyColor(UITheme.LIGHT_GREY);
         submitButton.addActionListener(e -> {
-            //TODO add delete code right here
-            removeComponent(newHTO);
             d.dispose();
         });
 
@@ -194,26 +204,24 @@ public class TaskHistoryScreen extends Form {
         d.show();
     }
 
-    private void EditTask(Component newHTO) {
+    private void EditTask(int index) {
         System.out.println("editUI Component");
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Edit Task History Dialog");
 
-        SimpleDateFormat DateFormat = new SimpleDateFormat("dd-MM-yyyy hh:mm:ss a");
-
         //TODO ADD Editing code within here
         d.add("Select Start Time");
         Picker startTimePicker = new Picker();
         startTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        startTimePicker.setFormatter(DateFormat);
+        startTimePicker.setFormatter(dateFormat);
 
         d.add(startTimePicker);
 
         d.add("Select End Time");
         Picker endTimePicker = new Picker();
         endTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        endTimePicker.setFormatter(DateFormat);
+        endTimePicker.setFormatter(dateFormat);
         d.add(endTimePicker);
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
@@ -231,8 +239,8 @@ public class TaskHistoryScreen extends Form {
             Date endDate = endTimePicker.getDate();
             Date startDate = endTimePicker.getDate();
 
-            String formattedStartDate = DateFormat.format(startDate);
-            String formattedEndDate = DateFormat.format(endDate);
+            String formattedStartDate = dateFormat.format(startDate);
+            String formattedEndDate = dateFormat.format(endDate);
 
             System.out.println("End Date: " + formattedStartDate);
             System.out.println("Start Date: " + formattedEndDate);

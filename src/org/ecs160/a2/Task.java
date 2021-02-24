@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import java.sql.Time;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -144,7 +145,15 @@ public class Task {
         return !getTimeBetween(start, stop).isZero();
     }
 
+    public void addTimeSpan (TimeSpan addedTimeSpan){
+        allTimes.add(addedTimeSpan);
+    }
+
     public List<TimeSpan> getAllTimeSpans() {
         return allTimes;
+    }
+
+    public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
+        allTimes.remove(deletedTimeSpan);
     }
 }
