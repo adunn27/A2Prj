@@ -18,9 +18,6 @@ public class HomeScreen extends Form{
     private final UINavigator ui;
 
     public HomeScreen(UINavigator ui) {
-        getContentPane().addPullToRefresh(() -> {
-            log("pulled");
-        });
         this.ui = ui;
     }
 
