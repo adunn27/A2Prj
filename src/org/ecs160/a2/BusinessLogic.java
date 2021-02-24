@@ -34,16 +34,7 @@ public class BusinessLogic {
     }
 
     public List<String> getAllTags() {
-        java.util.List<String> allTags = new ArrayList<>();
-        for (Task task : everyTask) { // TODO: archive vs unarchived?
-            for (String tagName : task.getTags()) {
-                if (!allTags.contains(tagName)) {
-                    allTags.add(tagName);
-                }
-
-            }
-        }
-        return allTags;
+        return everyTask.getAllTags();
     }
 
     public Task newTask(String name,
