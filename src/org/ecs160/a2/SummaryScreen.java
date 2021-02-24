@@ -5,7 +5,11 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.TimeZone;
 
 import static com.codename1.ui.CN.log;
 
@@ -104,9 +108,10 @@ public class SummaryScreen extends Form {
         createStatsList();
         createTaskList();
 
+
+
         add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, StatsList);
-        add(BorderLayout.SOUTH, TaskList);
+        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,TaskList));
     }
 
     private void createHeader() {
@@ -116,6 +121,7 @@ public class SummaryScreen extends Form {
         filterButton.setMyColor(UITheme.YELLOW);
         filterButton.setMyPadding(UITheme.PAD_3MM);
         filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
+        filterButton.setMyText(filter);
         filterButton.addActionListener(e->{
             showFilterDialog();
         });
@@ -144,24 +150,34 @@ public class SummaryScreen extends Form {
         long maxTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
+
+
         Container total = new Container(new GridLayout(2));
         total.addAll(new Label("Total Time Elapsed"),
-                     new Label(String.valueOf(totalTime)));
+                     new Label(formatDuration(totalTime)));
 
         Container average = new Container(new GridLayout(2));
         average.addAll(new Label("Average Time Elapsed"),
-                       new Label(String.valueOf(avgTime)));
+                       new Label(formatDuration(avgTime)));
 
         Container minimum = new Container(new GridLayout(2));
         minimum.addAll(new Label("Minimum Time Elapsed"),
-                       new Label(String.valueOf(minTime)));
+                       new Label(formatDuration(minTime)));
 
         Container maximum = new Container(new GridLayout(2));
         maximum.addAll(new Label("Maximum Time Elapsed"),
-                       new Label(String.valueOf(maxTime)));
+                       new Label(formatDuration(maxTime)));
 
         StatsList.addAll(total,average,minimum,maximum);
 
+    }
+
+    private String formatDuration(long dur) {
+        Date date = new Date(dur);
+        DateFormat formatter = new SimpleDateFormat("HH:mm:ss.SSS");
+        formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+        String dateFormatted = formatter.format(date);
+        return dateFormatted;
     }
 
     private void createTaskList() {
