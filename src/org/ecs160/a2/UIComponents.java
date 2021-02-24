@@ -1,6 +1,5 @@
 package org.ecs160.a2;
 
-import com.codename1.components.MultiButton;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
@@ -10,11 +9,7 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
-import com.codename1.ui.plaf.RoundRectBorder;
 import com.codename1.ui.plaf.Style;
-
-import java.util.*;
-import java.util.List;
 
 import static com.codename1.ui.CN.*;
 
@@ -38,10 +33,6 @@ public class UIComponents {
                             .rectangle(true)
                             .color(color)
             );
-        }
-
-        public void setMyFg(int color) {
-            getAllStyles().setFgColor(color);
         }
 
         // pass in FontImage.[icon]
@@ -171,6 +162,11 @@ public class UIComponents {
     static class TagObject extends Container {
         Button tagLabel;
         String name;
+
+        public String getName() {
+            return name;
+        }
+
         public TagObject (String tagName) {
             name = tagName;
             setLayout(new BorderLayout());
@@ -186,28 +182,14 @@ public class UIComponents {
             tagLabel.getAllStyles().setBorder(
                     RoundBorder.create().rectangle(true).color(UITheme.YELLOW)
             );
-
             add(BorderLayout.CENTER, tagLabel);
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void resetColor(int col) {
-            this.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(col)
-            );
         }
     }
 
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
-        boolean active;
-
         public TaskObject(Task task, UINavigator ui) {
-            Form currPage = Display.getInstance().getCurrent();
             setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
@@ -216,11 +198,21 @@ public class UIComponents {
             SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
             taskContainer.setTextLine2(taskData.getTotalTimeString());
 
+            taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
+
+            if (taskData.isActive()) {
+                taskContainer.setEmblem(
+                        FontImage.createMaterial(FontImage.MATERIAL_ALARM_ON,
+                                taskContainer.getUnselectedStyle())
+                );
+            }
+
             String tags = "";
             for (String t : taskData.getTags()) {
-                tags += "\t " + t;
+                tags += t + '\t';
             }
-            taskContainer.setTextLine3(tags);
+            if (!tags.isEmpty())
+                taskContainer.setTextLine3(tags);
 
             // LISTENERS
             taskContainer.addActionListener(e-> shortPressEvent(ui));
@@ -240,22 +232,23 @@ public class UIComponents {
                 else
                     ui.backend.getTaskByName(taskData.getName()).archive();
 //                currPage.animate();
+                ui.refreshScreen();
                 log("archived/unarchived task");
             });
             Container options = new Container(BoxLayout.x());
             options.addAll(edit, archive);
 
             // taskPanel: TASK + OPTIONS
-//            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
             SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
             add(taskPanel);
+            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getAllStyles().setMargin(UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM);
         }
 
         private void longPressEvent() {
 //            log("go to details " + taskData.getName()); // TODO: navigate to details
             ui.goDetails(taskData.getName());
         }
-
         private void shortPressEvent(UINavigator ui) {
             if (taskData.isActive()) {
                 //ui.goStop(taskData); // TODO: fix
