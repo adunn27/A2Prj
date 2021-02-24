@@ -58,7 +58,6 @@ public class TaskDetailsScreen extends Form {
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body = new Container();
             Body.addAll(titleRow, timeRow, tagRow, descRow);
         } else {
             Body.add("Task not found...");
