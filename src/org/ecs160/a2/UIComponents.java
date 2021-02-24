@@ -11,6 +11,9 @@ import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
+import java.util.*;
+import java.util.List;
+
 import static com.codename1.ui.CN.*;
 
 // Contains Buttons and Components frequently used in UI
@@ -33,6 +36,10 @@ public class UIComponents {
                             .rectangle(true)
                             .color(color)
             );
+        }
+
+        public void setMyFg(int color) {
+            getAllStyles().setFgColor(color);
         }
 
         // pass in FontImage.[icon]
@@ -82,11 +89,11 @@ public class UIComponents {
 
         }
         private int setColor(String size) {
-            if (size == "XL") {
+            if (size.equals("XL")) {
                 return UITheme.COL_SIZE_XL;
-            } else if (size == "L") {
+            } else if (size.equals("L")) {
                 return UITheme.COL_SIZE_L;
-            } else if (size == "M") {
+            } else if (size.equals("M")) {
                 return UITheme.COL_SIZE_M;
             } else {
                 return UITheme.COL_SIZE_S;
@@ -161,7 +168,9 @@ public class UIComponents {
     // used in: taskDetails, homeScreen, archivePage
     static class TagObject extends Container {
         Button tagLabel;
+        String name;
         public TagObject (String tagName) {
+            name = tagName;
             setLayout(new BorderLayout());
             tagLabel = new Button(tagName);
             tagLabel.getAllStyles().setFgColor(UITheme.BLACK);
@@ -179,6 +188,10 @@ public class UIComponents {
             add(BorderLayout.CENTER, tagLabel);
         }
 
+        public String getName() {
+            return name;
+        }
+
         public void resetColor(int col) {
             this.getAllStyles().setBorder(
                     RoundBorder.create().rectangle(true).color(col)
@@ -186,63 +199,58 @@ public class UIComponents {
         }
     }
 
-    // args: name, size, list of tag names
-    // used in: homeScreen, archivePage
 
-    static class ActiveTaskObject extends Container {
-        public ActiveTaskObject(String name, String size, String[] tags) {
+    static class TaskObject extends Container {
+        Task taskData;
+        UINavigator ui;
+
+        public TaskObject(Task task, UINavigator ui) {
+            this.taskData = task;
+            this.ui = ui;
             setLayout(new BorderLayout());
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMarginBottom(UITheme.PAD_3MM);
 
-            add(BorderLayout.NORTH, new Label("Now Playing"));
+            MultiButton taskButton = new MultiButton(taskData.getName());
 
-            MultiButton test = new MultiButton(name);
-            test.getAllStyles().setBgColor(UITheme.LIGHT_GREEN);
-            test.addActionListener(e->stop(name));
-
-            String tagsTemp = tags[0];
-            for (int i = 1; i < 2; i++) { //TODO: wraparound!
-                tagsTemp += '\t' + tags[i];
+            Container taskElement = new Container(new BorderLayout());
+            Container tagsContainer = new Container();
+            for (String t : taskData.getTags()) {
+                tagsContainer.add(t);
             }
 
-            test.setTextLine2(tagsTemp);
-            add(BorderLayout.CENTER, test);
-        }
+            taskElement.add(BorderLayout.CENTER, taskButton);
+            taskElement.add(BorderLayout.SOUTH, tagsContainer);
+            taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
 
-        private void stop(String name) {
-            // TODO: stop task
-            log("stop " + name);
-        }
-
-    }
-
-
-    static class StandardTaskObject extends Container {
-        public StandardTaskObject(String name, String size, String[] tags){
-            setLayout(new BorderLayout());
-            getAllStyles().setBorder(Border.createLineBorder(UITheme.PAD_1MM,UITheme.DARK_GREY));
-            getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,0,0);
-
-            MultiButton taskButton = new MultiButton(name);
-
-
-            String tagsTemp = tags[0];
-            for (int i = 1; i < 5; i++) { //TODO: wraparound!
-                tagsTemp += '\t' + tags[i];
-            }
-
-            taskButton.setTextLine2(tagsTemp);
-            taskButton.setIcon(FontImage.createMaterial(FontImage.MATERIAL_ALARM, getUnselectedStyle()));
             taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskButton);
-            add(BorderLayout.EAST, new SizeLabelObject(size));
+            add(BorderLayout.CENTER, taskElement);
 
             // LISTENERS
-            taskButton.addActionListener(e->UIManager.goStart(name));
-            taskButton.addLongPressListener(e->UIManager.goDetails());
+            taskButton.addActionListener(e-> shortPressEvent(ui));
+            taskButton.addLongPressListener(e-> longPressEvent());
+        }
+
+        private void longPressEvent() {
+//            log("go to details " + taskData.getName()); // TODO: navigate to details
+             ui.goDetails(taskData.getName());
+        }
+        private void shortPressEvent(UINavigator ui) {
+            if (taskData.isActive()) {
+                //ui.goStop(taskData); // TODO: fix
+                taskData.stop();
+            } else {
+                //ui.goStart(taskData.getName());
+                Task activeTask = ui.backend.getActiveTask();
+                if (activeTask != null) {
+                    activeTask.stop();
+                }
+                taskData.start();
+            }
+            ui.refreshScreen();
         }
     }
+
 
     // args: N/A
     // used in: homeScreen, archivePage
@@ -268,11 +276,16 @@ public class UIComponents {
     // args: name, size, duration
     // used in: summaryScreen
     static class SummaryTaskObject extends Container {
-        public SummaryTaskObject(String name, String size, String duration) {
+        Task taskObj;
+        UINavigator ui;
+        public SummaryTaskObject(Task task, UINavigator ui) {
+            this.taskObj = task;
+            this.ui = ui;
+
             setLayout(new BorderLayout());
             // left side (size, name)
-            Label sizeLabel = new SizeLabelObject(size);
-            Label nameLabel = new Label(name);
+            Label sizeLabel = new SizeLabelObject(taskObj.getTaskSizeString());
+            Label nameLabel = new Label(taskObj.getName());
             nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
 
             Container leftContainer = new Container(new BorderLayout());
@@ -280,18 +293,19 @@ public class UIComponents {
             leftContainer.add(BorderLayout.CENTER, nameLabel);
 
             // right side (time)
-            Label durationLabel = new Label(duration);
+            Label durationLabel = new Label(taskObj.getTotalTimeString());
 
             add(BorderLayout.WEST, leftContainer);
             add(BorderLayout.EAST, durationLabel);
 
             Button myButton = new Button();
-            myButton.addActionListener(e->goDescription(name));
+            myButton.addActionListener(e->goDetails());
             setLeadComponent(myButton);
         }
 
-        private void goDescription(String name) {
-            log("go description: " + name);
+        private void goDetails() {
+            log("go description: " + taskObj.getName());
+            ui.goDetails(taskObj.getName());
         }
     }
 

@@ -44,6 +44,10 @@ public class Task {
         return size;
     }
 
+    public String getTaskSizeString() {
+        return size.toString();
+    }
+
     public void setTaskSize(String newTaskSizeString) {
         size = TaskSize.parse(newTaskSizeString);
     }
@@ -66,6 +70,8 @@ public class Task {
 
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
+        if (isActive)
+            stop();
         isArchived = true;
     }
 
@@ -93,6 +99,12 @@ public class Task {
         return tags.contains(tag);
     }
 
+    public void addAllTags(List<String> tags) {
+        for (String t : tags) {
+            addTag(t);
+        }
+    }
+
     public void addTag(String tag) {
         tags.add(tag);
     }
@@ -101,11 +113,11 @@ public class Task {
         tags.remove(tag);
     }
 
-    public List<String> getAllTags() {
+    public List<String> getTags() {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
-    public Duration getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) { //TODO return type?
         Duration totalTime = Duration.ofMillis(0);
         for (TimeSpan timeSpan: allTimes) {
             totalTime = totalTime.plus(
@@ -115,7 +127,20 @@ public class Task {
         return totalTime;
     }
 
+    public String getTotalTimeString() {
+        Duration diff = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        String hms = String.format("%d:%02d:%02d",
+                diff.toHours(),
+                diff.toMinutesPart(),
+                diff.toSecondsPart());
+        return hms;
+    }
+
+    public String getTotalTimeTodayString() {
+        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+    }
+
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
-        return !getTotalTime(start, stop).isZero();
+        return !getTimeBetween(start, stop).isZero();
     }
 }

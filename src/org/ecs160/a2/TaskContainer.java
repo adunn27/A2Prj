@@ -23,6 +23,10 @@ public class TaskContainer implements Iterable<Task>{
         return taskSet.iterator(); //TODO check
     }
 
+    public Boolean isEmpty() {
+        return taskSet.isEmpty();
+    }
+
     public void addTask(Task newTask) {
         taskSet.add(newTask);
     }
@@ -99,7 +103,7 @@ public class TaskContainer implements Iterable<Task>{
     private LongSummaryStatistics getTimeStatistics(LocalDateTime start,
                                                     LocalDateTime stop) {
         return taskSet.stream()
-                .map(task -> task.getTotalTime(start, stop))
+                .map(task -> task.getTimeBetween(start, stop))
                 .mapToLong(Duration::toMillis)
                 .summaryStatistics();
     }

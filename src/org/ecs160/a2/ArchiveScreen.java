@@ -2,42 +2,18 @@ package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
 
-import com.codename1.components.MultiButton;
 import com.codename1.ui.*;
-import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
-import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.*;
-import com.codename1.ui.table.TableLayout;
-import com.codename1.ui.util.Resources;
-import com.codename1.io.Log;
 
-import java.io.IOException;
 import com.codename1.ui.layouts.BoxLayout;
-import com.codename1.io.NetworkEvent;
-
-import javax.swing.border.LineBorder;
-
-class TaskList extends Container {
-    public TaskList(){
-        setLayout(BoxLayout.y());
-        setScrollableY(true);
-        //Component TagObject = new UIComponents.TagObject("Name");
-        //add(TagObject);
-        for (int iter = 0 ; iter < 20; iter++){
-            Container newTask = new taskItem();
-            add(newTask);
-        }
-    }
-}
 
 class SearchBar extends Container{
     public SearchBar(){
         setLayout(BoxLayout.xRight());
         getAllStyles().setMarginLeft(100);
         TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
-//        add("           ");
         searchBar.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
         searchBar.getAllStyles().setFgColor(UITheme.BLACK);
         add(searchBar);
@@ -52,44 +28,58 @@ class SearchBar extends Container{
 }
 
 public class ArchiveScreen extends Form {
-    Form prevPage;
-    Form currentPage;
+    Container TaskList;
+    Container Header;
+    Container Footer;
 
-    Container TaskList = new Container();
-    Container Header = new Container();
-    Container Footer = new Container();
+    private TaskContainer tasks;
+    private final UINavigator ui;
 
-    private String nameTemp = "[Task Name]";
-    private String sizeTemp = "S";
-    private String[] tagsTemp = {"tag1", "tag2","tag3"};
+    public ArchiveScreen(UINavigator ui) {
+        this.ui = ui;
+    }
 
-    public ArchiveScreen(){
-        prevPage = Display.getInstance().getCurrent();
-        currentPage = new Form("Archive");
+    @Override
+    public void show() {
+        createArchiveScreen();
+        super.show();
+    }
 
-        currentPage.setLayout(new BorderLayout());
+    @Override
+    public void showBack() {
+        createArchiveScreen();
+        super.showBack();
+    }
+
+    public void createArchiveScreen() {
+        tasks = ui.backend.getArchivedTasks();
+
+        setTitle("Archive");
+
+        setLayout(new BorderLayout());
 
         Container newSearchBar = new SearchBar();
 
         createHeader();
         createTaskList();
 
-        currentPage.add(NORTH, Header);
-        currentPage.add(CENTER, TaskList);
-        currentPage.show();
+        add(NORTH, Header);
+        add(CENTER, TaskList);
     }
 
     private void createTaskList(){
-        setLayout(BoxLayout.y());
-        setScrollableY(true);
+        TaskList = new Container();
+        TaskList.setLayout(BoxLayout.y());
+        TaskList.setScrollableY(true);
 
-        for (int i = 0 ; i < 20; i++){
-            UIComponents.StandardTaskObject taskObject = new UIComponents.StandardTaskObject(nameTemp, sizeTemp, tagsTemp);
+        for (Task taskObj : tasks) {
+            UIComponents.TaskObject taskObject = new UIComponents.TaskObject(taskObj, ui);
             TaskList.add(taskObject);
         }
     }
 
     private void createHeader() {
+        Header = new Container();
         Header.setLayout(new BorderLayout());
 
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
@@ -97,13 +87,14 @@ public class ArchiveScreen extends Form {
         backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
         backButton.setMyPadding(UITheme.PAD_3MM);
 
-        backButton.addActionListener(e->UIManager.goBack(prevPage));
+        backButton.addActionListener(e-> ui.goBack());
 
         Header.add(BorderLayout.WEST, backButton);
     }
     private void createFooter(){
-        setLayout(new GridLayout(1,2));
-        setScrollableY(false);
+        Footer = new Container();
+        Footer.setLayout(new GridLayout(1,2));
+        Footer.setScrollableY(false);
 
         // history
         Button historyButton = new Button("History");
@@ -137,9 +128,8 @@ public class ArchiveScreen extends Form {
                 )
         );
 
-
         // add to container
-        add(historyButton);
-        add(archiveButton);
+        Footer.add(historyButton);
+        Footer.add(archiveButton);
     }
 }

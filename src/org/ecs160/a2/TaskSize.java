@@ -3,7 +3,7 @@ package org.ecs160.a2;
 public enum TaskSize {
     NONE, S, M, L, XL;
 
-    public TaskSize parse(String sizeString) {
+    public static TaskSize parse(String sizeString) {
         switch (sizeString) {
             case "S":
                 return TaskSize.S;
