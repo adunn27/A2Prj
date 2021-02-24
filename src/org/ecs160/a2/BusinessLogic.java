@@ -38,6 +38,10 @@ public class BusinessLogic {
         return aNewTask;
     }
 
+    public void saveTask(Task newTask) {
+        everyTask.addTask(newTask);
+    }
+
     public Task getActiveTask() {
         return everyTask.getActiveTask();
     }
