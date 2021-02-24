@@ -1,9 +1,11 @@
 package org.ecs160.a2;
 
+import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.plaf.RoundBorder;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -13,61 +15,11 @@ import java.util.TimeZone;
 
 import static com.codename1.ui.CN.log;
 
-//class SummaryHeader extends Container {
-//    public SummaryHeader() {
-//        setLayout(new BorderLayout());
-//        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
-//        filterButton.setMyColor(UITheme.YELLOW);
-//        filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
-//        filterButton.addActionListener(e->{
-//            Dialog fd = new FilterDialogue();
-//            fd.show();
-//        });
-//
-//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-//        filterButton.setMyColor(UITheme.YELLOW);
-//        filterButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-//        filterButton.addActionListener(e->goBack());
-//
-//        add(BorderLayout.EAST, filterButton);
-//        add(BorderLayout.WEST, backButton);
-//    }
-//}
-
-class FilterDialogue extends Dialog {
-    public FilterDialogue() {
-        setLayout(BoxLayout.y());
-        Container sizeOptions = new Container(BoxLayout.x());
-        UIComponents.SizeButtonObject sizeS = new UIComponents.SizeButtonObject("S");
-        UIComponents.SizeButtonObject sizeM = new UIComponents.SizeButtonObject("M");
-        UIComponents.SizeButtonObject sizeL = new UIComponents.SizeButtonObject("L");
-        UIComponents.SizeButtonObject sizeXL = new UIComponents.SizeButtonObject("XL");
-
-        sizeS.addMyListener();
-        sizeM.addMyListener();
-        sizeL.addMyListener();
-        sizeXL.addMyListener();
-
-        sizeOptions.addAll(sizeS, sizeM, sizeL, sizeXL);
-
-        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
-        cancel.setMyText("Cancel");
-        cancel.setMyColor(UITheme.LIGHT_GREY);
-        cancel.setMyPadding(UITheme.PAD_3MM);
-
-        cancel.addActionListener(c -> {
-            this.dispose();
-        });
-
-        add(sizeOptions);
-        add(cancel);
-    }
-}
-
 public class SummaryScreen extends Form {
     Container Header;
     Container TaskList;
     Container StatsList;
+    Container graphRow;
     Dialog FilterDialog;
 
     private String filterSize;
@@ -108,10 +60,8 @@ public class SummaryScreen extends Form {
         createStatsList();
         createTaskList();
 
-
-
         add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,TaskList));
+        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
     }
 
     private void createHeader() {
@@ -250,6 +200,14 @@ public class SummaryScreen extends Form {
         FilterDialog.show();
     }
 
+    // TODO: IMPLEMENT THIS
+    private void createGraphRow() {
+        graphRow = new Container(new BorderLayout());
+        SpanLabel graphPlaceHolder = new SpanLabel("Insert Chart of Time Spent\non Tasks by filter");
+        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+        graphRow.add(CENTER, graphPlaceHolder);
+    }
+
     // TODO: filter
     private void setFilter(String filter) {
         if (filter.isEmpty())
@@ -284,9 +242,4 @@ public class SummaryScreen extends Form {
             return true;
         return false;
     }
-
-    private void setFilterSize(String size) {
-        tempFilterSize = size;
-    }
-
 }
