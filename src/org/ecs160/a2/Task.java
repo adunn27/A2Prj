@@ -153,8 +153,6 @@ public class Task {
         return timeLogs;
     }
 
-
-
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();
     }

@@ -179,14 +179,14 @@ public class TaskDetailsScreen extends Form {
         timeRow.add(timeTitle);
         timeRow.add(timeData);
     }
+
+    // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(new BorderLayout());
         SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
         graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
         graphRow.add(CENTER, graphPlaceHolder);
     }
-
-
 
     // header/footer
     private void createHeader() {
