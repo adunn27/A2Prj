@@ -227,12 +227,6 @@ public class TaskHistoryScreen extends Form {
             Date endDate = endTimePicker.getDate();
             Date startDate = startTimePicker.getDate();
 
-            String formattedStartDate = dateFormat.format(startDate);
-            String formattedEndDate = dateFormat.format(endDate);
-
-            String formattedStartTime = timeFormat.format(startDate);
-            String formattedEndTime = timeFormat.format(endDate);
-
             LocalDateTime startDateTime = startDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
             LocalDateTime endDateTime = endDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
 
@@ -240,10 +234,6 @@ public class TaskHistoryScreen extends Form {
             editedTimeSpan.setEndTime(endDateTime);
             editedTimeSpan.setStartTime(startDateTime);
 
-            System.out.println("Start Time: " + formattedStartTime);
-            System.out.println("End Time: " + formattedEndTime);
-            System.out.println("End Date: " + formattedStartDate);
-            System.out.println("Start Date: " + formattedEndDate);
             d.dispose();
             ui.refreshScreen();
             ui.refreshScreen();
