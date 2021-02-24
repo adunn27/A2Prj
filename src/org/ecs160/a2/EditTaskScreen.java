@@ -279,16 +279,13 @@ public class EditTaskScreen extends Form {
 
             newTagObj.add(BorderLayout.EAST, deleteButton);
 
-            // Error if tag exists
-            if (task.hasTag(tagNameField.getText())) {
-                Dialog error = new Dialog("Tag already exists!");
-                error.show();
-                error.dispose();
-            } else {
+            if (!tagNameField.getText().isEmpty() &&
+                    !task.hasTag(tagNameField.getText())) {
                 tagField.add(newTagObj);
                 tagObjs.add(newTagObj);
-                d.dispose();
+                task.addTag(tagNameField.getText()); //TODO added this
             }
+            d.dispose();
         });
 
         // CANCEL
@@ -324,6 +321,7 @@ public class EditTaskScreen extends Form {
             System.out.println("REMOVING TAG");
             tagObjs.remove(deletedComponent);
             tagField.removeComponent(deletedComponent);
+            task.removeTag(deletedComponent.getName()); //TODO how?
             d.dispose();
         });
 
