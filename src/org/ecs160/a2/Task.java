@@ -106,6 +106,8 @@ public class Task {
     }
 
     public void addTag(String tag) {
+        if (tag.isEmpty())
+            return;
         tags.add(tag);
     }
 
