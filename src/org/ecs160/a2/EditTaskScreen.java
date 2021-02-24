@@ -65,6 +65,7 @@ public class EditTaskScreen extends Form {
 
     // IMPORTANT DATA FIELDS
     private TextField nameField;
+    private SizeMultiButton sizeButton;
     private Container tagField;
     private TextComponent descField;
     private java.util.List<UIComponents.TagObject> tagObjs;
@@ -78,19 +79,16 @@ public class EditTaskScreen extends Form {
 
     private UINavigator ui;
 
-    private void initData(Task task) {
-        this.task = task;
+    private void initData(Task passedTask) {
+        this.task = passedTask;
         if (task == null) {
-            nameData = "";
-            sizeData = "S";
-            descriptionData = "";
+            this.task = new Task("");
             isNewTask = true;
-        } else {
-            nameData = task.getName();
-            sizeData = task.getTaskSizeString();
-            descriptionData = task.getDescription();
-            tagsData = task.getTags();
         }
+        nameData = task.getName();
+        sizeData = task.getTaskSizeString();
+        descriptionData = task.getDescription();
+        tagsData = task.getTags();
     }
 
     @Override
@@ -138,10 +136,12 @@ public class EditTaskScreen extends Form {
         // title row
         TitleRow = new Container();
         TitleRow.setLayout(new BorderLayout());
-        nameField = new TextField(nameData, "Name");
 
+        nameField = new TextField(nameData, "Name");
         TitleRow.add(BorderLayout.CENTER,nameField);
-        TitleRow.add(BorderLayout.EAST, new SizeMultiButton(sizeData));
+
+        sizeButton = new SizeMultiButton(sizeData);
+        TitleRow.add(BorderLayout.EAST, sizeButton);
     }
 
     private void createTagRow() {
@@ -179,7 +179,7 @@ public class EditTaskScreen extends Form {
 
     private void saveChanges() {
         nameData = nameField.getText();
-        sizeData = "S"; //TODO
+        sizeData = sizeButton.getText();
         descriptionData = descField.getText();
         tagsData = new Vector<String>();
         for (UIComponents.TagObject tagButton : tagObjs) {
@@ -192,20 +192,13 @@ public class EditTaskScreen extends Form {
         }
 
         if (isNewTask) {
-            task = ui.backend.newTask(
-                    nameData,
-                    sizeData,
-                    descriptionData,
-                    tagsData
-            );
+            ui.backend.saveTask(task);
             isNewTask = false;
-        } else {
-            // Update Task
-            task.setName(nameData);
-            task.setTaskSize(sizeData);
-            task.addAllTags(tagsData);
-            task.setDescription(descriptionData);
         }
+        task.setName(nameData);
+        task.setTaskSize(sizeData);
+        task.addAllTags(tagsData);
+        task.setDescription(descriptionData);
         ui.goBack();
     }
 
