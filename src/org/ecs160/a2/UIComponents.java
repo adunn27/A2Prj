@@ -213,14 +213,14 @@ public class UIComponents {
             this.ui = ui;
 
             // TASK container
-            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName());
-//            taskContainer.setTextLine2(taskData.getTotalTimeString());
+            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName() + '(' + taskData.getTaskSizeString() + ')');
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
 
             String tags = "";
             for (String t : taskData.getTags()) {
                 tags += "\t" + t;
             }
-            taskContainer.setTextLine2(tags);
+            taskContainer.setTextLine3(tags);
 
             // LISTENERS
             taskContainer.addActionListener(e-> shortPressEvent(ui));
