@@ -105,4 +105,8 @@ public class UINavigator {
     public TaskContainer getArchiveTasks() {
         return backend.getArchivedTasks();
     }
+
+    public TaskContainer filterTasks(TaskContainer allTasks, String filter) {
+        return backend.filterTasks(allTasks, filter);
+    }
 }

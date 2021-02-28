@@ -74,35 +74,22 @@ public class BusinessLogic {
         everyTask.removeTask(task);
     }
 
-    /*
-    newTask(name, size, description, tags)
+    public TaskContainer filterTasks(TaskContainer allTasks, String filter) {
+        if (isSize(filter))
+            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
+        else if (!filter.isEmpty()) {
+            // TODO: filter by size
+            return allTasks.getTasksWithTag(filter);
+        } else {
+            // TODO: filter by tag
+            return allTasks;
+        }
+    }
 
-    getTaskName
-    setTaskName
-
-    getTaskSize
-    setTaskSize(size)
-
-    getTags(taskName)
-    addTag(tagName)
-    removeTag(tagName)
-
-    getTaskDescription
-    updateTaskDescription(desc)
-    setTaskDescription(desc)
-
-    getTaskHistory
-    updateTaskHistory(?)
-
-    getTotalTime
-    getTodayTime
-    getWeekTime
-
-    getTasks
-    getArchiveTasks
-    getTasksWithSize(size)
-    getTasksWithTag(tagName)
-
-    deleteTask
-     */
+    private boolean isSize(String s) { //TODO move this to TaskSize enum?
+        return  s.equals("S") ||
+                s.equals("M") ||
+                s.equals("L") ||
+                s.equals("XL");
+    }
 }

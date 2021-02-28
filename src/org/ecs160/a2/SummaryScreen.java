@@ -218,20 +218,6 @@ public class SummaryScreen extends Form {
 
     private TaskContainer getTaskContainer() {
         TaskContainer allTasks = ui.getHomeTasks(); //TODO all tasks
-        if (isSize(filter))
-            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
-        else if (!filter.isEmpty()) {
-            // TODO: filter by size
-            return allTasks.getTasksWithTag(filter);
-        } else {
-            // TODO: filter by tag
-            return allTasks;
-        }
-    }
-
-    private boolean isSize(String s) { //TODO move this to TaskSize enum?
-        if (s.equals("S") || s.equals("M") || s.equals("L") || s.equals("XL"))
-            return true;
-        return false;
+        return ui.filterTasks(allTasks, filter);
     }
 }
