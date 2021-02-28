@@ -38,8 +38,8 @@ public class HomeScreen extends Form{
         setTitle("Home");
         setLayout(new BorderLayout());
 
-        this.activeTask = ui.backend.getActiveTask();
-        this.unarchivedTasks = ui.backend.getUnarchivedTasks();
+        this.activeTask = ui.getActiveTask();
+        this.unarchivedTasks = ui.getHomeTasks();
 
         createHeader();
         createFooter();
@@ -131,7 +131,7 @@ public class HomeScreen extends Form{
         sizeButtons.addAll(sizeS,sizeM,sizeL,sizeXL);
 
         Container tagButtons = new Container();
-        java.util.List<String> allTags = ui.backend.getAllTags();
+        java.util.List<String> allTags = ui.getAllTags();
         for (String tagName : allTags) {
             UIComponents.ButtonObject tagB = new UIComponents.ButtonObject();
             tagB.setMyText(tagName);

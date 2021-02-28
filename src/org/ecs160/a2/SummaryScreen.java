@@ -163,7 +163,7 @@ public class SummaryScreen extends Form {
 
         // TAGS
         Container tagButtons = new Container();
-        java.util.List<String> tagData = ui.backend.getAllTags();
+        java.util.List<String> tagData = ui.getAllTags();
         for (String tag : tagData) {
             UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
             tagButton.setMyText(tag);
@@ -211,22 +211,13 @@ public class SummaryScreen extends Form {
 
     // TODO: filter
     private void setFilter(String filter) {
-        if (filter.isEmpty())
-            this.filter = filter;
-        else if (isSize(filter)) {
-            // TODO: filter by size
-            this.filter = filter;
-
-        } else {
-            // TODO: filter by tag
-            this.filter = filter;
-        }
+        this.filter = filter;
         log("FILTERING BY " + filter);
         show();
     }
 
     private TaskContainer getTaskContainer() {
-        TaskContainer allTasks = ui.backend.getUnarchivedTasks();
+        TaskContainer allTasks = ui.getHomeTasks(); //TODO all tasks
         if (isSize(filter))
             return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
         else if (!filter.isEmpty()) {

@@ -227,10 +227,7 @@ public class UIComponents {
             archive.setMyIcon(FontImage.MATERIAL_SAVE);
             archive.setMyColor(UITheme.LIGHT_GREY);
             archive.addActionListener(e->{
-                if (taskData.isArchived())
-                    ui.backend.getTaskByName(taskData.getName()).unarchive();
-                else
-                    ui.backend.getTaskByName(taskData.getName()).archive();
+                ui.getTaskByName(taskData.getName()).toggleArchived();
 //                currPage.animate();
                 ui.refreshScreen();
                 log("archived/unarchived task");
@@ -260,7 +257,7 @@ public class UIComponents {
             } else if (taskData.isActive()) {
                 taskData.stop();
             } else {
-                Task activeTask = ui.backend.getActiveTask();
+                Task activeTask = ui.getActiveTask();
                 if (activeTask != null) {
                     activeTask.stop();
                 }

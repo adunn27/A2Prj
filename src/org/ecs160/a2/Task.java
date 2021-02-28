@@ -81,6 +81,13 @@ public class Task {
         isArchived = false;
     }
 
+    public void toggleArchived() {
+        if (isArchived())
+            unarchive();
+        else
+            archive();
+    }
+
     public void start() {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";

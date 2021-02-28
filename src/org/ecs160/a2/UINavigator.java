@@ -5,6 +5,7 @@ import com.codename1.ui.Form;
 
 import java.util.ArrayDeque;
 import java.util.Deque;
+import java.util.List;
 
 import static com.codename1.ui.CN.log;
 
@@ -79,5 +80,29 @@ public class UINavigator {
         previousForm.push(Display.getInstance().getCurrent());
         log("go summary");
         (new SummaryScreen(this)).show();
+    }
+
+    public void saveNewTask(Task newTask) {
+        backend.saveTask(newTask);
+    }
+
+    public Task getTaskByName(String name) {
+        return backend.getTaskByName(name);
+    }
+
+    public Task getActiveTask() {
+        return backend.getActiveTask();
+    }
+
+    public TaskContainer getHomeTasks() {
+        return backend.getUnarchivedTasks();
+    }
+
+    public List<String> getAllTags() {
+        return backend.getAllTags(); //TODO expand to include colors?
+    }
+
+    public TaskContainer getArchiveTasks() {
+        return backend.getArchivedTasks();
     }
 }

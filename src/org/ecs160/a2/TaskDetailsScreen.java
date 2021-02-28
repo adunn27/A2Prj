@@ -249,11 +249,7 @@ public class TaskDetailsScreen extends Form {
         archiveButton.setMyColor(UITheme.LIGHT_GREY);
         archiveButton.setMyPadding(UITheme.PAD_3MM);
         archiveButton.addActionListener(e-> {
-            if (taskData.isArchived()) {
-                ui.backend.getTaskByName(taskData.getName()).unarchive();
-            } else {
-                ui.backend.getTaskByName(taskData.getName()).archive();
-            }
+            ui.getTaskByName(taskData.getName()).toggleArchived();
             ui.goBack();
         });
 

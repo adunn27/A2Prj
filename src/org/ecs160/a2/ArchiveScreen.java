@@ -52,7 +52,7 @@ public class ArchiveScreen extends Form {
     }
 
     public void createArchiveScreen() {
-        tasks = ui.backend.getArchivedTasks();
+        tasks = ui.getArchiveTasks();
 
         setTitle("Archive");
 
