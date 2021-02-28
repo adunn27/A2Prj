@@ -9,9 +9,8 @@ import java.util.Deque;
 import static com.codename1.ui.CN.log;
 
 public class UINavigator {
-    public BusinessLogic backend;
-    public Deque<Form> previousForm;
-//    private BusinessLogic backend;
+    private BusinessLogic backend;
+    private Deque<Form> previousForm;
 
     public UINavigator(BusinessLogic backendLogic) {
         backend = backendLogic;
@@ -22,7 +21,6 @@ public class UINavigator {
     }
 
     // navigation
-
     public void refreshScreen() {
         log("go back");
         Display.getInstance().getCurrent().show();
@@ -40,15 +38,9 @@ public class UINavigator {
         previousForm.pop().showBack();
     }
 
-    public void goDelete(Task task) {
+    public void goDelete(Task task) { //TODO
         backend.deleteTask(task);
-//        goBack();
         goHome();
-    }
-
-    public void goStart(String taskName) {
-        log("start " + taskName);
-        //TODO
     }
 
     public void goDetails(String taskName) {
