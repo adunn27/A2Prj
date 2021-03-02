@@ -148,12 +148,15 @@ public class SummaryScreen extends Form {
         FilterDialog.setScrollableY(true);
 
         // SIZE BUTTONS
-        Container sizeButtons = new Container(new GridLayout(5));
+        Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeList) {
-            UIComponents.ButtonObject button = new UIComponents.ButtonObject();
-            button.setMyText(size);
-            button.setMyColor(UITheme.LIGHT_YELLOW);
-            button.addActionListener(e->{
+//            UIComponents.ButtonObject button = new UIComponents.ButtonObject();
+//            button.setMyText(size);
+//            button.setMyPadding(UITheme.PAD_3MM);
+//            button.setMyColor(UITheme.LIGHT_YELLOW);
+//            button.addActionListener(e->{
+            UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
+            button.addPointerPressedListener(e -> {
                 tempFilterSize=size;
                 setFilter(size);
                 FilterDialog.dispose();

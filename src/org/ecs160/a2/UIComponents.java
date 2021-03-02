@@ -7,6 +7,7 @@ import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
@@ -37,22 +38,12 @@ public class UIComponents {
 
         // pass in FontImage.[icon]
         public void setMyIcon(char icon) {
-            this.setIcon(
-                FontImage.createMaterial(
-                        icon,
-                        getUnselectedStyle()
-                )
-            );
+            this.setIcon(FontImage.createMaterial(icon, getUnselectedStyle()));
         }
 
         // pass in String
         public void setMyText(String text) {
             this.setText(text);
-        }
-
-        public void setMyMargin(int margin) {
-            this.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            this.getAllStyles().setMargin(margin,margin,margin,margin);
         }
 
         public void setMyPadding(int pad) {
@@ -67,20 +58,20 @@ public class UIComponents {
         public SizeLabelObject(String size) {
             setText(size);
             getAllStyles().setFgColor(UITheme.WHITE);
-
             getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-
-            getAllStyles().setPadding(UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM);
-
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
-
+            getAllStyles().setPadding(UITheme.PAD_3MM,
+                                      UITheme.PAD_3MM,
+                                      UITheme.PAD_3MM,
+                                      UITheme.PAD_3MM);
+            getAllStyles().setMargin(UITheme.PAD_1MM,
+                                     UITheme.PAD_1MM,
+                                     UITheme.PAD_1MM,
+                                     UITheme.PAD_1MM);
             getAllStyles().setBorder(RoundBorder.create().color(setColor(size)));
 
         }
+
         private int setColor(String size) {
             if (size.equals("XL")) {
                 return UITheme.COL_SIZE_XL;
@@ -99,21 +90,13 @@ public class UIComponents {
         public SizeButtonObject(String size) {
             setLayout(new BorderLayout());
             b.setText(size);
-//            b.setMyPadding(UITheme.PAD_3MM);
 
-//            b.setWidth(100);
-//            b.setHeight(100);
             Dimension d = new Dimension(UITheme.PAD_3MM,UITheme.PAD_3MM);
             b.setSize(d);
 
             b.setMyColor(setColor(size));
             b.getAllStyles().setFgColor(UITheme.WHITE);
             add(BorderLayout.CENTER, b);
-        }
-
-        public void addMyListener() {
-            SizeListen listener = new SizeListen();
-            b.addActionListener(listener);
         }
 
         private int setColor(String size) {
@@ -128,20 +111,6 @@ public class UIComponents {
             }
         }
 
-        class SizeListen implements ActionListener {
-            public void actionPerformed(ActionEvent ev) {
-                // filter by size
-                if (!b.isToggle()) {
-                    b.setMyColor(UITheme.YELLOW);
-                    b.setToggle(true);
-
-                } else {
-                    b.setMyColor(setColor(b.getText()));
-                    b.setToggle(false);
-                }
-            }
-        }
-
     }
 
     static class TitleObject extends Label {
@@ -153,7 +122,11 @@ public class UIComponents {
         }
 
         public void setSize(int size) {
-            getAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, size)));
+            getAllStyles().setFont((
+                    Font.createSystemFont(FACE_SYSTEM,
+                                           STYLE_PLAIN,
+                                           size))
+            );
         }
     }
 
@@ -169,6 +142,7 @@ public class UIComponents {
 
         public TagObject (String tagName) {
             name = tagName;
+
             setLayout(new BorderLayout());
             tagLabel = new Button(tagName);
             tagLabel.getAllStyles().setFgColor(UITheme.BLACK);
@@ -180,7 +154,7 @@ public class UIComponents {
             tagLabel.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
             tagLabel.getAllStyles().setMargin(Component.BOTTOM, UITheme.PAD_1MM);
             tagLabel.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(UITheme.YELLOW)
+                    RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY)
             );
             add(BorderLayout.CENTER, tagLabel);
         }
@@ -303,9 +277,9 @@ public class UIComponents {
             Label nameLabel = new Label(taskObj.getName());
             nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
 
-            Container leftContainer = new Container(new BorderLayout());
-            leftContainer.add(BorderLayout.WEST, sizeLabel);
-            leftContainer.add(BorderLayout.CENTER, nameLabel);
+            Container leftContainer = new Container(new GridLayout(2));
+            leftContainer.addAll(sizeLabel, nameLabel);
+//            leftContainer.add(BorderLayout.CENTER, nameLabel);
 
             // right side (time)
             Label durationLabel = new Label(taskObj.getTotalTimeString());
