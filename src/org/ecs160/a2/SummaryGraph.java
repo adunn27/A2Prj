@@ -34,7 +34,10 @@ public class SummaryGraph{
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
         renderer.setLegendTextSize(50);
-        //renderer.setMargins(new int[]{20, 30, 15, 0});
+        renderer.setLabelsColor(ColorUtil.BLACK);
+        renderer.setMargins(new int[]{0, 0, 0, 0});
+        //renderer.setPanEnabled(false);
+
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
             r.setColor(color);
@@ -65,12 +68,16 @@ public class SummaryGraph{
         //int[] colors = new int[]{ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA, ColorUtil.YELLOW, ColorUtil.CYAN};
         DefaultRenderer renderer = buildCategoryRenderer(colors);
 
-        renderer.setChartTitleTextSize(20);
-        renderer.setDisplayValues(true);
+        //From website
         renderer.setShowLabels(true);
+
+
+
+        renderer.setChartTitleTextSize(20);
+        //renderer.setDisplayValues(true);
+
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
-        // Create the chart ... pass the values and renderer to the chart object.
         PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
 
         ChartComponent c = new ChartComponent(chart);
@@ -81,20 +88,28 @@ public class SummaryGraph{
 
     private int[] getColorArray(int numTasks) {
         int[] allColors = new int[]{
-                ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA,
-                ColorUtil.YELLOW, ColorUtil.CYAN, ColorUtil.LTGRAY,
+                ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.LTGRAY, ColorUtil.MAGENTA,
+                ColorUtil.YELLOW, ColorUtil.CYAN, UITheme.RED, UITheme.LIGHT_GREEN, UITheme.LIGHT_YELLOW,
                 ColorUtil.GRAY
         };
         while(numTasks > allColors.length){ //TODO this causes error
-            int len = allColors.length;
-            int[] temp = allColors;
-            allColors = Arrays.copyOf(allColors, len * 2);
-            System.arraycopy(temp, 0, allColors, len, len*2);
+            allColors = doubleColorArray(allColors);
         }
-        int[] result = Arrays.copyOfRange(allColors, 0, numTasks);
-        return result;
-    }
 
+        return allColors;
+
+    }
+    private int[] doubleColorArray(int[] allColors){
+        ArrayList<Integer> result = new ArrayList<Integer>(allColors.length);
+        for(int i = 0; i <allColors.length; i++){
+            result.add(allColors[i]);
+        }
+        int[] result_array = new int[result.size()];
+        for(int i = 0; i < result.size(); i++){
+            result_array[i] = result.get(i).intValue();
+        }
+        return result_array;
+    }
     private double[] getSetTimes(TaskContainer taskSet) {
         Iterator<Task> it = taskSet.iterator();
         ArrayList<Double> timeSet = new ArrayList<Double>();
@@ -127,18 +142,18 @@ public class SummaryGraph{
             start = dummyTimeSpan.getStartOfDay(present);
             stop = dummyTimeSpan.getEndOfDay(present);
         }
-       else if(this.mode == SummaryMode.WEEK) {
-           start = dummyTimeSpan.getStartOfDay(present);
-           stop = dummyTimeSpan.getEndOfDay(present);
-       }
-       else{
-           start = LocalDateTime.MIN; //TODO change
-           stop = present;
+        else if(this.mode == SummaryMode.WEEK) {
+            start = dummyTimeSpan.getStartOfDay(present);
+            stop = dummyTimeSpan.getEndOfDay(present);
+        }
+        else{
+            start = LocalDateTime.MIN; //TODO change
+            stop = present;
         }
 
-       summaryPeriod = new TimeSpan(start);
-       summaryPeriod.setEndTime(stop);
+        summaryPeriod = new TimeSpan(start);
+        summaryPeriod.setEndTime(stop);
 
-       return allTaskData.getTasksThatOccurred(start, stop);
-   }
+        return allTaskData.getTasksThatOccurred(start, stop);
+    }
 }
