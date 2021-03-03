@@ -1,10 +1,8 @@
 package org.ecs160.a2;
-import java.time.DayOfWeek;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.time.Duration;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Date;
 
 public class TimeSpan {
     private LocalDateTime startTime;
@@ -59,6 +57,13 @@ public class TimeSpan {
         return Duration.between(startTime, endTime);
     }
 
+    public LocalDateTime getStartTimeAsDate(){
+        return startTime;
+    }
+
+    public LocalDateTime getEndTimeAsDate(){
+        return endTime;
+    }
 
     public Duration getTimeSpanDurationBetween
             (LocalDateTime startDate, LocalDateTime endDate){

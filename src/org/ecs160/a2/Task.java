@@ -101,11 +101,13 @@ public class Task {
 
     public void addAllTags(List<String> tags) {
         for (String t : tags) {
-            addTag(t);
+            if (!hasTag(t)) addTag(t);
         }
     }
 
     public void addTag(String tag) {
+        if (tag.isEmpty())
+            return;
         tags.add(tag);
     }
 
@@ -128,20 +130,47 @@ public class Task {
     }
 
     public String getTotalTimeString() {
-        Duration diff = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        return toString(duration);
+    }
+
+    public String toString(Duration duration) {
         String hms = String.format("%d:%02d:%02d",
-                diff.toHours(),
-                diff.toMinutesPart(),
-                diff.toSecondsPart());
+                duration.toHours(),
+                duration.toMinutesPart(),
+                duration.toSecondsPart());
         return hms;
     }
 
     public String getTotalTimeTodayString() {
-        return getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).toString();
+        Duration duration = getTimeBetween(TimeSpan.getStartOfDay(LocalDateTime.now()),
+                TimeSpan.getEndOfDay(LocalDateTime.now()));
+        return toString(duration);
+    }
+
+    public String getTotalTimeThisWeekString() {
+        Duration duration = getTimeBetween(TimeSpan.getStartOfWeek(LocalDateTime.now()),
+                TimeSpan.getEndOfWeek(LocalDateTime.now()));
+        return toString(duration);
+    }
+
+    public List<Duration> getAllTimeLogs() {
+        List<Duration> timeLogs = new ArrayList<>();
+        for (TimeSpan timeSpan : allTimes) {
+            timeLogs.add(timeSpan.getTimeSpanDuration());
+        }
+        return timeLogs;
     }
 
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();
     }
 
+    public List<TimeSpan> getAllTimeSpans() {
+        return allTimes;
+    }
+
+    public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
+        allTimes.remove(deletedTimeSpan);
+    }
 }

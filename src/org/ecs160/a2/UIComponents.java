@@ -1,6 +1,6 @@
 package org.ecs160.a2;
 
-import com.codename1.components.MultiButton;
+import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.events.ActionEvent;
 import com.codename1.ui.events.ActionListener;
@@ -10,9 +10,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
-
-import java.util.*;
-import java.util.List;
 
 import static com.codename1.ui.CN.*;
 
@@ -36,10 +33,6 @@ public class UIComponents {
                             .rectangle(true)
                             .color(color)
             );
-        }
-
-        public void setMyFg(int color) {
-            getAllStyles().setFgColor(color);
         }
 
         // pass in FontImage.[icon]
@@ -169,6 +162,11 @@ public class UIComponents {
     static class TagObject extends Container {
         Button tagLabel;
         String name;
+
+        public String getName() {
+            return name;
+        }
+
         public TagObject (String tagName) {
             name = tagName;
             setLayout(new BorderLayout());
@@ -184,63 +182,86 @@ public class UIComponents {
             tagLabel.getAllStyles().setBorder(
                     RoundBorder.create().rectangle(true).color(UITheme.YELLOW)
             );
-
             add(BorderLayout.CENTER, tagLabel);
         }
-
-        public String getName() {
-            return name;
-        }
-
-        public void resetColor(int col) {
-            this.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(col)
-            );
-        }
     }
-
 
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
+        private SpanMultiButton taskContainer;
 
         public TaskObject(Task task, UINavigator ui) {
+            setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
-            setLayout(new BorderLayout());
-            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMarginBottom(UITheme.PAD_3MM);
 
-            MultiButton taskButton = new MultiButton(taskData.getName());
+            // TASK container
+            taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
 
-            Container taskElement = new Container(new BorderLayout());
-            Container tagsContainer = new Container();
-            for (String t : taskData.getTags()) {
-                tagsContainer.add(t);
+            taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
+
+            if (taskData.isActive()) {
+                taskContainer.setEmblem(
+                        FontImage.createMaterial(FontImage.MATERIAL_ALARM_ON,
+                                taskContainer.getUnselectedStyle())
+                );
             }
 
-            taskElement.add(BorderLayout.CENTER, taskButton);
-            taskElement.add(BorderLayout.SOUTH, tagsContainer);
-            taskElement.add(BorderLayout.WEST, new Label(taskData.getTaskSizeString()));
-
-            taskButton.setIconPosition(BorderLayout.WEST);
-            add(BorderLayout.CENTER, taskElement);
+            String tags = "";
+            for (String t : taskData.getTags()) {
+                tags += t + '\t';
+            }
+            if (!tags.isEmpty())
+                taskContainer.setTextLine3(tags);
 
             // LISTENERS
-            taskButton.addActionListener(e-> shortPressEvent(ui));
-            taskButton.addLongPressListener(e-> longPressEvent());
+            taskContainer.addActionListener(e-> shortPressEvent());
+            taskContainer.addLongPressListener(e-> longPressEvent());
+
+            // OPTIONS container
+            ButtonObject edit = new ButtonObject();
+            edit.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
+            edit.setMyColor(UITheme.YELLOW);
+            edit.addActionListener(e->{ui.goEdit(taskData.getName());});
+            ButtonObject archive = new ButtonObject();
+            archive.setMyIcon(FontImage.MATERIAL_SAVE);
+            archive.setMyColor(UITheme.LIGHT_GREY);
+            archive.addActionListener(e->{
+                if (taskData.isArchived())
+                    ui.backend.getTaskByName(taskData.getName()).unarchive();
+                else
+                    ui.backend.getTaskByName(taskData.getName()).archive();
+//                currPage.animate();
+                ui.refreshScreen();
+                log("archived/unarchived task");
+            });
+            Container options = new Container(BoxLayout.x());
+            options.addAll(edit, archive);
+
+            // taskPanel: TASK + OPTIONS
+            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
+            add(taskPanel);
+            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getAllStyles().setMargin(UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM);
         }
 
         private void longPressEvent() {
-//            log("go to details " + taskData.getName()); // TODO: navigate to details
-             ui.goDetails(taskData.getName());
+            if (taskData.isArchived()) {
+                taskData.unarchive();
+                ui.refreshScreen();
+            } else {
+                ui.goDetails(taskData.getName());
+            }
         }
-        private void shortPressEvent(UINavigator ui) {
-            if (taskData.isActive()) {
-                //ui.goStop(taskData); // TODO: fix
+        private void shortPressEvent() {
+            if (taskData.isArchived()) {
+                ui.goDetails(taskData.getName());
+                return;
+            } else if (taskData.isActive()) {
                 taskData.stop();
             } else {
-                //ui.goStart(taskData.getName());
                 Task activeTask = ui.backend.getActiveTask();
                 if (activeTask != null) {
                     activeTask.stop();
@@ -249,8 +270,13 @@ public class UIComponents {
             }
             ui.refreshScreen();
         }
-    }
 
+        @Override
+        public boolean animate() {
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
+            return true; //TODO what does this mean
+        }
+    }
 
     // args: N/A
     // used in: homeScreen, archivePage

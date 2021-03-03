@@ -9,20 +9,32 @@ public class BusinessLogic {
     public BusinessLogic() {
         //TODO load it in somehow
         everyTask = new TaskContainer();
-        everyTask.addTask(new Task("temp"));
+
+        //TODO tests
+        newTask("task1",
+                "S",
+                "the first task",
+                List.of("tag1","tag2","tag3"));
+        newTask("task2",
+                "M",
+                "the first task",
+                List.of("tag1"));
+        newTask("task3",
+                "M",
+                "the first task",
+                List.of("tag2","tag3"));
+        newTask("task4",
+                "L",
+                "the first task",
+                List.of("tag1","tag3"));
+        newTask("task5",
+                "XL",
+                "the first task",
+                List.of());
     }
 
     public List<String> getAllTags() {
-        java.util.List<String> allTags = new ArrayList<>();
-        for (Task task : everyTask) { // TODO: archive vs unarchived?
-            for (String tagName : task.getTags()) {
-                if (!allTags.contains(tagName)) {
-                    allTags.add(tagName);
-                }
-
-            }
-        }
-        return allTags;
+        return everyTask.getAllTags();
     }
 
     public Task newTask(String name,
@@ -36,6 +48,10 @@ public class BusinessLogic {
         }
         everyTask.addTask(aNewTask);
         return aNewTask;
+    }
+
+    public void saveTask(Task newTask) {
+        everyTask.addTask(newTask);
     }
 
     public Task getActiveTask() {

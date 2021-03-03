@@ -1,18 +1,26 @@
 package org.ecs160.a2;
 
+import com.codename1.charts.ChartComponent;
+import com.codename1.charts.models.XYMultipleSeriesDataset;
+import com.codename1.charts.models.XYSeries;
+import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
+import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
     private Container titleRow = new Container();
+    private Container graphRow;
     private Container descRow = new Container();
     private Container tagRow = new Container();
     private Container timeRow = new Container();
@@ -68,10 +76,18 @@ public class TaskDetailsScreen extends Form {
         if (taskData != null) {
             // add rows to body
             createTitleRow();
+            createGraphRow();
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body.addAll(titleRow, timeRow, tagRow, descRow);
+            Body.addAll(titleRow, timeRow);
+
+            if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
+                Body.add(graphRow);
+            if (!taskData.getTags().isEmpty())
+                Body.add(tagRow);
+            if (!taskData.getDescription().isEmpty())
+                Body.add(descRow);
         } else {
             Body.add("Task not found...");
         }
@@ -118,6 +134,10 @@ public class TaskDetailsScreen extends Form {
         titleRow.add(sizeLabel);
     }
     private void createTagRow() {
+        if (taskData.getTags().size() == 0) {
+            return;
+        }
+
         tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 
@@ -143,8 +163,8 @@ public class TaskDetailsScreen extends Form {
 
         // times
         allTime = taskData.getTotalTimeString(); // end time?;
-        weekTime = taskData.getTotalTimeString(); // end time?;
-        dayTime = taskData.getTotalTimeString(); // end time?;
+        weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
+        dayTime = taskData.getTotalTimeTodayString(); // end time?;
 
         SpanLabel timeData = new SpanLabel(
         "All Time:\t" + allTime + "\n"+
@@ -158,6 +178,14 @@ public class TaskDetailsScreen extends Form {
 
         timeRow.add(timeTitle);
         timeRow.add(timeData);
+    }
+
+    // TODO: IMPLEMENT THIS
+    private void createGraphRow() {
+        graphRow = new Container(new BorderLayout());
+        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+        graphRow.add(CENTER, graphPlaceHolder);
     }
 
     // header/footer
@@ -193,7 +221,25 @@ public class TaskDetailsScreen extends Form {
         historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
         historyButton.setMyColor(UITheme.LIGHT_GREY);
         historyButton.setMyPadding(UITheme.PAD_3MM);
-        historyButton.addActionListener(e-> ui.goHistory(taskData.getName()));
+        historyButton.addActionListener(e-> {
+            if (taskData.isActive()){
+                System.out.println("This task is currently running");
+                Dialog errorMessage = new Dialog();
+                errorMessage.setLayout(BoxLayout.y());
+                errorMessage.add("This task is currently running");
+
+                Button closeDialog = new Button("Close");
+                closeDialog.addActionListener(event -> {
+                    errorMessage.dispose();
+                });
+
+                errorMessage.add(closeDialog);
+
+                errorMessage.show();
+            } else {
+                ui.goHistory(taskData.getName());
+            }
+        });
 
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
@@ -215,4 +261,6 @@ public class TaskDetailsScreen extends Form {
         Footer.add(historyButton);
         Footer.add(archiveButton);
     }
+
+
 }

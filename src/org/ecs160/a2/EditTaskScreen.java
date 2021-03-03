@@ -65,6 +65,7 @@ public class EditTaskScreen extends Form {
 
     // IMPORTANT DATA FIELDS
     private TextField nameField;
+    private SizeMultiButton sizeButton;
     private Container tagField;
     private TextComponent descField;
     private java.util.List<UIComponents.TagObject> tagObjs;
@@ -78,19 +79,16 @@ public class EditTaskScreen extends Form {
 
     private UINavigator ui;
 
-    private void initData(Task task) {
-        this.task = task;
+    private void initData(Task passedTask) {
+        this.task = passedTask;
         if (task == null) {
-            nameData = "";
-            sizeData = "S";
-            descriptionData = "";
+            this.task = new Task("");
             isNewTask = true;
-        } else {
-            nameData = task.getName();
-            sizeData = task.getTaskSizeString();
-            descriptionData = task.getDescription();
-            tagsData = task.getTags();
         }
+        nameData = task.getName();
+        sizeData = task.getTaskSizeString();
+        descriptionData = task.getDescription();
+        tagsData = task.getTags();
     }
 
     @Override
@@ -138,10 +136,12 @@ public class EditTaskScreen extends Form {
         // title row
         TitleRow = new Container();
         TitleRow.setLayout(new BorderLayout());
-        nameField = new TextField(nameData, "Name");
 
+        nameField = new TextField(nameData, "Name");
         TitleRow.add(BorderLayout.CENTER,nameField);
-        TitleRow.add(BorderLayout.EAST, new SizeMultiButton(sizeData));
+
+        sizeButton = new SizeMultiButton(sizeData);
+        TitleRow.add(BorderLayout.EAST, sizeButton);
     }
 
     private void createTagRow() {
@@ -153,13 +153,13 @@ public class EditTaskScreen extends Form {
         UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
         addButton.setMyIcon(FontImage.MATERIAL_ADD);
         addButton.setMyColor(UITheme.GREEN);
-        addButton.setMyPadding(UITheme.PAD_1MM);
+        addButton.setMyPadding(UITheme.PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
         tagObjs = new ArrayList<>();
         for (String tag : tagsData) {
             UIComponents.TagObject tagObj = new UIComponents.TagObject(tag);
-            tagObj.addPointerPressedListener(e->{ new Dialog("Delete " + tag); });
+            tagObj.addPointerPressedListener(e-> RemoveTag(tagObj));
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_CLOSE);
@@ -179,7 +179,7 @@ public class EditTaskScreen extends Form {
 
     private void saveChanges() {
         nameData = nameField.getText();
-        sizeData = "S"; //TODO
+        sizeData = sizeButton.getText();
         descriptionData = descField.getText();
         tagsData = new Vector<String>();
         for (UIComponents.TagObject tagButton : tagObjs) {
@@ -192,20 +192,13 @@ public class EditTaskScreen extends Form {
         }
 
         if (isNewTask) {
-            task = ui.backend.newTask(
-                    nameData,
-                    sizeData,
-                    descriptionData,
-                    tagsData
-            );
+            ui.backend.saveTask(task);
             isNewTask = false;
-        } else {
-            // Update Task
-            task.setName(nameData);
-            task.setTaskSize(sizeData);
-            task.addAllTags(tagsData);
-            task.setDescription(descriptionData);
         }
+        task.setName(nameData);
+        task.setTaskSize(sizeData);
+        task.addAllTags(tagsData);
+        task.setDescription(descriptionData);
         ui.goBack();
     }
 
@@ -286,16 +279,13 @@ public class EditTaskScreen extends Form {
 
             newTagObj.add(BorderLayout.EAST, deleteButton);
 
-            // Error if tag exists
-            if (task.hasTag(tagNameField.getText())) {
-                Dialog error = new Dialog("Tag already exists!");
-                error.show();
-                error.dispose();
-            } else {
+            if (!tagNameField.getText().isEmpty() &&
+                    !task.hasTag(tagNameField.getText())) {
                 tagField.add(newTagObj);
                 tagObjs.add(newTagObj);
-                d.dispose();
+                task.addTag(tagNameField.getText()); //TODO added this
             }
+            d.dispose();
         });
 
         // CANCEL
@@ -317,7 +307,6 @@ public class EditTaskScreen extends Form {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Are you sure?");
-
         UIComponents.ButtonObject confirmButton = new UIComponents.ButtonObject();
         confirmButton.setMyColor(UITheme.RED);
         confirmButton.setMyText("Confirm");
@@ -332,6 +321,7 @@ public class EditTaskScreen extends Form {
             System.out.println("REMOVING TAG");
             tagObjs.remove(deletedComponent);
             tagField.removeComponent(deletedComponent);
+            task.removeTag(deletedComponent.getName()); //TODO how?
             d.dispose();
         });
 
