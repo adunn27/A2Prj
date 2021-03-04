@@ -62,19 +62,11 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getArchivedTasks() {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> task.isArchived())
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);
+        return filter(task -> task.isArchived());
     }
 
     public TaskContainer getUnarchivedTasks() {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> !task.isArchived())
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);
+        return filter(task -> !task.isArchived());
     }
 
     public TaskContainer getTasksBySize(TaskSize taskSize) {
@@ -87,11 +79,8 @@ public class TaskContainer implements Iterable<Task>{
 
     public TaskContainer getTasksThatOccurred(LocalDateTime start,
                                               LocalDateTime stop) {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> task.occurredBetween(start, stop))
-                .collect(Collectors.toSet());
 
-        return new TaskContainer(filteredSet);
+        return filter(task -> task.occurredBetween(start, stop));
     }
 
     public TaskContainer filter(Predicate<Task> selector) {
