@@ -21,7 +21,7 @@ public class SummaryGraph{
     public SummaryGraph(UINavigator ui){
         this.ui = ui;
         allTaskData = ui.backend.getUnarchivedTasks();
-        mode = SummaryMode.DAY; //default
+      //  mode = SummaryMode.DAY; //default
     }
     public void setSummaryMode(SummaryMode m){
         mode = m;
@@ -65,14 +65,11 @@ public class SummaryGraph{
         //int[] colors = new int[]{ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA, ColorUtil.YELLOW, ColorUtil.CYAN};
         DefaultRenderer renderer = buildCategoryRenderer(colors);
 
-        //From website
         renderer.setShowLabels(true);
 
-
-
         renderer.setChartTitleTextSize(20);
-        //renderer.setDisplayValues(true);
-
+        //renderer.setDisplayValues(false);
+        renderer.setShowLegend(false);
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
         PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
@@ -84,17 +81,6 @@ public class SummaryGraph{
     }
 
     private int[] getColorArray(int numTasks) {
-        /*int[] allColors = new int[]{
-                ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.LTGRAY, ColorUtil.MAGENTA,
-                ColorUtil.YELLOW, ColorUtil.CYAN, UITheme.RED, UITheme.LIGHT_GREEN, UITheme.LIGHT_YELLOW,
-                ColorUtil.GRAY
-        };
-        List<Integer> colorList = new ArrayList<Integer>();
-
-        while(numTasks > allColors.length){ //TODO this causes error
-            allColors = doubleColorArray(allColors);
-        }
-*/
         int[] allColors = new int[numTasks];
         Random random = new Random();
         for(int i= 0; i < numTasks; i++){
@@ -140,7 +126,6 @@ public class SummaryGraph{
     }
 
     private TaskContainer getTaskSet(){
-        //TaskContainer result = new TaskContainer();
         LocalDateTime present = LocalDateTime.now();
         TimeSpan dummyTimeSpan = new TimeSpan(present);
 
@@ -161,6 +146,8 @@ public class SummaryGraph{
 
         summaryPeriod = new TimeSpan(start);
         summaryPeriod.setEndTime(stop);
+
+        //TODO filter for tags
 
         return allTaskData.getTasksThatOccurred(start, stop);
     }
