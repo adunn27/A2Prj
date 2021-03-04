@@ -142,6 +142,13 @@ public class Task {
         return hms;
     }
 
+    private Duration getTotalTimeOfDay(LocalDateTime day) {
+        return getTimeBetween(TimeSpan.getStartOfDay(day),
+                TimeSpan.getEndOfDay(day));
+    }
+
+
+
     public String getTotalTimeTodayString() {
         Duration duration = getTimeBetween(TimeSpan.getStartOfDay(LocalDateTime.now()),
                 TimeSpan.getEndOfDay(LocalDateTime.now()));
