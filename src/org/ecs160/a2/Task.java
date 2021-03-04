@@ -151,9 +151,12 @@ public class Task {
 
     public List<Long> getDailyTimesBetween(LocalDate start, LocalDate stop) {
         LocalDate currDay = start;
+        List<Long> dailyTimes = new ArrayList<>();
         while (!currDay.isAfter(stop)) {
-
+            dailyTimes.add(getTotalTimeOfDay(currDay).toMillis());
+            currDay = currDay.plusDays(1);
         }
+        return dailyTimes;
     }
 
     public String getTotalTimeTodayString() {
