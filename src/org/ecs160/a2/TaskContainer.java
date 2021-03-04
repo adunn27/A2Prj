@@ -54,11 +54,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getInactiveTasks() {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> !task.isActive())
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);
+        return filter(task -> !task.isActive());
     }
 
     public TaskContainer getArchivedTasks() {
