@@ -82,11 +82,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getTasksWithTag(String tag) {
-        Set filteredSet = taskSet.stream()
-                .filter(task -> task.hasTag(tag))
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);
+        return filter(task -> task.hasTag(tag));
     }
 
     public TaskContainer getTasksThatOccurred(LocalDateTime start,
