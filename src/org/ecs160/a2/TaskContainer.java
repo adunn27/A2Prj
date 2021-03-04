@@ -3,6 +3,7 @@ package org.ecs160.a2;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TaskContainer implements Iterable<Task>{
@@ -77,11 +78,13 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getTasksBySize(TaskSize taskSize) {
-        Set filteredSet = taskSet.stream()
+        /*Set filteredSet = taskSet.stream()
                 .filter(task -> task.getTaskSize() == taskSize)
                 .collect(Collectors.toSet());
 
-        return new TaskContainer(filteredSet);
+        return new TaskContainer(filteredSet);*/
+
+        return filter(task -> task.getTaskSize() == taskSize);
     }
 
     public TaskContainer getTasksWithTag(String tag) {
@@ -96,6 +99,14 @@ public class TaskContainer implements Iterable<Task>{
                                               LocalDateTime stop) {
         Set filteredSet = taskSet.stream()
                 .filter(task -> task.occurredBetween(start, stop))
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
+    }
+
+    public TaskContainer filter(Predicate<Task> selector) {
+        Set filteredSet = taskSet.stream()
+                .filter(selector)
                 .collect(Collectors.toSet());
 
         return new TaskContainer(filteredSet);
