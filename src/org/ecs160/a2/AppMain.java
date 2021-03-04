@@ -43,7 +43,7 @@ public class AppMain {
             Dialog.show("Connection Error", "There was a networking error in the connection to " + err.getConnectionRequest().getUrl(), "OK", null);
         });        
     }
-    
+    //
     public void start() {
         if(current != null){
             current.show();
