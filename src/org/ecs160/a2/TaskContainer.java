@@ -57,7 +57,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getArchivedTasks() {
-        return filter(task -> task.isArchived());
+        return filter(Task::isArchived);
     }
 
     public TaskContainer getUnarchivedTasks() {
