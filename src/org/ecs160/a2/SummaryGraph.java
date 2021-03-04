@@ -9,10 +9,7 @@ import com.codename1.charts.views.PieChart;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SummaryGraph{
 
@@ -87,15 +84,26 @@ public class SummaryGraph{
     }
 
     private int[] getColorArray(int numTasks) {
-        int[] allColors = new int[]{
+        /*int[] allColors = new int[]{
                 ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.LTGRAY, ColorUtil.MAGENTA,
                 ColorUtil.YELLOW, ColorUtil.CYAN, UITheme.RED, UITheme.LIGHT_GREEN, UITheme.LIGHT_YELLOW,
                 ColorUtil.GRAY
         };
+        List<Integer> colorList = new ArrayList<Integer>();
+
         while(numTasks > allColors.length){ //TODO this causes error
             allColors = doubleColorArray(allColors);
         }
+*/
+        int[] allColors = new int[numTasks];
+        Random random = new Random();
+        for(int i= 0; i < numTasks; i++){
+            int r = random.nextInt();
+            int g = random.nextInt();
+            int b = random.nextInt();
 
+            allColors[i] = ColorUtil.argb(0,r, g, b);
+        }
         return allColors;
 
     }
