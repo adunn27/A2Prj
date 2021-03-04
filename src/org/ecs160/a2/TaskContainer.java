@@ -38,19 +38,18 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Task getTaskByName(String taskName) {
-        for (Task aTask: taskSet) {
-            if (taskName.equals(aTask.getName()))
-                return aTask;
-        }
-        return null;
+        return find(aTask -> taskName.equals(aTask.getName()));
     }
 
     public Task getActiveTask() {
-        for (Task aTask: taskSet) {
-            if (aTask.isActive())
-                return aTask;
-        }
-        return null;
+        return find(Task::isActive);
+    }
+
+    public Task find(Predicate<Task> selector) {
+        return taskSet.stream()
+                .filter(selector)
+                .findFirst()
+                .orElse(null);
     }
 
     public TaskContainer getInactiveTasks() {
