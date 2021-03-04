@@ -1,7 +1,9 @@
 package org.ecs160.a2;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -142,15 +144,20 @@ public class Task {
         return hms;
     }
 
-    private Duration getTotalTimeOfDay(LocalDateTime day) {
-        return getTimeBetween(TimeSpan.getStartOfDay(day),
-                TimeSpan.getEndOfDay(day));
+    private Duration getTotalTimeOfDay(LocalDate day) {
+        return getTimeBetween(day.atStartOfDay(),
+                day.atTime(LocalTime.MAX));
     }
 
+    public List<Long> getDailyTimesBetween(LocalDate start, LocalDate stop) {
+        LocalDate currDay = start;
+        while (!currDay.isAfter(stop)) {
 
+        }
+    }
 
     public String getTotalTimeTodayString() {
-        return toString(getTotalTimeOfDay(LocalDateTime.now()));
+        return toString(getTotalTimeOfDay(LocalDate.now()));
     }
 
     public String getTotalTimeThisWeekString() {
