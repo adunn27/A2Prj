@@ -205,8 +205,6 @@ public class SummaryScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-        //SpanLabel graphPlaceHolder = new SpanLabel("Insert Chart of Time Spent\non Tasks by filter");
-        //graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
         SummaryGraph summaryGraph = new SummaryGraph(ui);
         ChartComponent c = summaryGraph.createPieChart();
         graphRow.add(c);

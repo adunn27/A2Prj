@@ -16,24 +16,23 @@ public class SummaryGraph{
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
-    private SummaryMode mode;
+    //private SummaryMode mode;
     private TimeSpan summaryPeriod;
     public SummaryGraph(UINavigator ui){
         this.ui = ui;
         allTaskData = ui.backend.getUnarchivedTasks();
       //  mode = SummaryMode.DAY; //default
     }
-    public void setSummaryMode(SummaryMode m){
+    /*public void setSummaryMode(SummaryMode m){
         mode = m;
     }
-
+*/
     private DefaultRenderer buildCategoryRenderer(int[] colors) {
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
-        renderer.setLegendTextSize(50);
         renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setMargins(new int[]{0, 0, 0, 0});
-        //renderer.setPanEnabled(false);
+
 
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
@@ -52,7 +51,6 @@ public class SummaryGraph{
                 Task t = it.next();
                 series.add("" + t.getName(), time);
             }
-
         }
         return series;
     }
@@ -62,13 +60,10 @@ public class SummaryGraph{
         double[] setTimes = getSetTimes(taskSet);
         int [] colors = getColorArray(setTimes.length);
         // Set up the renderer
-        //int[] colors = new int[]{ColorUtil.BLUE, ColorUtil.GREEN, ColorUtil.MAGENTA, ColorUtil.YELLOW, ColorUtil.CYAN};
         DefaultRenderer renderer = buildCategoryRenderer(colors);
 
         renderer.setShowLabels(true);
 
-        renderer.setChartTitleTextSize(20);
-        //renderer.setDisplayValues(false);
         renderer.setShowLegend(false);
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
@@ -126,11 +121,15 @@ public class SummaryGraph{
     }
 
     private TaskContainer getTaskSet(){
+
         LocalDateTime present = LocalDateTime.now();
+
         TimeSpan dummyTimeSpan = new TimeSpan(present);
 
         LocalDateTime start;
         LocalDateTime stop;
+        /*
+        Commenting out SummaryMode for now until it is implemented
         if(this.mode == SummaryMode.DAY) {
             start = dummyTimeSpan.getStartOfDay(present);
             stop = dummyTimeSpan.getEndOfDay(present);
@@ -140,10 +139,11 @@ public class SummaryGraph{
             stop = dummyTimeSpan.getEndOfDay(present);
         }
         else{
-            start = LocalDateTime.MIN; //TODO change
-            stop = present;
-        }
 
+        }
+ */
+        start = LocalDateTime.MIN; //TODO change
+        stop = present;
         summaryPeriod = new TimeSpan(start);
         summaryPeriod.setEndTime(stop);
 
