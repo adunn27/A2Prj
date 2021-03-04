@@ -78,12 +78,6 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public TaskContainer getTasksBySize(TaskSize taskSize) {
-        /*Set filteredSet = taskSet.stream()
-                .filter(task -> task.getTaskSize() == taskSize)
-                .collect(Collectors.toSet());
-
-        return new TaskContainer(filteredSet);*/
-
         return filter(task -> task.getTaskSize() == taskSize);
     }
 
