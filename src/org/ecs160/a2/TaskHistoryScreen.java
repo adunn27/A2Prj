@@ -114,16 +114,19 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        System.out.println(taskData.getAllTimeSpans().size());
-
-        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
+        taskData= ui.backend.logTask.getTaskByName(taskData.getName());
+        //System.out.println(taskData.getName());
+        //System.out.println(taskData.getAllTimes().size());
+        for (int i = 0; i < taskData.getAllTimes().size(); i++){
 
             TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
 
             LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
             String startTimeString = startTime.format(timeFormatter);
+
             LocalDateTime endTime = thisTimeSpan.getEndTimeAsDate();
             String endTimeString = endTime.format(timeFormatter);
+
 
             HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString,
                     startTime.format(dateFormatter), endTime.format(dateFormatter));

@@ -9,6 +9,9 @@ public class TimeSpan {
     private LocalDateTime endTime;
     private final DateTimeFormatter timeFormat =
             DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
+    public LocalDateTime getstarttime(){
+        return this.startTime;
+    }
 
     public TimeSpan(LocalDateTime startTime){
         this.startTime = startTime;
@@ -22,12 +25,6 @@ public class TimeSpan {
         this.endTime = endTime;
     }
 
-    public LocalDateTime getStartTime(){
-        return startTime;
-    }
-    public LocalDateTime getEndTime(){
-        return endTime;
-    }
     public String getFormattedTimeAsString(LocalDateTime time){
         return time.format(timeFormat);
     }

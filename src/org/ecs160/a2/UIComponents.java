@@ -189,15 +189,13 @@ public class UIComponents {
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
-        private SpanMultiButton taskContainer;
-
         public TaskObject(Task task, UINavigator ui) {
             setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
 
             // TASK container
-            taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
+            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
             taskContainer.setTextLine2(taskData.getTotalTimeString());
 
             taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
@@ -260,6 +258,8 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
+                ui.backend.logfile.stopTask(taskData);
+
                 taskData.stop();
             } else {
                 Task activeTask = ui.backend.getActiveTask();
@@ -267,14 +267,9 @@ public class UIComponents {
                     activeTask.stop();
                 }
                 taskData.start();
+                ui.backend.logfile.startTask(taskData);
             }
             ui.refreshScreen();
-        }
-
-        @Override
-        public boolean animate() {
-            taskContainer.setTextLine2(taskData.getTotalTimeString());
-            return true; //TODO what does this mean
         }
     }
 

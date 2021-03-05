@@ -162,6 +162,7 @@ public class TaskDetailsScreen extends Form {
         timeTitle.setSize(SIZE_SMALL);
 
         // times
+        taskData = ui.backend.logTask.getTaskByName(taskData.getName());
         allTime = taskData.getTotalTimeString(); // end time?;
         weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
         dayTime = taskData.getTotalTimeTodayString(); // end time?;

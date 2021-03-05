@@ -3,7 +3,6 @@ package org.ecs160.a2;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TaskContainer implements Iterable<Task>{
@@ -31,56 +30,75 @@ public class TaskContainer implements Iterable<Task>{
 
     public void addTask(Task newTask) {
         taskSet.add(newTask);
+
     }
 
     public void removeTask(Task newTask) {
         taskSet.remove(newTask);
     }
 
+
+
     public Task getTaskByName(String taskName) {
-        return find(aTask -> taskName.equals(aTask.getName()));
+        for (Task aTask: taskSet) {
+            if (taskName.equals(aTask.getName()))
+                return aTask;
+        }
+        return null;
     }
 
     public Task getActiveTask() {
-        return find(Task::isActive);
-    }
-
-    public Task find(Predicate<Task> selector) {
-        return taskSet.stream()
-                .filter(selector)
-                .findFirst()
-                .orElse(null);
+        for (Task aTask: taskSet) {
+            if (aTask.isActive())
+                return aTask;
+        }
+        return null;
     }
 
     public TaskContainer getInactiveTasks() {
-        return filter(task -> !task.isActive());
+        Set filteredSet = taskSet.stream()
+                .filter(task -> !task.isActive())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
     }
 
     public TaskContainer getArchivedTasks() {
-        return filter(Task::isArchived);
+        Set filteredSet = taskSet.stream()
+                .filter(task -> task.isArchived())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
     }
 
     public TaskContainer getUnarchivedTasks() {
-        return filter(task -> !task.isArchived());
+        Set filteredSet = taskSet.stream()
+                .filter(task -> !task.isArchived())
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
     }
 
     public TaskContainer getTasksBySize(TaskSize taskSize) {
-        return filter(task -> task.getTaskSize() == taskSize);
+        Set filteredSet = taskSet.stream()
+                .filter(task -> task.getTaskSize() == taskSize)
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
     }
 
     public TaskContainer getTasksWithTag(String tag) {
-        return filter(task -> task.hasTag(tag));
+        Set filteredSet = taskSet.stream()
+                .filter(task -> task.hasTag(tag))
+                .collect(Collectors.toSet());
+
+        return new TaskContainer(filteredSet);
     }
 
     public TaskContainer getTasksThatOccurred(LocalDateTime start,
                                               LocalDateTime stop) {
-
-        return filter(task -> task.occurredBetween(start, stop));
-    }
-
-    public TaskContainer filter(Predicate<Task> selector) {
         Set filteredSet = taskSet.stream()
-                .filter(selector)
+                .filter(task -> task.occurredBetween(start, stop))
                 .collect(Collectors.toSet());
 
         return new TaskContainer(filteredSet);

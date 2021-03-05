@@ -193,12 +193,14 @@ public class EditTaskScreen extends Form {
 
         if (isNewTask) {
             ui.backend.saveTask(task);
+           // ui.backend.logfile.addTask(task);
             isNewTask = false;
         }
         task.setName(nameData);
         task.setTaskSize(sizeData);
         task.addAllTags(tagsData);
         task.setDescription(descriptionData);
+        ui.backend.logfile.editTask(task);
         ui.goBack();
     }
 

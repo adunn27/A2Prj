@@ -102,10 +102,9 @@ public class HomeScreen extends Form{
             UIComponents.TitleObject activeHeader = new UIComponents.TitleObject("Now Playing");
             activeHeader.setSize(Font.SIZE_MEDIUM);
             TaskMenu.add(activeHeader);
-
+//            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
-            getComponentForm().registerAnimated(t);
         }
 
         if (!unarchivedTasks.isEmpty()) {
@@ -114,7 +113,8 @@ public class HomeScreen extends Form{
             TaskMenu.add(inactiveHeader);
         }
 
-        for (Task taskObj: unarchivedTasks) {
+        for (Task taskObj : unarchivedTasks) {
+//            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
             TaskMenu.add(task);
         }
@@ -143,5 +143,9 @@ public class HomeScreen extends Form{
         d.addAll(new Label("Tags"), tagButtons);
         d.showPopupDialog(b);
         d.dispose();
+    }
+
+    private void refresh() {
+        log("pulled refresh");
     }
 }
