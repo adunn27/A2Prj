@@ -157,12 +157,15 @@ public class TaskDetailsScreen extends Form {
         timeRow = new Container();
         timeRow.setLayout(BoxLayout.y());
 
+
+
         // time title
         UIComponents.TitleObject timeTitle = new UIComponents.TitleObject("Time Elapsed");
         timeTitle.setSize(SIZE_SMALL);
 
         // times
-        taskData = ui.backend.logTask.getTaskByName(taskData.getName());
+        //taskData = ui.backend.logTask.getTaskByName(taskData.getName());
+        //TODO : fix the total time screen.
         allTime = taskData.getTotalTimeString(); // end time?;
         weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
         dayTime = taskData.getTotalTimeTodayString(); // end time?;

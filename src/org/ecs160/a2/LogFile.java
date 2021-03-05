@@ -92,9 +92,13 @@ public class LogFile {
                         task.setTaskSize(data.split("\\|")[4]);
 
                         List<String> tags_e= new ArrayList<>();
-                        for(String tag : data.split("\\|")[5].split(" ")){
-                            tags_e.add(tag);
+                        boolean check_bit = data.split("\\|").length >5;
+                        if (check_bit){
+                            for(String tag : data.split("\\|")[5].split(" ")){
+                                tags_e.add(tag);
+                            }
                         }
+
 
                         task.addAllTags(tags_e);
                         retrieveTask.addTask(task);
