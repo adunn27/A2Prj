@@ -105,6 +105,8 @@ public class HomeScreen extends Form{
 //            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
+           // getComponentForm().registerAnimated(t);
+
         }
 
         if (!unarchivedTasks.isEmpty()) {
