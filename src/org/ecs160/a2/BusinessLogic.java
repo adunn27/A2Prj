@@ -24,8 +24,30 @@ public class BusinessLogic {
 
 
         //TODO tests
+/*
+         newTask("task1",
+                "S",
+                "the first task",
+                List.of("tag1","tag2","tag3"));
+        newTask("task2",
+                "M",
+                "the first task",
+                List.of("tag1"));
+        newTask("task3",
+                "M",
+                "the first task",
+                List.of("tag2","tag3"));
+        newTask("task4",
+                "L",
+                "the first task",
+                List.of("tag1","tag3"));
+        newTask("task5",
+                "XL",
+                "the first task",
+                List.of());
 
 
+*/
     }
 
     public List<String> getAllTags() {

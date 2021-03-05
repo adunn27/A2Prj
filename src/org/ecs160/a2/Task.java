@@ -1,7 +1,9 @@
 package org.ecs160.a2;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -147,11 +149,26 @@ public class Task {
         return hms;
     }
 
-    public String getTotalTimeTodayString() {
-        Duration duration = getTimeBetween(TimeSpan.getStartOfDay(LocalDateTime.now()),
-                TimeSpan.getEndOfDay(LocalDateTime.now()));
-        return toString(duration);
+    private Duration getTotalTimeOfDay(LocalDate day) {
+        return getTimeBetween(day.atStartOfDay(),
+                day.atTime(LocalTime.MAX));
     }
+
+    public List<Long> getDailyTimesBetween(LocalDate start, LocalDate stop) {
+        LocalDate currDay = start;
+        List<Long> dailyTimes = new ArrayList<>();
+        while (!currDay.isAfter(stop)) {
+            dailyTimes.add(getTotalTimeOfDay(currDay).toMillis());
+            currDay = currDay.plusDays(1);
+        }
+        return dailyTimes;
+    }
+
+    public String getTotalTimeTodayString() {
+        return toString(getTotalTimeOfDay(LocalDate.now()));
+    }
+
+
 
     public String getTotalTimeThisWeekString() {
         Duration duration = getTimeBetween(TimeSpan.getStartOfWeek(LocalDateTime.now()),
@@ -159,13 +176,7 @@ public class Task {
         return toString(duration);
     }
 
-    public List<Duration> getAllTimeLogs() {
-        List<Duration> timeLogs = new ArrayList<>();
-        for (TimeSpan timeSpan : allTimes) {
-            timeLogs.add(timeSpan.getTimeSpanDuration());
-        }
-        return timeLogs;
-    }
+ 
 
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
         return !getTimeBetween(start, stop).isZero();

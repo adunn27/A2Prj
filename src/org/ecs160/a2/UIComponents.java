@@ -189,13 +189,15 @@ public class UIComponents {
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
+        private SpanMultiButton taskContainer;
+
         public TaskObject(Task task, UINavigator ui) {
             setLayout(BoxLayout.y());
             this.taskData = task;
             this.ui = ui;
 
             // TASK container
-            SpanMultiButton taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
+            taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
             taskContainer.setTextLine2(taskData.getTotalTimeString());
 
             taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
@@ -272,6 +274,13 @@ public class UIComponents {
             ui.refreshScreen();
         }
     }
+/*
+    @Override
+        public boolean animate() {
+            taskContainer.setTextLine2(taskData.getTotalTimeString());
+            return true; //TODO what does this mean
+        }
+*/
 
     // args: N/A
     // used in: homeScreen, archivePage
