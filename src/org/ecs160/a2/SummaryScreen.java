@@ -151,10 +151,8 @@ public class SummaryScreen extends Form {
         // SIZE BUTTONS
         Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeList) {
-            UIComponents.ButtonObject button = new UIComponents.ButtonObject();
-            button.setMyText(size);
-            button.setMyColor(UITheme.LIGHT_YELLOW);
-            button.addActionListener(e->{
+            UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
+            button.addPointerPressedListener(e -> {
                 tempFilterSize=size;
                 setFilter(size);
                 FilterDialog.dispose();
