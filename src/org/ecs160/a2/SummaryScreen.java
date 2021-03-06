@@ -149,7 +149,7 @@ public class SummaryScreen extends Form {
         FilterDialog.setScrollableY(true);
 
         // SIZE BUTTONS
-        Container sizeButtons = new Container(new GridLayout(5));
+        Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeList) {
             UIComponents.ButtonObject button = new UIComponents.ButtonObject();
             button.setMyText(size);
