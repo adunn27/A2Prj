@@ -24,6 +24,24 @@ public class UIComponents {
                                      UITheme.PAD_1MM,
                                      UITheme.PAD_1MM,
                                      UITheme.PAD_1MM);
+            getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+        }
+
+        public void setAllStyles(String text,
+                                 int color,
+                                 char icon,
+                                 int pad) {
+            if (!text.isEmpty())
+                this.setText(text);
+
+            this.getAllStyles().setBorder(RoundBorder.create()
+                    .rectangle(true).color(color)
+            );
+
+            if (icon != ' ')
+                this.setIcon(FontImage.createMaterial(icon,getUnselectedStyle()));
+
+            this.getAllStyles().setPadding(pad,pad,pad,pad);
         }
 
         // pass in UITheme.[color]

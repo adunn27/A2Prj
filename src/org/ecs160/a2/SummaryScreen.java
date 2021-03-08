@@ -1,24 +1,18 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.layouts.mig.Grid;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
-import java.util.function.Predicate;
 
 import static com.codename1.ui.CN.log;
 
@@ -31,7 +25,7 @@ public class SummaryScreen extends Form {
     Dialog FilterDialog;
 
     // FILTERS
-    private String sizeFilter;
+    private java.util.List<String> sizeFilters;
     private java.util.List<String> tagFilters;
     private java.util.List<Date> timeFilter;
 
@@ -40,6 +34,7 @@ public class SummaryScreen extends Form {
     private String tempFilterSize = "";
 
     // TODO: REVIEW
+    private java.util.List<String> sizeData;
     private java.util.List<String> tagData;
     private String filter;
 
@@ -53,7 +48,13 @@ public class SummaryScreen extends Form {
     }
 
     private void initializeFilters() {
-        sizeFilter = "";
+        sizeData = new ArrayList<>(); // TODO: fix sizeData initialization
+        sizeData.add("S");
+        sizeData.add("M");
+        sizeData.add("L");
+        sizeData.add("XL");
+
+        sizeFilters = new ArrayList<>();
         // time filter?
         tagData = ui.backend.getAllTags();
         tagFilters = new ArrayList<>();
@@ -171,33 +172,47 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDialog() {
-        String[] sizeList = {"S","M","L","XL"};
+
         FilterDialog = new Dialog(BoxLayout.y());
         FilterDialog.setScrollableY(true);
 
+        if (!sizeFilters.isEmpty()) {
+            Container activeFilters = new Container();
+            activeFilters.add("Size Filters");
+            for (String size : sizeFilters) {
+                UIComponents.SizeButtonObject sizeButton = new UIComponents.SizeButtonObject(size);
+
+                sizeButton.addPointerPressedListener(e->{
+                    updateSizeFilter(size, false);
+                });
+
+                activeFilters.add(sizeButton);
+            }
+            FilterDialog.add(activeFilters);
+        }
+
         if (!tagFilters.isEmpty()) {
             Container activeFilters = new Container();
-            activeFilters.add("Active Filters");
+            activeFilters.add("Tag Filters");
             for (String tag : tagFilters) {
                 UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-                tagButton.setMyText(tag);
-                tagButton.setMyColor(UITheme.LIGHT_YELLOW);
-                tagButton.setMyPadding(UITheme.PAD_1MM);
+                tagButton.setAllStyles(tag, UITheme.LIGHT_YELLOW, ' ', UITheme.PAD_1MM);
+
                 tagButton.addActionListener(e->{
-                    actionListenerTags(tag, false);
+                    updateTagsFilter(tag, false);
                 });
+
                 activeFilters.add(tagButton);
             }
             FilterDialog.add(activeFilters);
         }
 
         // SIZE
-        Container sizeButtons = new Container(new GridLayout(4));
-        for (String size : sizeList) {
+        Container sizeButtons = new Container(new GridLayout(sizeData.size()));
+        for (String size : sizeData) {
             UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
             button.addPointerPressedListener(e -> {
-//                setFilter(size);
-//                FilterDialog.dispose();
+                updateSizeFilter(size, true);
             });
             sizeButtons.add(button);
             button.getSelectedStyle().setBgColor(UITheme.YELLOW); // SELECTED COLOR
@@ -207,13 +222,9 @@ public class SummaryScreen extends Form {
         Container tagButtons = new Container();
         for (String tag : tagData) {
             UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setMyText(tag);
-            tagButton.setMyColor(UITheme.LIGHT_GREEN);
-            tagButton.setMyPadding(UITheme.PAD_1MM);
+            tagButton.setAllStyles(tag, UITheme.LIGHT_GREEN, ' ', UITheme.PAD_1MM);
             tagButton.addActionListener(e->{
-                actionListenerTags(tag, true);
-//                setFilter(tag);
-//                FilterDialog.dispose();
+                updateTagsFilter(tag, true);
             });
             tagButtons.add(tagButton);
         }
@@ -223,7 +234,8 @@ public class SummaryScreen extends Form {
         reset.setMyColor(UITheme.YELLOW);
         reset.setMyPadding(UITheme.PAD_3MM);
         reset.addActionListener(c -> {
-            setFilter(""); // RESET FILTER
+//            setFilter(""); // RESET FILTER
+            log("RESET...");
         });
 
         UIComponents.ButtonObject done = new UIComponents.ButtonObject();
@@ -231,7 +243,8 @@ public class SummaryScreen extends Form {
         done.setMyColor(UITheme.LIGHT_GREY);
         done.setMyPadding(UITheme.PAD_3MM);
         done.addActionListener(c -> {
-            setFilter(""); // TODO: SET ALL SELECTED FILTERS
+            log("DONE...");
+//            setFilter(""); // TODO: SET ALL SELECTED FILTERS
         });
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
@@ -239,6 +252,7 @@ public class SummaryScreen extends Form {
         cancel.setMyColor(UITheme.LIGHT_GREY);
         cancel.setMyPadding(UITheme.PAD_3MM);
         cancel.addActionListener(c -> {
+            log("CANCEL...");
             FilterDialog.dispose();
         });
 
@@ -254,7 +268,18 @@ public class SummaryScreen extends Form {
         FilterDialog.add(foot);
     }
 
-    private void actionListenerTags(String name, boolean isFilter)  {
+    private void updateSizeFilter(String size, boolean isFilter) {
+        if (isFilter) {
+            sizeFilters.add(size);
+            sizeData.remove(size);
+        } else {
+            sizeFilters.remove(size);
+            sizeData.add(size);
+        }
+        refreshFilterDialog();
+    }
+
+    private void updateTagsFilter(String name, boolean isFilter)  {
         if (isFilter) {
             tagData.remove(name);
             tagFilters.add(name);
@@ -262,9 +287,6 @@ public class SummaryScreen extends Form {
             tagData.add(name);
             tagFilters.remove(name);
         }
-
-        System.out.println(tagFilters);
-        System.out.println(tagData);
 
         refreshFilterDialog();
     }
@@ -281,28 +303,29 @@ public class SummaryScreen extends Form {
     }
 
     // TODO: filter!!!
-    private void setFilters(String sizeFilter,
+    private void setFilters(java.util.ArrayList<String> sizeFilters,
                            java.util.ArrayList<String> tagFilters,
                            java.util.ArrayList<Date> timeFilter) {
-        this.sizeFilter = sizeFilter;
+        this.sizeFilters = sizeFilters;
         this.tagFilters = tagFilters;
         this.timeFilter = timeFilter;
 
-        log("FILTERING BY " + sizeFilter + tagFilters + timeFilter);
+        log("FILTERING BY " + sizeFilters + tagFilters + timeFilter);
         show();
     }
 
     private TaskContainer getTaskContainer() {
         TaskContainer allTasks = ui.backend.getUnarchivedTasks();
-        if (isSize(filter))
-            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
-        else if (!filter.isEmpty()) {
-            // TODO: filter by size
-            return allTasks.getTasksWithTag(filter);
-        } else {
-            // TODO: filter by tag
-            return allTasks;
-        }
+//        if (isSize(filter))
+//            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
+//        else if (!filter.isEmpty()) {
+//            // TODO: filter by size
+//            return allTasks.getTasksWithTag(filter);
+//        } else {
+//            // TODO: filter by tag
+//            return allTasks;
+//        }
+        return allTasks;
     }
 
     private boolean isSize(String s) { //TODO move this to TaskSize enum?
