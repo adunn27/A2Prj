@@ -13,7 +13,6 @@ import static com.codename1.ui.CN.*;
 
 // Contains Buttons and Components frequently used in UI
 public class UIComponents {
-    //Button object defaults to edit icon
     static class ButtonObject extends Button {
         public ButtonObject () {
             getAllStyles().setFgColor(UITheme.BLACK);
@@ -40,6 +39,14 @@ public class UIComponents {
                 this.setIcon(FontImage.createMaterial(icon,getUnselectedStyle()));
 
             this.getAllStyles().setPadding(pad,pad,pad,pad);
+        }
+
+        public void setSelectedColor() {
+            this.getAllStyles().setBorder(
+                    RoundBorder.create()
+                            .rectangle(true)
+                            .color(UITheme.COL_SELECTED)
+            );
         }
 
         // pass in UITheme.[color]
@@ -98,8 +105,11 @@ public class UIComponents {
 
         }
         public void setSelectedColor() {
-            Stroke borderStroke = new Stroke(UITheme.PAD_9MM, Stroke.CAP_SQUARE, Stroke.JOIN_MITER, 1);
-            this.getAllStyles().setBorder(RoundBorder.create().color(UITheme.COL_SELECTED).stroke(borderStroke).strokeColor(UITheme.BLACK));
+            this.getAllStyles().setFgColor(UITheme.BLACK);
+            this.getAllStyles().setBorder(
+                    RoundBorder.create()
+                            .color(UITheme.COL_SELECTED)
+            );
         }
         private int setColor(String size) {
             if (size.equals("XL")) {
