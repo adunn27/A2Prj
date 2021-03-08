@@ -99,6 +99,9 @@ public class UIComponents {
             getAllStyles().setBorder(RoundBorder.create().color(setColor(size)));
 
         }
+        public void setSelectedColor() {
+            this.getAllStyles().setBorder(RoundBorder.create().color(UITheme.COL_SELECTED));
+        }
         private int setColor(String size) {
             if (size.equals("XL")) {
                 return UITheme.COL_SIZE_XL;

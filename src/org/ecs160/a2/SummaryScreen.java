@@ -172,50 +172,18 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDialog() {
-
         FilterDialog = new Dialog(BoxLayout.y());
-        FilterDialog.setScrollableY(true);
-
-        if (!sizeFilters.isEmpty()) {
-            Container activeFilters = new Container();
-            activeFilters.add("Size Filters");
-            for (String size : sizeFilters) {
-                UIComponents.SizeButtonObject sizeButton = new UIComponents.SizeButtonObject(size);
-
-                sizeButton.addPointerPressedListener(e->{
-                    updateSizeFilter(size, false);
-                });
-
-                activeFilters.add(sizeButton);
-            }
-            FilterDialog.add(activeFilters);
-        }
-
-        if (!tagFilters.isEmpty()) {
-            Container activeFilters = new Container();
-            activeFilters.add("Tag Filters");
-            for (String tag : tagFilters) {
-                UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-                tagButton.setAllStyles(tag, UITheme.LIGHT_YELLOW, ' ', UITheme.PAD_1MM);
-
-                tagButton.addActionListener(e->{
-                    updateTagsFilter(tag, false);
-                });
-
-                activeFilters.add(tagButton);
-            }
-            FilterDialog.add(activeFilters);
-        }
 
         // SIZE
         Container sizeButtons = new Container(new GridLayout(sizeData.size()));
         for (String size : sizeData) {
             UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
-            button.addPointerPressedListener(e -> {
-                updateSizeFilter(size, true);
-            });
+            if (sizeFilters.contains(size))
+                button.setSelectedColor();
+
+            button.addPointerPressedListener(e ->
+                updateSizeFilter(size, sizeFilters.contains(size)));
             sizeButtons.add(button);
-            button.getSelectedStyle().setBgColor(UITheme.YELLOW); // SELECTED COLOR
         }
 
         // TAGS
@@ -223,34 +191,29 @@ public class SummaryScreen extends Form {
         for (String tag : tagData) {
             UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
             tagButton.setAllStyles(tag, UITheme.LIGHT_GREEN, ' ', UITheme.PAD_1MM);
-            tagButton.addActionListener(e->{
-                updateTagsFilter(tag, true);
-            });
+            if (tagFilters.contains(tag)) {
+                tagButton.setMyColor(UITheme.COL_SELECTED);
+                tagButton.addActionListener(e->{
+                    updateTagsFilter(tag, true);
+                });
+            } else {
+                tagButton.addActionListener(e->{
+                    updateTagsFilter(tag, false);
+                });
+            }
             tagButtons.add(tagButton);
         }
 
         UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
-        reset.setMyText("Reset");
-        reset.setMyColor(UITheme.YELLOW);
-        reset.setMyPadding(UITheme.PAD_3MM);
-        reset.addActionListener(c -> {
-//            setFilter(""); // RESET FILTER
-            log("RESET...");
-        });
+        reset.setAllStyles("Reset",UITheme.YELLOW,' ',UITheme.PAD_3MM);
+        reset.addActionListener(e -> log("RESET..."));
 
         UIComponents.ButtonObject done = new UIComponents.ButtonObject();
-        done.setMyText("Done");
-        done.setMyColor(UITheme.LIGHT_GREY);
-        done.setMyPadding(UITheme.PAD_3MM);
-        done.addActionListener(c -> {
-            log("DONE...");
-//            setFilter(""); // TODO: SET ALL SELECTED FILTERS
-        });
+        done.setAllStyles("Done",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        done.addActionListener(e -> log("DONE..."));
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
-        cancel.setMyText("Cancel");
-        cancel.setMyColor(UITheme.LIGHT_GREY);
-        cancel.setMyPadding(UITheme.PAD_3MM);
+        cancel.setAllStyles("Cancel",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
         cancel.addActionListener(c -> {
             log("CANCEL...");
             FilterDialog.dispose();
@@ -268,26 +231,23 @@ public class SummaryScreen extends Form {
         FilterDialog.add(foot);
     }
 
-    private void updateSizeFilter(String size, boolean isFilter) {
-        if (isFilter) {
-            sizeFilters.add(size);
-            sizeData.remove(size);
-        } else {
+    // todo: refactor these update filters
+    private void updateSizeFilter(String size, boolean wasFilter) {
+        if (wasFilter) {
             sizeFilters.remove(size);
-            sizeData.add(size);
+        } else {
+            sizeFilters.add(size);
         }
         refreshFilterDialog();
     }
 
-    private void updateTagsFilter(String name, boolean isFilter)  {
-        if (isFilter) {
-            tagData.remove(name);
-            tagFilters.add(name);
-        } else {
-            tagData.add(name);
+    private void updateTagsFilter(String name, boolean wasFilter)  {
+        if (wasFilter) {
             tagFilters.remove(name);
-        }
 
+        } else {
+            tagFilters.add(name);
+        }
         refreshFilterDialog();
     }
 
@@ -341,12 +301,12 @@ public class SummaryScreen extends Form {
         Picker startDate = new Picker();
         Picker endDate = new Picker();
 
-        startDate.setType(Display.PICKER_TYPE_DATE);
+        startDate.setType(Display.PICKER_TYPE_CALENDAR);
         startDate.getStyle().setBorder(
                 RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
         startDate.setDate(new Date());
 
-        endDate.setType(Display.PICKER_TYPE_DATE);
+        endDate.setType(Display.PICKER_TYPE_CALENDAR);
         endDate.getStyle().setBorder(
                 RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
         endDate.setDate(new Date());
