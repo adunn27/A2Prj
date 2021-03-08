@@ -96,24 +96,17 @@ public class UIComponents {
 
     static class SizeButtonObject extends Container {
         ButtonObject b = new ButtonObject();
+
         public SizeButtonObject(String size) {
             setLayout(new BorderLayout());
             b.setText(size);
-//            b.setMyPadding(UITheme.PAD_3MM);
 
-//            b.setWidth(100);
-//            b.setHeight(100);
-            Dimension d = new Dimension(UITheme.PAD_3MM,UITheme.PAD_3MM);
+            Dimension d = new Dimension(UITheme.PAD_3MM, UITheme.PAD_3MM);
             b.setSize(d);
 
             b.setMyColor(setColor(size));
             b.getAllStyles().setFgColor(UITheme.WHITE);
             add(BorderLayout.CENTER, b);
-        }
-
-        public void addMyListener() {
-            SizeListen listener = new SizeListen();
-            b.addActionListener(listener);
         }
 
         private int setColor(String size) {
@@ -127,21 +120,6 @@ public class UIComponents {
                 return UITheme.COL_SIZE_S;
             }
         }
-
-        class SizeListen implements ActionListener {
-            public void actionPerformed(ActionEvent ev) {
-                // filter by size
-                if (!b.isToggle()) {
-                    b.setMyColor(UITheme.YELLOW);
-                    b.setToggle(true);
-
-                } else {
-                    b.setMyColor(setColor(b.getText()));
-                    b.setToggle(false);
-                }
-            }
-        }
-
     }
 
     static class TitleObject extends Label {

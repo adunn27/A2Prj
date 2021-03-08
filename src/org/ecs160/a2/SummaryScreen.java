@@ -6,13 +6,19 @@ import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.layouts.mig.Grid;
 import com.codename1.ui.plaf.RoundBorder;
+import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.function.Predicate;
 
 import static com.codename1.ui.CN.log;
 
@@ -21,22 +27,36 @@ public class SummaryScreen extends Form {
     Container TaskList;
     Container StatsList;
     Container graphRow;
+    Container timePicker;
     Dialog FilterDialog;
 
+    // FILTERS
+    private String sizeFilter;
+    private java.util.List<String> tagFilters;
+    private java.util.List<Date> timeFilter;
+
+    // TODO: REMOVE?
     private String filterSize;
     private String tempFilterSize = "";
 
-    private String filterTag;
-    private String tempFilterTag = "";
-
+    // TODO: REVIEW
+    private java.util.List<String> tagData;
     private String filter;
 
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
     public SummaryScreen(UINavigator ui) {
-        this.filter = "";
         this.ui = ui;
+        initializeFilters();
+        createSummaryScreen();
+    }
+
+    private void initializeFilters() {
+        sizeFilter = "";
+        // time filter?
+        tagData = ui.backend.getAllTags();
+        tagFilters = new ArrayList<>();
     }
 
     @Override
@@ -75,7 +95,8 @@ public class SummaryScreen extends Form {
         filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
         filterButton.setMyText(filter);
         filterButton.addActionListener(e->{
-            showFilterDialog();
+            createFilterDialog();
+            FilterDialog.show();
         });
 
         UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
@@ -143,84 +164,131 @@ public class SummaryScreen extends Form {
         }
     }
 
-    private void showFilterDialog() {
+    private void refreshFilterDialog() { // TODO: fix refresh speed
+        FilterDialog.dispose();
+        createFilterDialog();
+        FilterDialog.show();
+    }
+
+    private void createFilterDialog() {
         String[] sizeList = {"S","M","L","XL"};
         FilterDialog = new Dialog(BoxLayout.y());
         FilterDialog.setScrollableY(true);
 
-        // SIZE BUTTONS
+        if (!tagFilters.isEmpty()) {
+            Container activeFilters = new Container();
+            activeFilters.add("Active Filters");
+            for (String tag : tagFilters) {
+                UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
+                tagButton.setMyText(tag);
+                tagButton.setMyColor(UITheme.LIGHT_YELLOW);
+                tagButton.setMyPadding(UITheme.PAD_1MM);
+                tagButton.addActionListener(e->{
+                    actionListenerTags(tag, false);
+                });
+                activeFilters.add(tagButton);
+            }
+            FilterDialog.add(activeFilters);
+        }
+
+        // SIZE
         Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeList) {
             UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
             button.addPointerPressedListener(e -> {
-                tempFilterSize=size;
-                setFilter(size);
-                FilterDialog.dispose();
+//                setFilter(size);
+//                FilterDialog.dispose();
             });
             sizeButtons.add(button);
+            button.getSelectedStyle().setBgColor(UITheme.YELLOW); // SELECTED COLOR
         }
 
         // TAGS
         Container tagButtons = new Container();
-        java.util.List<String> tagData = ui.backend.getAllTags();
         for (String tag : tagData) {
             UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
             tagButton.setMyText(tag);
             tagButton.setMyColor(UITheme.LIGHT_GREEN);
+            tagButton.setMyPadding(UITheme.PAD_1MM);
             tagButton.addActionListener(e->{
-                tempFilterTag = tag;
-                setFilter(tag);
-                FilterDialog.dispose();
+                actionListenerTags(tag, true);
+//                setFilter(tag);
+//                FilterDialog.dispose();
             });
             tagButtons.add(tagButton);
         }
 
-        UIComponents.ButtonObject none = new UIComponents.ButtonObject();
-        none.setMyText("None");
-        none.setMyColor(UITheme.YELLOW);
-        none.setMyPadding(UITheme.PAD_3MM);
-        none.addActionListener(c -> {
+        UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
+        reset.setMyText("Reset");
+        reset.setMyColor(UITheme.YELLOW);
+        reset.setMyPadding(UITheme.PAD_3MM);
+        reset.addActionListener(c -> {
             setFilter(""); // RESET FILTER
-            FilterDialog.dispose();
+        });
+
+        UIComponents.ButtonObject done = new UIComponents.ButtonObject();
+        done.setMyText("Done");
+        done.setMyColor(UITheme.LIGHT_GREY);
+        done.setMyPadding(UITheme.PAD_3MM);
+        done.addActionListener(c -> {
+            setFilter(""); // TODO: SET ALL SELECTED FILTERS
         });
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
         cancel.setMyText("Cancel");
         cancel.setMyColor(UITheme.LIGHT_GREY);
         cancel.setMyPadding(UITheme.PAD_3MM);
-
         cancel.addActionListener(c -> {
             FilterDialog.dispose();
         });
 
+        TimePicker();
+        FilterDialog.add(timePicker);
         FilterDialog.add(sizeButtons);
         FilterDialog.add(tagButtons);
-        FilterDialog.add(none);
-        FilterDialog.add(cancel);
-        FilterDialog.show();
+
+        Container foot = new Container(new GridLayout(2));
+        foot.addAll(cancel, done);
+
+        FilterDialog.add(reset);
+        FilterDialog.add(foot);
     }
+
+    private void actionListenerTags(String name, boolean isFilter)  {
+        if (isFilter) {
+            tagData.remove(name);
+            tagFilters.add(name);
+        } else {
+            tagData.add(name);
+            tagFilters.remove(name);
+        }
+
+        System.out.println(tagFilters);
+        System.out.println(tagData);
+
+        refreshFilterDialog();
+    }
+
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-        SummaryGraph summaryGraph = new SummaryGraph(ui);
-        ChartComponent c = summaryGraph.createPieChart();
-        graphRow.add(c);
+//        SummaryGraph summaryGraph = new SummaryGraph(ui);
+//        ChartComponent c = summaryGraph.createPieChart();
+//        graphRow.add(c);
+
+        graphRow.add(new Label("graph goes here"));
     }
 
-    // TODO: filter
-    private void setFilter(String filter) {
-        if (filter.isEmpty())
-            this.filter = filter;
-        else if (isSize(filter)) {
-            // TODO: filter by size
-            this.filter = filter;
+    // TODO: filter!!!
+    private void setFilters(String sizeFilter,
+                           java.util.ArrayList<String> tagFilters,
+                           java.util.ArrayList<Date> timeFilter) {
+        this.sizeFilter = sizeFilter;
+        this.tagFilters = tagFilters;
+        this.timeFilter = timeFilter;
 
-        } else {
-            // TODO: filter by tag
-            this.filter = filter;
-        }
-        log("FILTERING BY " + filter);
+        log("FILTERING BY " + sizeFilter + tagFilters + timeFilter);
         show();
     }
 
@@ -241,5 +309,25 @@ public class SummaryScreen extends Form {
         if (s.equals("S") || s.equals("M") || s.equals("L") || s.equals("XL"))
             return true;
         return false;
+    }
+
+
+    private void TimePicker() {
+        timePicker = new Container(new GridLayout(2));
+
+        Picker startDate = new Picker();
+        Picker endDate = new Picker();
+
+        startDate.setType(Display.PICKER_TYPE_DATE);
+        startDate.getStyle().setBorder(
+                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+        startDate.setDate(new Date());
+
+        endDate.setType(Display.PICKER_TYPE_DATE);
+        endDate.getStyle().setBorder(
+                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+        endDate.setDate(new Date());
+
+        timePicker.addAll(startDate, endDate);
     }
 }
