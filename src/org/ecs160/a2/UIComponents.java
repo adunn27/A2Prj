@@ -2,8 +2,6 @@ package org.ecs160.a2;
 
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
-import com.codename1.ui.events.ActionEvent;
-import com.codename1.ui.events.ActionListener;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -100,7 +98,8 @@ public class UIComponents {
 
         }
         public void setSelectedColor() {
-            this.getAllStyles().setBorder(RoundBorder.create().color(UITheme.COL_SELECTED));
+            Stroke borderStroke = new Stroke(UITheme.PAD_9MM, Stroke.CAP_SQUARE, Stroke.JOIN_MITER, 1);
+            this.getAllStyles().setBorder(RoundBorder.create().color(UITheme.COL_SELECTED).stroke(borderStroke).strokeColor(UITheme.BLACK));
         }
         private int setColor(String size) {
             if (size.equals("XL")) {

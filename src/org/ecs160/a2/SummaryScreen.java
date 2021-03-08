@@ -87,6 +87,12 @@ public class SummaryScreen extends Form {
         add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
     }
 
+    private void filterTaskData() {
+        for (String size : sizeFilters) {
+            allTaskData = allTaskData.getTasksBySize()
+        }
+    }
+
     private void createHeader() {
         Header = new Container();
         Header.setLayout(new BorderLayout());
@@ -205,17 +211,25 @@ public class SummaryScreen extends Form {
         }
 
         UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
-        reset.setAllStyles("Reset",UITheme.YELLOW,' ',UITheme.PAD_3MM);
-        reset.addActionListener(e -> log("RESET..."));
+        reset.setAllStyles("Reset",UITheme.LIGHT_YELLOW,' ',UITheme.PAD_3MM);
+        reset.addActionListener(e -> {
+            log("RESETTING");
+            sizeFilters = new ArrayList<>();
+            tagFilters = new ArrayList<>();
+            refreshFilterDialog();
+        });
 
         UIComponents.ButtonObject done = new UIComponents.ButtonObject();
         done.setAllStyles("Done",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
-        done.addActionListener(e -> log("DONE..."));
+        done.addActionListener(e -> {
+            log("DONE");
+            FilterDialog.dispose();
+        });
 
         UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
         cancel.setAllStyles("Cancel",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
         cancel.addActionListener(c -> {
-            log("CANCEL...");
+            log("CANCEL");
             FilterDialog.dispose();
         });
 
