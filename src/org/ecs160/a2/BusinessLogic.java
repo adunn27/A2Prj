@@ -54,6 +54,8 @@ public class BusinessLogic {
                         String size,
                         String description,
                         List<String> tags) {
+        assert (everyTask.getTaskByName(name) == null): "Task already exists!";
+
         Task aNewTask = new Task(name, TaskSize.parse(size));
         aNewTask.setDescription(description);
         for(String aTag: tags) {
