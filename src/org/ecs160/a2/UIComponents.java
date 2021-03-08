@@ -260,6 +260,7 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
+                ui.backend.logfile.stopTask(taskData);
                 taskData.stop();
             } else {
                 Task activeTask = ui.backend.getActiveTask();
@@ -267,6 +268,8 @@ public class UIComponents {
                     activeTask.stop();
                 }
                 taskData.start();
+                ui.backend.logfile.startTask(taskData);
+
             }
             ui.refreshScreen();
         }

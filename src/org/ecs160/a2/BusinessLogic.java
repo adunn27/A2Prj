@@ -5,10 +5,23 @@ import java.util.List;
 
 public class BusinessLogic {
     private TaskContainer everyTask;
+    public LogFile logfile;
+    public TaskContainer logTask;
 
     public BusinessLogic() {
         //TODO load it in somehow
         everyTask = new TaskContainer();
+        logfile = new LogFile();
+        logTask = logfile.retrieveTask;
+
+        for(Task task : logTask){
+
+            newTask(task.getName(),task.getTaskSizeString(),task.getDescription(),task.getTags());
+            // System.out.println("here is task time"+ task.getAllTimes().size());
+
+        }
+
+
 
         //TODO tests
         newTask("task1",

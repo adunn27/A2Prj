@@ -14,6 +14,10 @@ public class TimeSpan {
         this.startTime = startTime;
     }
 
+    public LocalDateTime getstarttime(){
+        return this.startTime;
+    }
+
     public void setStartTime(LocalDateTime startTime){
         this.startTime = startTime;
     }

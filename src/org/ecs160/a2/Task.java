@@ -83,6 +83,10 @@ public class Task {
         isArchived = false;
     }
 
+    public List<TimeSpan> getAllTimes(){
+        return allTimes;
+    }
+
     public void start() {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";

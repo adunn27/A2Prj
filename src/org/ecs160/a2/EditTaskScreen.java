@@ -199,6 +199,7 @@ public class EditTaskScreen extends Form {
         task.setTaskSize(sizeData);
         task.addAllTags(tagsData);
         task.setDescription(descriptionData);
+        ui.backend.logfile.editTask(task);
         ui.goBack();
     }
 
