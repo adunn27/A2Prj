@@ -14,19 +14,12 @@ import java.util.*;
 public class SummaryGraph{
 
     private TaskContainer allTaskData;
-    private final UINavigator ui;
-
-    //private SummaryMode mode;
+    private String filter;
     private TimeSpan summaryPeriod;
-    public SummaryGraph(UINavigator ui){
-        this.ui = ui;
-        allTaskData = ui.backend.getUnarchivedTasks();
-      //  mode = SummaryMode.DAY; //default
+    public SummaryGraph(TaskContainer allTaskData, String filter){
+        this.allTaskData = allTaskData;
+        this.filter = filter;
     }
-    /*public void setSummaryMode(SummaryMode m){
-        mode = m;
-    }
-*/
     private DefaultRenderer buildCategoryRenderer(int[] colors) {
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
@@ -119,8 +112,7 @@ public class SummaryGraph{
         total = (double)(d.toMillis() / 1000);
         return total;
     }
-
-    private TaskContainer getTaskSet(){
+    private TaskContainer getTaskSet() {
 
         LocalDateTime present = LocalDateTime.now();
 
@@ -147,8 +139,11 @@ public class SummaryGraph{
         summaryPeriod = new TimeSpan(start);
         summaryPeriod.setEndTime(stop);
 
-        //TODO filter for tags
+        TaskContainer result = allTaskData.getTasksThatOccurred(start, stop);
 
-        return allTaskData.getTasksThatOccurred(start, stop);
+        //TODO filter for tags
+        //return filterTaskSet(result);
+        return result;
     }
+
 }
