@@ -73,7 +73,7 @@ public class SummaryScreen extends Form {
     }
 
     public void createSummaryScreen() {
-        removeAll();
+        removeAll(); // reset
         setTitle("Summary");
         setLayout(BoxLayout.y());
 
@@ -83,7 +83,6 @@ public class SummaryScreen extends Form {
         createTaskList();
         createGraphRow();
 
-//        add(BorderLayout.NORTH, Header);
         addAll(StatsList,graphRow,TaskList);
     }
 
@@ -100,23 +99,6 @@ public class SummaryScreen extends Form {
     }
 
     private void createToolbar() {
-//        Header = new Container();
-//        Header.setLayout(new BorderLayout());
-//        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
-//        filterButton.setAllStyles("",UITheme.YELLOW,FontImage.MATERIAL_FILTER_LIST,UITheme.PAD_3MM);
-//
-//        filterButton.addActionListener(e->{
-//            createFilterDialog();
-//            FilterDialog.show();
-//        });
-//
-//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-//        backButton.setMyColor(UITheme.YELLOW);
-//        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-//        backButton.setMyPadding(UITheme.PAD_3MM);
-//        backButton.addActionListener(e-> ui.goBack());
-//        Header.add(BorderLayout.EAST, filterButton);
-//        Header.add(BorderLayout.WEST, backButton);
         getToolbar().addCommandToLeftBar("",
                 FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK,
                         new Style()), e->ui.goBack());
