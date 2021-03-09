@@ -65,8 +65,8 @@ public class TaskContainer implements Iterable<Task>{
         return filter(task -> !task.isArchived());
     }
 
-    public TaskContainer getTasksBySize(String taskSize) {
-        return filter(task -> task.getTaskSize().toString() == taskSize);
+    public TaskContainer getTasksBySize(TaskSize taskSize) {
+        return filter(task -> task.getTaskSize() == taskSize);
     }
 
     public TaskContainer getTasksWithTag(String tag) {

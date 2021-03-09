@@ -121,7 +121,7 @@ public class SummaryScreen extends Form {
         allTaskData = ui.backend.getUnarchivedTasks();
 
         for (String size : sizeFilters) {
-            allTaskData = allTaskData.getTasksBySize(size);
+            allTaskData = allTaskData.getTasksBySize(TaskSize.parse(size));
         }
 
         for (String tag : tagFilters) {
