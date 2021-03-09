@@ -163,6 +163,14 @@ public class UIComponents {
         public void setSize(int size) {
             getAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, size)));
         }
+
+        public void setMyColor(int color) {
+            getAllStyles().setFgColor(color);
+        }
+
+        public void removePadding() {
+            getAllStyles().setMargin(Component.LEFT, 0);
+        }
     }
 
     // args: tagName

@@ -42,7 +42,6 @@ public class SummaryScreen extends Form {
     // DATA
     private java.util.List<String> sizeData;
     private java.util.List<String> tagData;
-
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
@@ -112,19 +111,24 @@ public class SummaryScreen extends Form {
                 dateToString(startDateFilter) + " - " +
                         dateToString(endDateFilter));
         startEndDates.setSize(SIZE_LARGE);
+        startEndDates.setMyColor(UITheme.BLACK);
+        startEndDates.removePadding();
 
-        FilterHeader.add(startEndDates);
+        FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
 
         Container filters = new Container();
         for (String size : sizeFilters) {
-            filters.add(new Label(size));
+            UIComponents.SizeButtonObject b = new UIComponents.SizeButtonObject(size);
+            filters.add(b);
         }
         for (String tag : tagFilters) {
-            filters.add(new Label(tag));
+            UIComponents.ButtonObject b = new UIComponents.ButtonObject();
+            b.setAllStyles(tag, UITheme.LIGHT_GREEN,' ',UITheme.PAD_1MM);
+            filters.add(b);
         }
 
         if (!sizeFilters.isEmpty() || !tagFilters.isEmpty()) {
-            FilterHeader.add(filters);
+            FilterHeader.add(FlowLayout.encloseCenterMiddle(filters));
         }
     }
     private void getTaskContainer() {
