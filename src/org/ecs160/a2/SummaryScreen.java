@@ -117,6 +117,7 @@ public class SummaryScreen extends Form {
         FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
 
         Container filters = new Container();
+        filters.add(new Label("Showing: "));
         for (String size : sizeFilters) {
             UIComponents.SizeButtonObject b = new UIComponents.SizeButtonObject(size);
             filters.add(b);
