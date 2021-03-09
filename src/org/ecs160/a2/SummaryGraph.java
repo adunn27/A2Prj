@@ -13,19 +13,19 @@ import java.util.*;
 
 public class SummaryGraph{
 
-    private TaskContainer allTaskData;
-    private String filter;
+    //private TaskContainer allTaskData;
+    //private String filter;
     private TimeSpan summaryPeriod;
-    public SummaryGraph(TaskContainer allTaskData, String filter){
-        this.allTaskData = allTaskData;
-        this.filter = filter;
+    private TaskContainer taskSet;
+    public SummaryGraph(TaskContainer tasks, TimeSpan timeSpan){
+        this.taskSet = tasks;
+        this.summaryPeriod = timeSpan;
     }
     private DefaultRenderer buildCategoryRenderer(int[] colors) {
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
         renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setMargins(new int[]{0, 0, 0, 0});
-
 
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
@@ -49,7 +49,7 @@ public class SummaryGraph{
     }
     public ChartComponent createPieChart() {
         // Generate the values
-        TaskContainer taskSet = getTaskSet(); //TODO change for modes
+        //TaskContainer taskSet = getTaskSet(); //TODO change for modes
         double[] setTimes = getSetTimes(taskSet);
         int [] colors = getColorArray(setTimes.length);
         // Set up the renderer
@@ -79,7 +79,6 @@ public class SummaryGraph{
             allColors[i] = ColorUtil.argb(0,r, g, b);
         }
         return allColors;
-
     }
     private int[] doubleColorArray(int[] allColors){
         ArrayList<Integer> result = new ArrayList<Integer>(allColors.length);
@@ -112,6 +111,7 @@ public class SummaryGraph{
         total = (double)(d.toMillis() / 1000);
         return total;
     }
+    /*
     private TaskContainer getTaskSet() {
 
         LocalDateTime present = LocalDateTime.now();
@@ -120,20 +120,7 @@ public class SummaryGraph{
 
         LocalDateTime start;
         LocalDateTime stop;
-        /*
-        Commenting out SummaryMode for now until it is implemented
-        if(this.mode == SummaryMode.DAY) {
-            start = dummyTimeSpan.getStartOfDay(present);
-            stop = dummyTimeSpan.getEndOfDay(present);
-        }
-        else if(this.mode == SummaryMode.WEEK) {
-            start = dummyTimeSpan.getStartOfDay(present);
-            stop = dummyTimeSpan.getEndOfDay(present);
-        }
-        else{
 
-        }
- */
         start = LocalDateTime.MIN; //TODO change
         stop = present;
         summaryPeriod = new TimeSpan(start);
@@ -145,5 +132,5 @@ public class SummaryGraph{
         //return filterTaskSet(result);
         return result;
     }
-
+*/
 }

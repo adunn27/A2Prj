@@ -208,7 +208,9 @@ public class SummaryScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container();
-        SummaryGraph summaryGraph = new SummaryGraph(allTaskData, filter);
+        TaskContainer filteredTaskData;
+        TimeSpan summaryPeriod;
+        SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
         ChartComponent c = summaryGraph.createPieChart();
         graphRow.add(c);
     }
