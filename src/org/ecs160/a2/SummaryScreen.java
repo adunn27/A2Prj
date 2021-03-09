@@ -151,17 +151,17 @@ public class SummaryScreen extends Form {
         UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");
         statTitle.setSize(SIZE_LARGE);
         StatsList.add(statTitle);
-        long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        LocalDateTime startTime = Utility.getStartOfDay(
+                Utility.convertToLocalDate(startDateFilter));
+        LocalDateTime endTime = Utility.getEndOfDay(
+                Utility.convertToLocalDate(endDateFilter));
+        long totalTime = allTaskData.getTotalTime(startTime, endTime);
 
-        long avgTime = allTaskData.getAverageTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long avgTime = allTaskData.getAverageTime(startTime, endTime);
 
-        long minTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long minTime = allTaskData.getMinimumTime(startTime, endTime);
 
-        long maxTime = allTaskData.getMaximumTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long maxTime = allTaskData.getMaximumTime(startTime, endTime);
 
         Container total = FlowLayout.encloseCenterMiddle();
         total.addAll(new Label("Total"),
