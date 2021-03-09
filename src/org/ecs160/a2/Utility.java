@@ -14,7 +14,7 @@ public final class Utility {
     // week on Sunday
     public static LocalDateTime getStartOfWeek(LocalDateTime present) {
         return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                      .with(LocalDateTime.MIN);
+                      .with(LocalTime.MIN);
     }
 
     public static LocalDateTime getStartOfCurrentWeek() {
@@ -23,7 +23,7 @@ public final class Utility {
 
     public static LocalDateTime getEndOfWeek(LocalDateTime present) {
         return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
-                .with(LocalDateTime.MAX);
+                .with(LocalTime.MAX);
     }
 
     public static LocalDateTime getStartOfDay(LocalDate present) {

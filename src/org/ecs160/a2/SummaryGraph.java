@@ -149,6 +149,7 @@ public class SummaryGraph{
 
         //TODO filter for tags
 
-        return allTaskData.getTasksThatOccurred(start, stop);
+        return allTaskData.getTasksThatOccurred(start.toLocalDate(),
+                stop.toLocalDate());
     }
 }
