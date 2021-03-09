@@ -194,14 +194,17 @@ public class SummaryScreen extends Form {
         UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
         taskTitle.setSize(SIZE_LARGE);
         TaskList.add(taskTitle);
-
+        LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
+                Utility.convertToLocalDate(startDateFilter));
+        LocalDateTime endTime = Utility.getEndOfDay(
+                Utility.convertToLocalDate(endDateFilter));
         if (allTaskData.isEmpty()) {
             Container noTasks = FlowLayout.encloseCenterMiddle();
             noTasks.add("No Tasks to Display");
             TaskList.add(noTasks);
         } else {
             for (Task taskObj : allTaskData) {
-                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, ui));
+                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
     }

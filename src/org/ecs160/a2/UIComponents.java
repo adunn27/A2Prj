@@ -9,6 +9,8 @@ import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
+import java.time.LocalDateTime;
+
 import static com.codename1.ui.CN.*;
 
 // Contains Buttons and Components frequently used in UI
@@ -320,7 +322,8 @@ public class UIComponents {
     static class SummaryTaskObject extends Container {
         Task taskObj;
         UINavigator ui;
-        public SummaryTaskObject(Task task, UINavigator ui) {
+        public SummaryTaskObject(Task task, LocalDateTime startTime,
+                                 LocalDateTime endTime, UINavigator ui) {
             this.taskObj = task;
             this.ui = ui;
 
@@ -335,7 +338,9 @@ public class UIComponents {
             leftContainer.add(BorderLayout.CENTER, nameLabel);
 
             // right side (time)
-            Label durationLabel = new Label(taskObj.getTotalTimeString());
+            Label durationLabel = new Label(
+                    Utility.durationToFormattedString(
+                            taskObj.getTimeBetween(startTime, endTime)));//TODO need to restrict by time
 
             add(BorderLayout.WEST, leftContainer);
             add(BorderLayout.EAST, durationLabel);
