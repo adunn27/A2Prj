@@ -1,5 +1,7 @@
 package org.ecs160.a2;
 
+import jdk.jshell.execution.Util;
+
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -133,15 +135,7 @@ public class Task {
 
     public String getTotalTimeString() {
         Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
-        return toString(duration);
-    }
-
-    public String toString(Duration duration) {
-        String hms = String.format("%d:%02d:%02d",
-                duration.toHours(),
-                duration.toMinutesPart(),
-                duration.toSecondsPart());
-        return hms;
+        return Utility.durationToFormattedString(duration);
     }
 
     private Duration getTotalTimeOfDay(LocalDate day) {
@@ -160,13 +154,13 @@ public class Task {
     }
 
     public String getTotalTimeTodayString() {
-        return toString(getTotalTimeOfDay(LocalDate.now()));
+        return Utility.durationToFormattedString(getTotalTimeOfDay(LocalDate.now()));
     }
 
     public String getTotalTimeThisWeekString() {
         Duration duration = getTimeBetween(Utility.getStartOfCurrentWeek(),
                 Utility.getEndOfWeek(LocalDateTime.now()));
-        return toString(duration);
+        return Utility.durationToFormattedString(duration);
     }
 
     public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
