@@ -15,6 +15,7 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import static com.codename1.ui.CN.log;
+import static com.codename1.ui.layouts.BoxLayout.Y_AXIS;
 
 public class SummaryScreen extends Form {
     Container Header;
@@ -56,14 +57,16 @@ public class SummaryScreen extends Form {
 
         setTitle("Summary");
         setLayout(new BorderLayout());
-
         createHeader();
         createStatsList();
         createTaskList();
         createGraphRow();
 
         add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
+        Container temp = BoxLayout.encloseY(StatsList,graphRow, TaskList);
+        temp.setScrollableY(true);
+        add(BorderLayout.CENTER, temp);
+
     }
 
     private void createHeader() {
@@ -204,7 +207,7 @@ public class SummaryScreen extends Form {
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
-        graphRow = new Container(BoxLayout.y());
+        graphRow = new Container();
         SummaryGraph summaryGraph = new SummaryGraph(allTaskData, filter);
         ChartComponent c = summaryGraph.createPieChart();
         graphRow.add(c);
