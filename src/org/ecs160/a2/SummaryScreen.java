@@ -2,7 +2,6 @@ package org.ecs160.a2;
 
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
-import com.codename1.ui.animations.Transition;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
@@ -18,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static com.codename1.ui.CN.CENTER_BEHAVIOR_CENTER;
+import static com.codename1.ui.CN.SIZE_LARGE;
 import static com.codename1.ui.CN.log;
 
 public class SummaryScreen extends Form {
@@ -34,14 +33,9 @@ public class SummaryScreen extends Form {
     private java.util.List<String> tagFilters;
     private java.util.List<Date> timeFilter;
 
-    // TODO: REMOVE?
-    private String filterSize;
-    private String tempFilterSize = "";
-
-    // TODO: REVIEW
+    // DATA
     private java.util.List<String> sizeData;
     private java.util.List<String> tagData;
-    private String filter;
 
     private TaskContainer allTaskData;
     private final UINavigator ui;
@@ -49,6 +43,7 @@ public class SummaryScreen extends Form {
     public SummaryScreen(UINavigator ui) {
         this.ui = ui;
         initializeFilters();
+        createToolbar();
         createSummaryScreen();
     }
 
@@ -78,18 +73,18 @@ public class SummaryScreen extends Form {
     }
 
     public void createSummaryScreen() {
+        removeAll();
         setTitle("Summary");
-        setLayout(new BorderLayout());
+        setLayout(BoxLayout.y());
 
         getTaskContainer();
 
-        createHeader();
         createStatsList();
         createTaskList();
         createGraphRow();
 
-        add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
+//        add(BorderLayout.NORTH, Header);
+        addAll(StatsList,graphRow,TaskList);
     }
 
     private void getTaskContainer() {
@@ -104,31 +99,43 @@ public class SummaryScreen extends Form {
         }
     }
 
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
-        filterButton.setMyColor(UITheme.YELLOW);
-        filterButton.setMyPadding(UITheme.PAD_3MM);
-        filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
-        filterButton.setMyText(filter);
-        filterButton.addActionListener(e->{
-            createFilterDialog();
-            FilterDialog.show();
-        });
+    private void createToolbar() {
+//        Header = new Container();
+//        Header.setLayout(new BorderLayout());
+//        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
+//        filterButton.setAllStyles("",UITheme.YELLOW,FontImage.MATERIAL_FILTER_LIST,UITheme.PAD_3MM);
+//
+//        filterButton.addActionListener(e->{
+//            createFilterDialog();
+//            FilterDialog.show();
+//        });
+//
+//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
+//        backButton.setMyColor(UITheme.YELLOW);
+//        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+//        backButton.setMyPadding(UITheme.PAD_3MM);
+//        backButton.addActionListener(e-> ui.goBack());
+//        Header.add(BorderLayout.EAST, filterButton);
+//        Header.add(BorderLayout.WEST, backButton);
+        getToolbar().addCommandToLeftBar("",
+                FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK,
+                        new Style()), e->ui.goBack());
 
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e-> ui.goBack());
-
-        Header.add(BorderLayout.EAST, filterButton);
-        Header.add(BorderLayout.WEST, backButton);
+        getToolbar().addCommandToRightBar("",
+                FontImage.createMaterial(FontImage.MATERIAL_FILTER_LIST,
+                        new Style()),
+                        e->{
+                            createFilterDialog();
+                            FilterDialog.show();
+                        }
+                );
     }
 
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
+        UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");
+        statTitle.setSize(SIZE_LARGE);
+        StatsList.add(statTitle);
         long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
@@ -158,7 +165,6 @@ public class SummaryScreen extends Form {
                        new Label(formatDuration(maxTime)));
 
         StatsList.addAll(total,average,minimum,maximum);
-
     }
 
     private String formatDuration(long dur) {
@@ -171,10 +177,15 @@ public class SummaryScreen extends Form {
 
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
-        TaskList.setScrollableY(true);
+
+        UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
+        taskTitle.setSize(SIZE_LARGE);
+        TaskList.add(taskTitle);
 
         if (allTaskData.isEmpty()) {
-            TaskList.add("No Tasks to Display");
+            Container noTasks = FlowLayout.encloseCenterMiddle();
+            noTasks.add("No Tasks to Display");
+            TaskList.add(noTasks);
         } else {
             for (Task taskObj : allTaskData) {
                 TaskList.add(new UIComponents.SummaryTaskObject(taskObj, ui));
