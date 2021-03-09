@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
@@ -72,10 +73,12 @@ public class TaskContainer implements Iterable<Task>{
         return filter(task -> task.hasTag(tag));
     }
 
-    public TaskContainer getTasksThatOccurred(LocalDateTime start,
-                                              LocalDateTime stop) {
+    public TaskContainer getTasksThatOccurred(LocalDate start,
+                                              LocalDate stop) {
 
-        return filter(task -> task.occurredBetween(start, stop));
+        return filter(task -> task.occurredBetween(
+                Utility.getStartOfDay(start),
+                Utility.getEndOfDay(stop)));
     }
 
     public TaskContainer filter(Predicate<Task> selector) {

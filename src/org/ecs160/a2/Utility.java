@@ -26,12 +26,12 @@ public final class Utility {
                 .with(LocalDateTime.MAX);
     }
 
-    public static LocalDateTime getStartOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MIN);
+    public static LocalDateTime getStartOfDay(LocalDate present) {
+        return present.atStartOfDay().with(LocalTime.MIN);
     }
 
-    public static LocalDateTime getEndOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MAX);
+    public static LocalDateTime getEndOfDay(LocalDate present) {
+        return present.atStartOfDay().with(LocalTime.MAX);
     }
 
     public static Date convertToDate(LocalDateTime localDateTime) {
