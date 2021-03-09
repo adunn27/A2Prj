@@ -96,14 +96,12 @@ public class SummaryScreen extends Form {
         allTaskData = ui.backend.getUnarchivedTasks();
 
         for (String size : sizeFilters) {
-            log("FILTERING BY SIZE: " + size);
-            // filter by size
+            allTaskData = allTaskData.getTasksBySize(size);
         }
+
         for (String tag : tagFilters) {
-            log("FILTERING BY TAG: " + tag);
             allTaskData = allTaskData.getTasksWithTag(tag);
         }
-        // filter by time
     }
 
     private void createHeader() {
@@ -143,20 +141,20 @@ public class SummaryScreen extends Form {
         long maxTime = allTaskData.getMaximumTime(LocalDateTime.MIN,
                                                   LocalDateTime.MAX);
 
-        Container total = new Container(new GridLayout(2));
-        total.addAll(new Label("Total Time Elapsed"),
+        Container total = FlowLayout.encloseCenterMiddle();
+        total.addAll(new Label("Total"),
                      new Label(formatDuration(totalTime)));
 
-        Container average = new Container(new GridLayout(2));
-        average.addAll(new Label("Average Time Elapsed"),
+        Container average = FlowLayout.encloseCenterMiddle();
+        average.addAll(new Label("Average"),
                        new Label(formatDuration(avgTime)));
 
-        Container minimum = new Container(new GridLayout(2));
-        minimum.addAll(new Label("Minimum Time Elapsed"),
+        Container minimum = FlowLayout.encloseCenterMiddle();
+        minimum.addAll(new Label("Minimum"),
                        new Label(formatDuration(minTime)));
 
-        Container maximum = new Container(new GridLayout(2));
-        maximum.addAll(new Label("Maximum Time Elapsed"),
+        Container maximum = FlowLayout.encloseCenterMiddle();
+        maximum.addAll(new Label("Maximum"),
                        new Label(formatDuration(maxTime)));
 
         StatsList.addAll(total,average,minimum,maximum);
@@ -258,6 +256,7 @@ public class SummaryScreen extends Form {
         if (wasFilter) {
             sizeFilters.remove(size);
         } else {
+            sizeFilters = new ArrayList<>();
             sizeFilters.add(size);
         }
         refreshFilterDialog();
@@ -296,6 +295,8 @@ public class SummaryScreen extends Form {
         startDate.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
         startDate.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
                 UITheme.PAD_3MM, UITheme.PAD_3MM);
+
+        startDate.setUseLightweightPopup(true);
         startDate.setDate(new Date());
 
         endDate.setType(Display.PICKER_TYPE_CALENDAR);
@@ -305,6 +306,8 @@ public class SummaryScreen extends Form {
         endDate.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
                 UITheme.PAD_3MM, UITheme.PAD_3MM);
         endDate.setDate(new Date());
+
+        endDate.setUseLightweightPopup(true);
 
         timePicker.addAll(new Label("Start"), startDate,
                           endDate, new Label("End"));
