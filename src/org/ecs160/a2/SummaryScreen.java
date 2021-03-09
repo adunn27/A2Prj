@@ -208,11 +208,20 @@ public class SummaryScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container();
-        TaskContainer filteredTaskData;
-        TimeSpan summaryPeriod;
-        SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
-        ChartComponent c = summaryGraph.createPieChart();
-        graphRow.add(c);
+
+        //TODO: This should be changed to the dates selected
+        TimeSpan summaryPeriod = new TimeSpan(LocalDateTime.MIN);
+        summaryPeriod.setEndTime(LocalDateTime.now());
+
+        TaskContainer filteredTaskData = getTaskContainer().getTasksThatOccurred(
+                                        summaryPeriod.getStartTime(),
+                                        summaryPeriod.getEndTime());
+
+        if(filteredTaskData.getNumberOfTasks() != 0) {
+            SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
+            ChartComponent c = summaryGraph.createPieChart();
+            graphRow.add(c);
+        }
     }
 
     // TODO: filter
