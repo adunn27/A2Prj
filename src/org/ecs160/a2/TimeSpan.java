@@ -85,27 +85,6 @@ public class TimeSpan {
         return Duration.between(trueStartTime, trueEndTime);
     }
 
-    public static LocalDateTime getStartOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MIN);
-    }
-
-    public static LocalDateTime getEndOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MAX);
-    }
-
-    // Decided that since this tool will be mainly for work related purposes
-    // a week should start with the work week on Monday rather than the calendar
-    // week on Sunday
-    public static LocalDateTime getStartOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .with(LocalDateTime.MIN);
-    }
-
-    public static LocalDateTime getEndOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
-                .with(LocalDateTime.MAX);
-    }
-
     public static void main(String[] args){
         LocalDateTime start = LocalDateTime.now().minusSeconds(5);
         LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);

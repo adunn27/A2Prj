@@ -60,22 +60,7 @@ public class SummaryScreen extends Form {
         sizeData.add("XL");
         tagData = ui.backend.getAllTags();
 
-        sizeFilters = new ArrayList<>();
-        tagFilters = new ArrayList<>();
-        startDateFilter = convertToDate(getStartOfWeek());
-        endDateFilter = new Date();
-    }
-
-    private LocalDateTime getStartOfWeek() {
-        LocalDateTime start = LocalDateTime.now();
-        start.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .with(LocalDateTime.MIN);
-        return start;
-    }
-    private Date convertToDate(LocalDateTime localDateTime) {
-        return Date.from(localDateTime.atZone(
-                ZoneId.systemDefault()).toInstant()
-        );
+        resetFilters();
     }
 
     @Override
@@ -142,6 +127,10 @@ public class SummaryScreen extends Form {
         for (String tag : tagFilters) {
             allTaskData = allTaskData.getTasksWithTag(tag);
         }
+
+        allTaskData = allTaskData.getTasksThatOccurred(
+                Utility.convertToLocalDate(startDateFilter),
+                Utility.convertToLocalDate(endDateFilter));
     }
     private void createToolbar() {
         getToolbar().addCommandToLeftBar("",
@@ -284,7 +273,7 @@ public class SummaryScreen extends Form {
     private void resetFilters() {
         sizeFilters = new ArrayList<>();
         tagFilters = new ArrayList<>();
-        startDateFilter = convertToDate(getStartOfWeek());
+        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
     }
     private String dateToString(Date date) {
