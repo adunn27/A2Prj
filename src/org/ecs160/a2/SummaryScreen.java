@@ -133,18 +133,15 @@ public class SummaryScreen extends Form {
                 Utility.convertToLocalDate(endDateFilter));
     }
     private void createToolbar() {
-        getToolbar().addCommandToLeftBar("",
-                FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK,
-                        new Style()), e->ui.goBack());
+        getToolbar().addMaterialCommandToLeftBar("",
+                FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
 
-        getToolbar().addCommandToRightBar("",
-                FontImage.createMaterial(FontImage.MATERIAL_FILTER_LIST,
-                        new Style()),
-                        e->{
-                            createFilterDialog();
-                            FilterDialog.show();
-                        }
-                );
+        getToolbar().addMaterialCommandToRightBar("",
+                FontImage.MATERIAL_FILTER_LIST, UITheme.PAD_6MM,
+                e->{
+                    createFilterDialog();
+                    FilterDialog.show();
+                });
     }
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());

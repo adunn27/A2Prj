@@ -29,6 +29,7 @@ public class UITheme {
 
     // padding
     public static final int PAD_9MM = 9;
+    public static final int PAD_6MM = 6;
     public static final int PAD_3MM = 3;
     public static final int PAD_1MM = 1;
 }
