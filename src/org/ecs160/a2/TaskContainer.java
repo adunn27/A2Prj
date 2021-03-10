@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Predicate;
@@ -72,10 +73,12 @@ public class TaskContainer implements Iterable<Task>{
         return filter(task -> task.hasTag(tag));
     }
 
-    public TaskContainer getTasksThatOccurred(LocalDateTime start,
-                                              LocalDateTime stop) {
+    public TaskContainer getTasksThatOccurred(LocalDate start,
+                                              LocalDate stop) {
 
-        return filter(task -> task.occurredBetween(start, stop));
+        return filter(task -> task.occurredBetween(
+                Utility.getStartOfDay(start),
+                Utility.getEndOfDay(stop)));
     }
 
     public TaskContainer filter(Predicate<Task> selector) {
@@ -101,8 +104,9 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics(start, stop);
+        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
 
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMin();
     }
 
@@ -113,8 +117,9 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics(start, stop);
+        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
 
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMax();
     }
 
@@ -127,4 +132,5 @@ public class TaskContainer implements Iterable<Task>{
         }
         return setOfAllTags.stream().sorted().collect(Collectors.toList());
     }
+
 }

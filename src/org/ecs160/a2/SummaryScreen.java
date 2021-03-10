@@ -1,42 +1,66 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
-import com.codename1.ui.layouts.BorderLayout;
+import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.RoundBorder;
+import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAdjusters;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
-import static com.codename1.ui.CN.log;
+import static com.codename1.ui.CN.*;
 
 public class SummaryScreen extends Form {
     Container Header;
+    Container FilterHeader;
     Container TaskList;
     Container StatsList;
     Container graphRow;
+    Container timePicker;
+    Picker startDate;
+    Picker endDate;
     Dialog FilterDialog;
 
-    private String filterSize;
-    private String tempFilterSize = "";
+    // FILTERS
+    private java.util.List<String> sizeFilters;
+    private java.util.List<String> tagFilters;
+    private Date startDateFilter;
+    private Date endDateFilter;
 
-    private String filterTag;
-    private String tempFilterTag = "";
-
-    private String filter;
-
+    // DATA
+    private java.util.List<String> sizeData;
+    private java.util.List<String> tagData;
     private TaskContainer allTaskData;
     private final UINavigator ui;
 
     public SummaryScreen(UINavigator ui) {
-        this.filter = "";
         this.ui = ui;
+        initializeDataAndFilters();
+        createToolbar();
+        createSummaryScreen();
+    }
+
+    private void initializeDataAndFilters() {
+        sizeData = new ArrayList<>(); // TODO: fix sizeData initialization
+        sizeData.add("S");
+        sizeData.add("M");
+        sizeData.add("L");
+        sizeData.add("XL");
+        tagData = ui.backend.getAllTags();
+
+        resetFilters();
     }
 
     @Override
@@ -52,76 +76,111 @@ public class SummaryScreen extends Form {
     }
 
     public void createSummaryScreen() {
-        allTaskData = getTaskContainer();
-
+        removeAll(); // reset
         setTitle("Summary");
-        setLayout(new BorderLayout());
+        setLayout(BoxLayout.y());
 
-        createHeader();
+        getTaskContainer();
+        createFilterDisplay();
         createStatsList();
         createTaskList();
         createGraphRow();
 
-        add(BorderLayout.NORTH, Header);
-        add(BorderLayout.CENTER, BoxLayout.encloseY(StatsList,graphRow,TaskList));
+        addAll(FilterHeader,StatsList,graphRow,TaskList);
     }
 
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject filterButton = new UIComponents.ButtonObject();
-        filterButton.setMyColor(UITheme.YELLOW);
-        filterButton.setMyPadding(UITheme.PAD_3MM);
-        filterButton.setMyIcon(FontImage.MATERIAL_FILTER_LIST);
-        filterButton.setMyText(filter);
-        filterButton.addActionListener(e->{
-            showFilterDialog();
-        });
+    private void createFilterDisplay() {
+        FilterHeader = new Container(BoxLayout.y());
 
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e-> ui.goBack());
+        UIComponents.TitleObject startEndDates = new UIComponents.TitleObject(
+                dateToString(startDateFilter) + " - " +
+                        dateToString(endDateFilter));
+        startEndDates.setSize(SIZE_LARGE);
+        startEndDates.setMyColor(UITheme.BLACK);
+        startEndDates.removePadding();
 
-        Header.add(BorderLayout.EAST, filterButton);
-        Header.add(BorderLayout.WEST, backButton);
+        FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
+
+        Container filters = new Container();
+        filters.add(new Label("Showing: "));
+        for (String size : sizeFilters) {
+            UIComponents.SizeButtonObject b = new UIComponents.SizeButtonObject(size);
+            filters.add(b);
+        }
+        for (String tag : tagFilters) {
+            UIComponents.ButtonObject b = new UIComponents.ButtonObject();
+            b.setAllStyles(tag, UITheme.LIGHT_GREEN,' ',UITheme.PAD_1MM);
+            filters.add(b);
+        }
+
+        if (!sizeFilters.isEmpty() || !tagFilters.isEmpty()) {
+            FilterHeader.add(FlowLayout.encloseCenterMiddle(filters));
+        }
     }
+    private void getTaskContainer() {
+        allTaskData = ui.backend.getUnarchivedTasks();
 
+        for (String size : sizeFilters) {
+            allTaskData = allTaskData.getTasksBySize(TaskSize.parse(size));
+        }
+
+        for (String tag : tagFilters) {
+            allTaskData = allTaskData.getTasksWithTag(tag);
+        }
+
+        allTaskData = allTaskData.getTasksThatOccurred(
+                Utility.convertToLocalDate(startDateFilter),
+                Utility.convertToLocalDate(endDateFilter));
+    }
+    private void createToolbar() {
+        getToolbar().addCommandToLeftBar("",
+                FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK,
+                        new Style()), e->ui.goBack());
+
+        getToolbar().addCommandToRightBar("",
+                FontImage.createMaterial(FontImage.MATERIAL_FILTER_LIST,
+                        new Style()),
+                        e->{
+                            createFilterDialog();
+                            FilterDialog.show();
+                        }
+                );
+    }
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
-        long totalTime = allTaskData.getTotalTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");
+        statTitle.setSize(SIZE_LARGE);
+        StatsList.add(statTitle);
+        LocalDateTime startTime = Utility.getStartOfDay(
+                Utility.convertToLocalDate(startDateFilter));
+        LocalDateTime endTime = Utility.getEndOfDay(
+                Utility.convertToLocalDate(endDateFilter));
+        long totalTime = allTaskData.getTotalTime(startTime, endTime);
 
-        long avgTime = allTaskData.getAverageTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long avgTime = allTaskData.getAverageTime(startTime, endTime);
 
-        long minTime = allTaskData.getMinimumTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long minTime = allTaskData.getMinimumTime(startTime, endTime);
 
-        long maxTime = allTaskData.getMaximumTime(LocalDateTime.MIN,
-                                                  LocalDateTime.MAX);
+        long maxTime = allTaskData.getMaximumTime(startTime, endTime);
 
-        Container total = new Container(new GridLayout(2));
-        total.addAll(new Label("Total Time Elapsed"),
+        Container total = FlowLayout.encloseCenterMiddle();
+        total.addAll(new Label("Total"),
                      new Label(formatDuration(totalTime)));
 
-        Container average = new Container(new GridLayout(2));
-        average.addAll(new Label("Average Time Elapsed"),
+        Container average = FlowLayout.encloseCenterMiddle();
+        average.addAll(new Label("Average"),
                        new Label(formatDuration(avgTime)));
 
-        Container minimum = new Container(new GridLayout(2));
-        minimum.addAll(new Label("Minimum Time Elapsed"),
+        Container minimum = FlowLayout.encloseCenterMiddle();
+        minimum.addAll(new Label("Minimum"),
                        new Label(formatDuration(minTime)));
 
-        Container maximum = new Container(new GridLayout(2));
-        maximum.addAll(new Label("Maximum Time Elapsed"),
+        Container maximum = FlowLayout.encloseCenterMiddle();
+        maximum.addAll(new Label("Maximum"),
                        new Label(formatDuration(maxTime)));
 
         StatsList.addAll(total,average,minimum,maximum);
-
     }
-
     private String formatDuration(long dur) {
         Date date = new Date(dur);
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
@@ -129,119 +188,150 @@ public class SummaryScreen extends Form {
         String dateFormatted = formatter.format(date);
         return dateFormatted;
     }
-
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
-        TaskList.setScrollableY(true);
 
+        UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
+        taskTitle.setSize(SIZE_LARGE);
+        TaskList.add(taskTitle);
+        LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
+                Utility.convertToLocalDate(startDateFilter));
+        LocalDateTime endTime = Utility.getEndOfDay(
+                Utility.convertToLocalDate(endDateFilter));
         if (allTaskData.isEmpty()) {
-            TaskList.add("No Tasks to Display");
+            Container noTasks = FlowLayout.encloseCenterMiddle();
+            noTasks.add("No Tasks to Display");
+            TaskList.add(noTasks);
         } else {
             for (Task taskObj : allTaskData) {
-                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, ui));
+                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
     }
-
-    private void showFilterDialog() {
-        String[] sizeList = {"S","M","L","XL"};
+    private void refreshFilterDialog() { // TODO: fix refresh speed
+        FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
+        FilterDialog.dispose();
+        createFilterDialog();
+        FilterDialog.setTransitionInAnimator(CommonTransitions.createEmpty());
+        FilterDialog.show();
+    }
+    private void createFilterDialog() {
         FilterDialog = new Dialog(BoxLayout.y());
-        FilterDialog.setScrollableY(true);
+        FilterDialog.setTitle("Filter");
 
-        // SIZE BUTTONS
-        Container sizeButtons = new Container(new GridLayout(5));
-        for (String size : sizeList) {
-            UIComponents.ButtonObject button = new UIComponents.ButtonObject();
-            button.setMyText(size);
-            button.setMyColor(UITheme.LIGHT_YELLOW);
-            button.addActionListener(e->{
-                tempFilterSize=size;
-                setFilter(size);
-                FilterDialog.dispose();
-            });
+        // TODO: refactor
+        Container sizeButtons = new Container(new GridLayout(4));
+        for (String size : sizeData) {
+            UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
+            if (sizeFilters.contains(size))
+                button.setSelectedColor();
+            button.addPointerPressedListener(e ->
+                updateSizeFilter(size, sizeFilters.contains(size)));
             sizeButtons.add(button);
         }
 
-        // TAGS
-        Container tagButtons = new Container();
-        java.util.List<String> tagData = ui.backend.getAllTags();
+        Container tagButtons = FlowLayout.encloseCenterMiddle();
         for (String tag : tagData) {
             UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setMyText(tag);
-            tagButton.setMyColor(UITheme.LIGHT_GREEN);
+            tagButton.setAllStyles(tag, UITheme.LIGHT_GREEN, ' ', UITheme.PAD_3MM);
+            if (tagFilters.contains(tag))
+                tagButton.setSelectedColor();
+
             tagButton.addActionListener(e->{
-                tempFilterTag = tag;
-                setFilter(tag);
-                FilterDialog.dispose();
+                updateTagsFilter(tag, tagFilters.contains(tag));
             });
+
             tagButtons.add(tagButton);
         }
 
-        UIComponents.ButtonObject none = new UIComponents.ButtonObject();
-        none.setMyText("None");
-        none.setMyColor(UITheme.YELLOW);
-        none.setMyPadding(UITheme.PAD_3MM);
-        none.addActionListener(c -> {
-            setFilter(""); // RESET FILTER
-            FilterDialog.dispose();
+        UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
+        reset.setAllStyles("Reset",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        reset.addActionListener(e -> {
+            resetFilters();
+            refreshFilterDialog();
         });
 
-        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
-        cancel.setMyText("Cancel");
-        cancel.setMyColor(UITheme.LIGHT_GREY);
-        cancel.setMyPadding(UITheme.PAD_3MM);
-
-        cancel.addActionListener(c -> {
-            FilterDialog.dispose();
+        UIComponents.ButtonObject done = new UIComponents.ButtonObject();
+        done.setAllStyles("Done",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        done.addActionListener(e -> {
+            startDateFilter = startDate.getDate();
+            endDateFilter = endDate.getDate();
+            show();
         });
 
+        TimePicker();
+        FilterDialog.add(timePicker);
         FilterDialog.add(sizeButtons);
+
+        Container tagTitle = FlowLayout.encloseCenterMiddle();
+        tagTitle.add("Tags");
+        FilterDialog.add(tagTitle);
         FilterDialog.add(tagButtons);
-        FilterDialog.add(none);
-        FilterDialog.add(cancel);
-        FilterDialog.show();
+
+        Container foot = new Container(new GridLayout(2));
+        foot.addAll(reset, done);
+
+        FilterDialog.add(foot);
+    }
+    private void resetFilters() {
+        sizeFilters = new ArrayList<>();
+        tagFilters = new ArrayList<>();
+        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
+        endDateFilter = new Date();
+    }
+    private String dateToString(Date date) {
+        String pattern = "MM/dd/yy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
     }
 
-    // TODO: IMPLEMENT THIS
+    // TODO: refactor
+    private void updateSizeFilter(String size, boolean wasFilter) {
+        if (wasFilter) {
+            sizeFilters.remove(size);
+        } else {
+            sizeFilters = new ArrayList<>();
+            sizeFilters.add(size);
+        }
+        refreshFilterDialog();
+    }
+    private void updateTagsFilter(String name, boolean wasFilter)  {
+        if (wasFilter) {
+            tagFilters.remove(name);
+
+        } else {
+            tagFilters.add(name);
+        }
+        refreshFilterDialog();
+    }
+
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-        SummaryGraph summaryGraph = new SummaryGraph(ui);
-        ChartComponent c = summaryGraph.createPieChart();
-        graphRow.add(c);
+//        SummaryGraph summaryGraph = new SummaryGraph(ui);
+//        ChartComponent c = summaryGraph.createPieChart();
+//        graphRow.add(c);
+
+        graphRow.add(new Label("graph goes here"));
     }
 
-    // TODO: filter
-    private void setFilter(String filter) {
-        if (filter.isEmpty())
-            this.filter = filter;
-        else if (isSize(filter)) {
-            // TODO: filter by size
-            this.filter = filter;
-
-        } else {
-            // TODO: filter by tag
-            this.filter = filter;
-        }
-        log("FILTERING BY " + filter);
-        show();
+    private Picker createPicker(Date date) {
+        Picker datePicker = new Picker();
+        datePicker.setType(Display.PICKER_TYPE_CALENDAR);
+        datePicker.getStyle().setBorder(
+                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+        datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+        datePicker.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
+                UITheme.PAD_3MM, UITheme.PAD_3MM);
+        datePicker.setDate(date);
+        return datePicker;
     }
+    private void TimePicker() {
+        timePicker = FlowLayout.encloseCenterMiddle();
 
-    private TaskContainer getTaskContainer() {
-        TaskContainer allTasks = ui.backend.getUnarchivedTasks();
-        if (isSize(filter))
-            return allTasks.getTasksBySize(TaskSize.parse(filter)); //TODO coupling?
-        else if (!filter.isEmpty()) {
-            // TODO: filter by size
-            return allTasks.getTasksWithTag(filter);
-        } else {
-            // TODO: filter by tag
-            return allTasks;
-        }
-    }
+        startDate = createPicker(startDateFilter);
+        endDate = createPicker(endDateFilter);
 
-    private boolean isSize(String s) { //TODO move this to TaskSize enum?
-        if (s.equals("S") || s.equals("M") || s.equals("L") || s.equals("XL"))
-            return true;
-        return false;
+        timePicker.addAll(new Label("Start"), startDate,
+                          endDate, new Label("End"));
     }
 }
