@@ -13,8 +13,6 @@ import java.util.*;
 
 public class SummaryGraph{
 
-    //private TaskContainer allTaskData;
-    //private String filter;
     private TimeSpan summaryPeriod;
     private TaskContainer taskSet;
     public SummaryGraph(TaskContainer tasks, TimeSpan timeSpan){
@@ -25,7 +23,7 @@ public class SummaryGraph{
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
         renderer.setLabelsColor(ColorUtil.BLACK);
-        renderer.setMargins(new int[]{5, 5, 5, 5});
+        renderer.setMargins(new int[]{0, 0, 0, 0});
         renderer.setScale(0.90F);
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
@@ -34,7 +32,6 @@ public class SummaryGraph{
         }
         return renderer;
     }
-
 
     protected CategorySeries buildCategoryDataset(String title, double[] times, TaskContainer taskSet) {
         CategorySeries series = new CategorySeries(title);
@@ -47,25 +44,19 @@ public class SummaryGraph{
         }
         return series;
     }
+
     public ChartComponent createPieChart() {
-        // Generate the values
-        //TaskContainer taskSet = getTaskSet(); //TODO change for modes
         double[] setTimes = getSetTimes(taskSet);
         int [] colors = getColorArray(setTimes.length);
-        // Set up the renderer
+
         DefaultRenderer renderer = buildCategoryRenderer(colors);
-
         renderer.setShowLabels(true);
-
         renderer.setShowLegend(false);
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
         PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
-
         ChartComponent c = new ChartComponent(chart);
-
         return c;
-
     }
 
     private int[] getColorArray(int numTasks) {
@@ -111,26 +102,4 @@ public class SummaryGraph{
         total = (double)(d.toMillis() / 1000);
         return total;
     }
-    /*
-    private TaskContainer getTaskSet() {
-
-        LocalDateTime present = LocalDateTime.now();
-
-        TimeSpan dummyTimeSpan = new TimeSpan(present);
-
-        LocalDateTime start;
-        LocalDateTime stop;
-
-        start = LocalDateTime.MIN; //TODO change
-        stop = present;
-        summaryPeriod = new TimeSpan(start);
-        summaryPeriod.setEndTime(stop);
-
-        TaskContainer result = allTaskData.getTasksThatOccurred(start, stop);
-
-        //TODO filter for tags
-        //return filterTaskSet(result);
-        return result;
-    }
-*/
 }

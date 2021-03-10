@@ -309,16 +309,15 @@ public class SummaryScreen extends Form {
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
 
-        TimeSpan summaryPeriod = new TimeSpan(Utility.convertToLocalDateTime(startDateFilter));
-        summaryPeriod.setEndTime(Utility.convertToLocalDateTime(endDateFilter));
+        if(filteredTaskData.getNumberOfTasks() > 0) {
+            TimeSpan summaryPeriod = new TimeSpan(Utility.convertToLocalDateTime(startDateFilter));
+            summaryPeriod.setEndTime(Utility.convertToLocalDateTime(endDateFilter));
 
-        SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
-        ChartComponent c = summaryGraph.createPieChart();
+            SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
+            ChartComponent c = summaryGraph.createPieChart();
 
-        graphRow = (Container)graphRow.stripMarginAndPadding();
-
-        graphRow.add(c);
-        //graphRow.add(new Label("graph goes here"));
+            graphRow.add(c);
+        }
     }
 
     private Picker createPicker(Date date) {
