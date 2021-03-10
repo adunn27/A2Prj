@@ -24,7 +24,6 @@ public class TaskDetailsScreen extends Form {
     private Container descRow = new Container();
     private Container tagRow = new Container();
     private Container timeRow = new Container();
-    private Container Header = new Container();
     private Container Footer = new Container();
 
     private String allTime; // TODO: get allTimeData
@@ -66,7 +65,6 @@ public class TaskDetailsScreen extends Form {
         createFooter();
 
         // add components
-        add(BorderLayout.NORTH, Header);
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, Body);
     }
@@ -201,27 +199,6 @@ public class TaskDetailsScreen extends Form {
         );
     }
 
-//    private void createHeader() {
-//        Header = new Container();
-//        Header.setLayout(new BorderLayout());
-//
-//        // back button
-//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-//        backButton.setMyColor(UITheme.YELLOW);
-//        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-//        backButton.setMyPadding(UITheme.PAD_3MM);
-//        backButton.addActionListener(e-> ui.goBack());
-//
-//        // edit button
-//        UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
-//        editButton.setMyColor(UITheme.YELLOW);
-//        editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
-//        editButton.setMyPadding(UITheme.PAD_3MM);
-//        editButton.addActionListener(e-> ui.goEdit(taskData.getName()));
-//
-//        Header.add(BorderLayout.EAST, editButton);
-//        Header.add(BorderLayout.WEST, backButton);
-//    }
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));

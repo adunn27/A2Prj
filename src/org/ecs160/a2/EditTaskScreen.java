@@ -21,44 +21,7 @@ import java.util.Vector;
 
 import static com.codename1.ui.CN.*;
 
-
-// TODO: in tagElement(), add event listener for delete button
-class tagElement extends Container {
-    int color_lightGrey = 0xc4c4c4;
-    int color_black = 0x000000;
-    int color_red = 0xbe0000;
-
-    public tagElement(String name) {
-        this.setLayout(new BorderLayout());
-
-        // name label
-        Label tagName = new Label(name);
-        tagName.getAllStyles().setFgColor(color_black);
-
-        // delete button
-        Button tagDelete = new Button(); // needs event listener
-        tagDelete.setIcon(FontImage.createMaterial(FontImage.MATERIAL_CLOSE, tagDelete.getUnselectedStyle()));
-        tagDelete.getAllStyles().setFgColor(UITheme.RED);
-
-        add(BorderLayout.CENTER, tagName);
-        add(BorderLayout.EAST, tagDelete);
-        getAllStyles().setBorder(Border.createDashedBorder(6, UITheme.LIGHT_GREY));
-        getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
-    }
-
-}
-
-class tagEditObject extends Container {
-    String name = "tagXX";
-    public tagEditObject() {
-        // todo: implement tagEditObject()
-//        add(tagEdit);
-    }
-}
-
 public class EditTaskScreen extends Form {
-    private Container Header;
     private Container Footer;
     private Container TitleRow;
     private Container TagRow;
@@ -106,14 +69,15 @@ public class EditTaskScreen extends Form {
     public EditTaskScreen(Task taskObj, UINavigator ui) {
         this.ui = ui;
         initData(taskObj); // save data so it may be rewritten
+        createToolbar();
         createEditTaskScreen();
     }
 
     private void createEditTaskScreen() {
+        removeAll();
         setTitle("Edit Task");
         setLayout(new BorderLayout());
 
-        createHeader();
         createFooter();
         Container body = new Container(BoxLayout.y());
 
@@ -127,7 +91,6 @@ public class EditTaskScreen extends Form {
 
         body.addAll(TitleRow, TagRow, descField);
 
-        add(BorderLayout.NORTH, Header);
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, body);
     }
@@ -202,18 +165,11 @@ public class EditTaskScreen extends Form {
         ui.goBack();
     }
 
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
-        doneButton.setMyColor(UITheme.YELLOW);
-        doneButton.setMyText("Done");
-        doneButton.setMyPadding(UITheme.PAD_3MM);
-
-        doneButton.addActionListener(e ->  saveChanges());
-
-        Header.add(BorderLayout.EAST, doneButton);
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToRightBar("Done",
+                ' ', UITheme.PAD_6MM, e->saveChanges());
     }
+
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new BorderLayout());
