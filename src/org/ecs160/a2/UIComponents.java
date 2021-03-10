@@ -1,15 +1,20 @@
 package org.ecs160.a2;
 
+import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.Label;
+import com.codename1.ui.spinner.Picker;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static com.codename1.ui.CN.*;
 
@@ -383,6 +388,44 @@ public class UIComponents {
 
             add(WEST, startLabel);
             add(EAST, EastSide);
+        }
+    }
+
+
+    static class DatePickerObject extends Picker {
+        public DatePickerObject(Date date) {
+            setType(Display.PICKER_TYPE_CALENDAR);
+            getStyle().setBorder(
+                    RoundBorder.create().rectangle(true).
+                            color(UITheme.LIGHT_GREY));
+            getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+            getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
+                    UITheme.PAD_3MM, UITheme.PAD_3MM);
+            setDate(date);
+        }
+    }
+
+    static class StartEndPickers extends Container {
+        public StartEndPickers(Picker start, Picker end) {
+            setLayout(BoxLayout.y());
+            addAll(FlowLayout.encloseCenterMiddle(
+                    new Label("Start"), start,
+                    end, new Label("End"))
+            );
+        }
+    }
+
+    static class showWarningDialog extends Dialog {
+        public showWarningDialog(String warning) {
+            setLayout(BoxLayout.y());
+            setTitle("Wait!");
+            add(new SpanLabel(warning));
+            ButtonObject okButton = new ButtonObject();
+            okButton.setAllStyles("Ok", UITheme.YELLOW,
+                    ' ', UITheme.PAD_3MM);
+            add(okButton);
+            okButton.addActionListener(e->this.dispose());
+            show();
         }
     }
 }

@@ -256,11 +256,20 @@ public class SummaryScreen extends Form {
         done.addActionListener(e -> {
             startDateFilter = startDate.getDate();
             endDateFilter = endDate.getDate();
-            show();
+            if (startDateFilter.compareTo(endDateFilter) > 0) {
+                new UIComponents.showWarningDialog(
+                        "Please set start date on or before end date"
+                );
+            } else {
+                show();
+            }
         });
 
-        TimePicker();
-        FilterDialog.add(timePicker);
+        startDate = new UIComponents.DatePickerObject(startDateFilter);
+        endDate = new UIComponents.DatePickerObject(endDateFilter);
+        UIComponents.StartEndPickers startEndPickers = new UIComponents.
+                StartEndPickers(startDate, endDate);
+        FilterDialog.add(startEndPickers);
         FilterDialog.add(sizeButtons);
 
         Container tagTitle = FlowLayout.encloseCenterMiddle();
