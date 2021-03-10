@@ -322,25 +322,4 @@ public class SummaryScreen extends Form {
 
         graphRow.add(new Label("graph goes here"));
     }
-
-    private Picker createPicker(Date date) {
-        Picker datePicker = new Picker();
-        datePicker.setType(Display.PICKER_TYPE_CALENDAR);
-        datePicker.getStyle().setBorder(
-                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
-        datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-        datePicker.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
-                UITheme.PAD_3MM, UITheme.PAD_3MM);
-        datePicker.setDate(date);
-        return datePicker;
-    }
-    private void TimePicker() {
-        timePicker = FlowLayout.encloseCenterMiddle();
-
-        startDate = createPicker(startDateFilter);
-        endDate = createPicker(endDateFilter);
-
-        timePicker.addAll(new Label("Start"), startDate,
-                          endDate, new Label("End"));
-    }
 }
