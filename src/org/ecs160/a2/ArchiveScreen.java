@@ -29,13 +29,13 @@ class SearchBar extends Container{
 
 public class ArchiveScreen extends Form {
     Container TaskList;
-    Container Header;
     Container Footer;
 
     private TaskContainer tasks;
     private final UINavigator ui;
 
     public ArchiveScreen(UINavigator ui) {
+        createToolbar();
         this.ui = ui;
     }
 
@@ -58,12 +58,9 @@ public class ArchiveScreen extends Form {
 
         setLayout(new BorderLayout());
 
-        Container newSearchBar = new SearchBar();
-
-        createHeader();
         createTaskList();
 
-        add(NORTH, Header);
+//        add(NORTH, Header);
         add(CENTER, TaskList);
     }
 
@@ -78,19 +75,12 @@ public class ArchiveScreen extends Form {
         }
     }
 
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-
-        backButton.addActionListener(e-> ui.goBack());
-
-        Header.add(BorderLayout.WEST, backButton);
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("",
+                FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM,
+                e->ui.goBack());
     }
+
     private void createFooter(){
         Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));
