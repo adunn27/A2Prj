@@ -143,6 +143,7 @@ public class SummaryScreen extends Form {
                     FilterDialog.show();
                 });
     }
+
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
         UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");

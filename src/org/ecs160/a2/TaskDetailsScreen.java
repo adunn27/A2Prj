@@ -37,6 +37,7 @@ public class TaskDetailsScreen extends Form {
     TaskDetailsScreen(Task task, UINavigator ui) {
         taskData =  task;
         this.ui = ui;
+        createToolbar();
         createDetailsScreen();
     }
 
@@ -53,6 +54,7 @@ public class TaskDetailsScreen extends Form {
     }
 
     private void createDetailsScreen() {
+        removeAll();
         setTitle("Details");
         setLayout(new BorderLayout());
 
@@ -60,7 +62,7 @@ public class TaskDetailsScreen extends Form {
         Container Body = createBody();
 
         // create header, footer
-        createHeader();
+//        createHeader();
         createFooter();
 
         // add components
@@ -189,27 +191,37 @@ public class TaskDetailsScreen extends Form {
     }
 
     // header/footer
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("",
+                FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
 
-        // back button
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e-> ui.goBack());
-
-        // edit button
-        UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
-        editButton.setMyColor(UITheme.YELLOW);
-        editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
-        editButton.setMyPadding(UITheme.PAD_3MM);
-        editButton.addActionListener(e-> ui.goEdit(taskData.getName()));
-
-        Header.add(BorderLayout.EAST, editButton);
-        Header.add(BorderLayout.WEST, backButton);
+        getToolbar().addMaterialCommandToRightBar("",
+                FontImage.MATERIAL_MODE_EDIT, UITheme.PAD_6MM,
+                e-> ui.goEdit(taskData.getName())
+        );
     }
+
+//    private void createHeader() {
+//        Header = new Container();
+//        Header.setLayout(new BorderLayout());
+//
+//        // back button
+//        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
+//        backButton.setMyColor(UITheme.YELLOW);
+//        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
+//        backButton.setMyPadding(UITheme.PAD_3MM);
+//        backButton.addActionListener(e-> ui.goBack());
+//
+//        // edit button
+//        UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
+//        editButton.setMyColor(UITheme.YELLOW);
+//        editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
+//        editButton.setMyPadding(UITheme.PAD_3MM);
+//        editButton.addActionListener(e-> ui.goEdit(taskData.getName()));
+//
+//        Header.add(BorderLayout.EAST, editButton);
+//        Header.add(BorderLayout.WEST, backButton);
+//    }
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));
