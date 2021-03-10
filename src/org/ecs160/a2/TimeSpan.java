@@ -66,23 +66,28 @@ public class TimeSpan {
     }
 
     public Duration getTimeSpanDurationBetween
-            (LocalDateTime startDate, LocalDateTime endDate){
-        LocalDateTime trueStartTime = startDate;
-        LocalDateTime trueEndTime = endDate;
-        if (startTime.isAfter(startDate)){
+            (LocalDateTime startOfTimeWindow, LocalDateTime endOfTimeWindow){
+
+        LocalDateTime trueStartTime = startOfTimeWindow;
+        if (startTime.isAfter(startOfTimeWindow))
             trueStartTime = startTime;
-        }
 
-        LocalDateTime tempEndTime;
-        if (endTime == null)
-            tempEndTime = LocalDateTime.now();
-        else
-            tempEndTime = endTime;
-
-        if (tempEndTime.isBefore(endDate)){
+        LocalDateTime tempEndTime = getEndTimeElseNow();
+        LocalDateTime trueEndTime = endOfTimeWindow;
+        if (tempEndTime.isBefore(endOfTimeWindow))
             trueEndTime = tempEndTime;
-        }
+
+        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
+
+        // Need to check if the timeframe was outside
+        if (timeBetween.isNegative()) return Duration.ofMillis(0);
         return Duration.between(trueStartTime, trueEndTime);
+    }
+
+    private LocalDateTime getEndTimeElseNow() {
+        if (endTime == null)
+            return LocalDateTime.now();
+        return endTime;
     }
 
     public static void main(String[] args){
