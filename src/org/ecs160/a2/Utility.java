@@ -44,7 +44,11 @@ public final class Utility {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
-
+    public static LocalDateTime convertToLocalDateTime(Date date) { //TODO: Consider cleaning up
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
     public static String durationToFormattedString(Duration duration) {
         String hms = String.format("%d:%02d:%02d",
                 duration.toHours(),

@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import com.codename1.charts.ChartComponent;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
@@ -42,7 +43,7 @@ public class SummaryScreen extends Form {
     // DATA
     private java.util.List<String> sizeData;
     private java.util.List<String> tagData;
-    private TaskContainer allTaskData;
+    private TaskContainer filteredTaskData;
     private final UINavigator ui;
 
     public SummaryScreen(UINavigator ui) {
@@ -118,17 +119,17 @@ public class SummaryScreen extends Form {
         }
     }
     private void getTaskContainer() {
-        allTaskData = ui.backend.getUnarchivedTasks();
+        filteredTaskData = ui.backend.getUnarchivedTasks();
 
         for (String size : sizeFilters) {
-            allTaskData = allTaskData.getTasksBySize(TaskSize.parse(size));
+            filteredTaskData = filteredTaskData.getTasksBySize(TaskSize.parse(size));
         }
 
         for (String tag : tagFilters) {
-            allTaskData = allTaskData.getTasksWithTag(tag);
+            filteredTaskData = filteredTaskData.getTasksWithTag(tag);
         }
 
-        allTaskData = allTaskData.getTasksThatOccurred(
+        filteredTaskData = filteredTaskData.getTasksThatOccurred(
                 Utility.convertToLocalDate(startDateFilter),
                 Utility.convertToLocalDate(endDateFilter));
     }
@@ -155,13 +156,13 @@ public class SummaryScreen extends Form {
                 Utility.convertToLocalDate(startDateFilter));
         LocalDateTime endTime = Utility.getEndOfDay(
                 Utility.convertToLocalDate(endDateFilter));
-        long totalTime = allTaskData.getTotalTime(startTime, endTime);
+        long totalTime = filteredTaskData.getTotalTime(startTime, endTime);
 
-        long avgTime = allTaskData.getAverageTime(startTime, endTime);
+        long avgTime = filteredTaskData.getAverageTime(startTime, endTime);
 
-        long minTime = allTaskData.getMinimumTime(startTime, endTime);
+        long minTime = filteredTaskData.getMinimumTime(startTime, endTime);
 
-        long maxTime = allTaskData.getMaximumTime(startTime, endTime);
+        long maxTime = filteredTaskData.getMaximumTime(startTime, endTime);
 
         Container total = FlowLayout.encloseCenterMiddle();
         total.addAll(new Label("Total"),
@@ -198,12 +199,12 @@ public class SummaryScreen extends Form {
                 Utility.convertToLocalDate(startDateFilter));
         LocalDateTime endTime = Utility.getEndOfDay(
                 Utility.convertToLocalDate(endDateFilter));
-        if (allTaskData.isEmpty()) {
+        if (filteredTaskData.isEmpty()) {
             Container noTasks = FlowLayout.encloseCenterMiddle();
             noTasks.add("No Tasks to Display");
             TaskList.add(noTasks);
         } else {
-            for (Task taskObj : allTaskData) {
+            for (Task taskObj : filteredTaskData) {
                 TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
@@ -307,11 +308,16 @@ public class SummaryScreen extends Form {
 
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-//        SummaryGraph summaryGraph = new SummaryGraph(ui);
-//        ChartComponent c = summaryGraph.createPieChart();
-//        graphRow.add(c);
 
-        graphRow.add(new Label("graph goes here"));
+        if(filteredTaskData.getNumberOfTasks() > 0) {
+            TimeSpan summaryPeriod = new TimeSpan(Utility.convertToLocalDateTime(startDateFilter));
+            summaryPeriod.setEndTime(Utility.convertToLocalDateTime(endDateFilter));
+
+            SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
+            ChartComponent c = summaryGraph.createPieChart();
+
+            graphRow.add(c);
+        }
     }
 
     private Picker createPicker(Date date) {
