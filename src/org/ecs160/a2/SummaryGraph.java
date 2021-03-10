@@ -25,8 +25,8 @@ public class SummaryGraph{
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
         renderer.setLabelsColor(ColorUtil.BLACK);
-        renderer.setMargins(new int[]{0, 0, 0, 0});
-
+        renderer.setMargins(new int[]{5, 5, 5, 5});
+        renderer.setScale(0.90F);
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
             r.setColor(color);

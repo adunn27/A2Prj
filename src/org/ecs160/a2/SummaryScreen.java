@@ -314,8 +314,10 @@ public class SummaryScreen extends Form {
 
         SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
         ChartComponent c = summaryGraph.createPieChart();
-        graphRow.add(c);
 
+        graphRow = (Container)graphRow.stripMarginAndPadding();
+
+        graphRow.add(c);
         //graphRow.add(new Label("graph goes here"));
     }
 
