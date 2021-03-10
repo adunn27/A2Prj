@@ -49,9 +49,12 @@ public class AppMain {
             current.show();
             return;
         }
-
         BusinessLogic backend = new BusinessLogic();
         UINavigator frontend = new UINavigator(backend);
+
+        Task t = new Task("taskA", TaskSize.S);
+        TaskDetailsScreen tDS = new TaskDetailsScreen(t, frontend);
+        tDS.show();
     }
 
     public void stop() {

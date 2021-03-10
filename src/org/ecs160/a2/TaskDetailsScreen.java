@@ -82,7 +82,7 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.addAll(titleRow, timeRow);
 
-            if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
+          //  if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
                 Body.add(graphRow);
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
@@ -183,9 +183,12 @@ public class TaskDetailsScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(new BorderLayout());
-        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-        graphRow.add(CENTER, graphPlaceHolder);
+        //SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+        //graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+        double[] placeholder = new double[]{2.0, 15.0, 17.0, 6.0, 33.0, 14.2};
+        TaskDetailsGraph graph = new TaskDetailsGraph(placeholder);
+        ChartComponent c = graph.createLineChart();
+        graphRow.add(CENTER, c);
     }
 
     // header/footer
