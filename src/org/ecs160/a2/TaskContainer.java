@@ -104,8 +104,9 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics(start, stop);
+        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
 
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMin();
     }
 
@@ -116,8 +117,9 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics(start, stop);
+        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
 
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMax();
     }
 
