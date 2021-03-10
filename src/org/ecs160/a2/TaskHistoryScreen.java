@@ -281,12 +281,32 @@ public class TaskHistoryScreen extends Form {
             LocalDateTime endDateTime = end_1.toInstant().
                     atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-            editedTimeSpan.setStartTime(startDateTime);
-            editedTimeSpan.setEndTime(endDateTime);
+            if (startDateTime.isAfter(endDateTime)){
+                System.out.println("You can't have a negative duration!");
+                Dialog newDialog = new Dialog();
 
-            PopupDialog.dispose();
-            ui.refreshScreen();
-            ui.refreshScreen();
+                Container warningDialog = new Container();
+
+                warningDialog.setLayout(BoxLayout.y());
+                warningDialog.add("You can't have a negative duration!");
+                UIComponents.ButtonObject button = new UIComponents.ButtonObject();
+                button.setMyText("OK");
+                button.setMyColor(UITheme.LIGHT_YELLOW);
+                button.addActionListener(event -> {
+                    newDialog.dispose();
+                });
+                warningDialog.add(button);
+                newDialog.add(warningDialog);
+                newDialog.show();
+            } else {
+                editedTimeSpan.setStartTime(startDateTime);
+                editedTimeSpan.setEndTime(endDateTime);
+
+
+                PopupDialog.dispose();
+                ui.refreshScreen();
+                ui.refreshScreen();
+            }
         });
 
         d.add(submitButton);
