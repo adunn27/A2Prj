@@ -86,7 +86,11 @@ public class SummaryScreen extends Form {
         createTaskList();
         createGraphRow();
 
-        addAll(FilterHeader,StatsList,graphRow,TaskList);
+        if (allTaskData.isEmpty()) {
+            addAll(FilterHeader,TaskList);
+        } else {
+            addAll(FilterHeader,StatsList,graphRow,TaskList);
+        }
     }
 
     private void createFilterDisplay() {
@@ -191,7 +195,7 @@ public class SummaryScreen extends Form {
 
         UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
         taskTitle.setSize(SIZE_LARGE);
-        TaskList.add(taskTitle);
+
         LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
                 Utility.convertToLocalDate(startDateFilter));
         LocalDateTime endTime = Utility.getEndOfDay(
@@ -201,6 +205,7 @@ public class SummaryScreen extends Form {
             noTasks.add("No Tasks to Display");
             TaskList.add(noTasks);
         } else {
+            TaskList.add(taskTitle);
             for (Task taskObj : allTaskData) {
                 TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
