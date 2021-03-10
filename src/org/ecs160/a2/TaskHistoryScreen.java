@@ -114,9 +114,11 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        System.out.println(taskData.getAllTimeSpans().size());
-
+        taskData= ui.backend.getTaskByName(taskData.getName());
+        //System.out.println(taskData.getName());
+        //System.out.println(taskData.getAllTimes().size());
         for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
+
 
             TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
 

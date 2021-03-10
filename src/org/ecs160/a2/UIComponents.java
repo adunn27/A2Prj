@@ -247,10 +247,14 @@ public class UIComponents {
             archive.setMyIcon(FontImage.MATERIAL_SAVE);
             archive.setMyColor(UITheme.LIGHT_GREY);
             archive.addActionListener(e->{
-                if (taskData.isArchived())
+                if (taskData.isArchived()){
                     ui.backend.getTaskByName(taskData.getName()).unarchive();
-                else
+                    ui.backend.logfile.unarchiveTask(taskData);
+                }
+                else{
                     ui.backend.getTaskByName(taskData.getName()).archive();
+                    ui.backend.logfile.archiveTask(taskData);
+                }
 //                currPage.animate();
                 ui.refreshScreen();
                 log("archived/unarchived task");
@@ -278,13 +282,16 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
+                ui.backend.logfile.stopTask(taskData);
                 taskData.stop();
             } else {
                 Task activeTask = ui.backend.getActiveTask();
                 if (activeTask != null) {
+                    ui.backend.logfile.stopTask(activeTask);
                     activeTask.stop();
                 }
                 taskData.start();
+                ui.backend.logfile.startTask(taskData);
             }
             ui.refreshScreen();
         }

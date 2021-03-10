@@ -72,6 +72,7 @@ public class EditTaskScreen extends Form {
 
     private Task task;
     private String nameData;
+    private int taskid;
     private String sizeData;
     private String descriptionData;
     private java.util.List<String> tagsData = new ArrayList<>();
@@ -85,6 +86,7 @@ public class EditTaskScreen extends Form {
             this.task = new Task("");
             isNewTask = true;
         }
+       // taskid = task.getId();
         nameData = task.getName();
         sizeData = task.getTaskSizeString();
         descriptionData = task.getDescription();
@@ -178,6 +180,7 @@ public class EditTaskScreen extends Form {
     }
 
     private void saveChanges() {
+        taskid = task.getId();
         nameData = nameField.getText();
         sizeData = sizeButton.getText();
         descriptionData = descField.getText();
@@ -190,15 +193,21 @@ public class EditTaskScreen extends Form {
             ui.goBack();
             return;
         }
-
-        if (isNewTask) {
-            ui.backend.saveTask(task);
-            isNewTask = false;
-        }
+        task.setId(task.getId());
         task.setName(nameData);
         task.setTaskSize(sizeData);
         task.addAllTags(tagsData);
         task.setDescription(descriptionData);
+
+        if (isNewTask) {
+            ui.backend.saveTask(task);
+            ui.backend.logfile.addTask(task);
+            isNewTask = false;
+        }else {
+
+            ui.backend.logfile.editTask(task);
+        }
+
         ui.goBack();
     }
 

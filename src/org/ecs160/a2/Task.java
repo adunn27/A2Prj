@@ -13,12 +13,15 @@ public class Task {
     private static final TaskSize DEFAULT_TASK_SIZE = TaskSize.S;
 
     private String name;
+    private int TaskId;
     private TaskSize size;
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
     private List<TimeSpan> allTimes; //TODO better name
     private Set<String> tags; //TODO does order matter? Do tags need color also?
+
+
 
     private void construct(String newTaskName, TaskSize newTaskSize) {
         this.name = newTaskName;
@@ -27,6 +30,12 @@ public class Task {
         this.allTimes = new Vector<TimeSpan>();
 
     }
+
+    public Boolean isArchive(){ return isArchived; }
+
+    public void setId(int taskid){TaskId = taskid;}
+
+    public int getId(){return TaskId;}
 
     public Task(String newTaskName, TaskSize newTaskSize) {
         construct(newTaskName, newTaskSize);
@@ -85,6 +94,8 @@ public class Task {
         isArchived = false;
     }
 
+
+
     public void start() {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
@@ -138,6 +149,14 @@ public class Task {
         return Utility.durationToFormattedString(duration);
     }
 
+    public String toString(Duration duration) {
+        String hms = String.format("%d:%02d:%02d",
+                duration.toHours(),
+                duration.toMinutesPart(),
+                duration.toSecondsPart());
+        return hms;
+    }
+
     private Duration getTotalTimeOfDay(LocalDate day) {
         return getTimeBetween(day.atStartOfDay(),
                 day.atTime(LocalTime.MAX));
@@ -174,4 +193,6 @@ public class Task {
     public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
         allTimes.remove(deletedTimeSpan);
     }
+
+    public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}
 }
