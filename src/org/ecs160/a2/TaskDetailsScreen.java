@@ -9,6 +9,8 @@ import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
+import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
@@ -209,8 +211,14 @@ public class TaskDetailsScreen extends Form {
         graphRow.add(dateButton);
     }
 
-    private Double[] getGraphData() {
-        taskData.getDailyTimesBetween();
+    private double[] getGraphData() {
+        LocalDate startLocalDate = Utility.convertToLocalDate(startDateFilter);
+        LocalDate endLocalDate = Utility.convertToLocalDate(endDateFilter);
+        java.util.List<Duration> dailyTimes = taskData.getDailyTimesBetween(
+                                                        startLocalDate,
+                                                        endLocalDate);
+
+        return dailyTimes.stream().mapToDouble(Duration::toMillis).toArray();
     }
 
     private void createFilterDialog() {
