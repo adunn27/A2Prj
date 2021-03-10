@@ -149,13 +149,7 @@ public class Task {
         return Utility.durationToFormattedString(duration);
     }
 
-    public String toString(Duration duration) {
-        String hms = String.format("%d:%02d:%02d",
-                duration.toHours(),
-                duration.toMinutesPart(),
-                duration.toSecondsPart());
-        return hms;
-    }
+    
 
     private Duration getTotalTimeOfDay(LocalDate day) {
         return getTimeBetween(day.atStartOfDay(),
