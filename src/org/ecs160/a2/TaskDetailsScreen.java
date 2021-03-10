@@ -238,7 +238,14 @@ public class TaskDetailsScreen extends Form {
         doneButton.addActionListener(e -> {
             startDateFilter = startDatePicker.getDate();
             endDateFilter = endDatePicker.getDate();
-            show();
+
+            if (startDateFilter.compareTo(endDateFilter) > 0) {
+                new UIComponents.showWarningDialog(
+                        "Please set start date on or before end date"
+                );
+            } else {
+                show();
+            }
         });
 
         // ADD TO FILTER
