@@ -40,6 +40,7 @@ public final class Utility {
                 .toInstant()
         );
     }
+
     public static LocalDate convertToLocalDate(Date date) {
         return date.toInstant()
                 .atZone(ZoneId.systemDefault())
