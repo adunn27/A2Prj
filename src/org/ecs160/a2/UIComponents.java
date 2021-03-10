@@ -391,7 +391,6 @@ public class UIComponents {
         }
     }
 
-
     static class DatePickerObject extends Picker {
         public DatePickerObject(Date date) {
             setType(Display.PICKER_TYPE_CALENDAR);
