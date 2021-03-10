@@ -15,13 +15,13 @@ import java.util.Date;
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
-    private Container titleRow = new Container();
+    private Container titleRow;
     private Container graphRow;
-    private Container descRow = new Container();
-    private Container tagRow = new Container();
-    private Container timeRow = new Container();
-    private Container Header = new Container();
-    private Container Footer = new Container();
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container Header;
+    private Container Footer;
     private Dialog FilterDialog;
     private Picker startDatePicker;
     private Picker endDatePicker;
@@ -207,6 +207,10 @@ public class TaskDetailsScreen extends Form {
         });
 
         graphRow.add(dateButton);
+    }
+
+    private Double[] getGraphData() {
+        taskData.getDailyTimesBetween();
     }
 
     private void createFilterDialog() {
