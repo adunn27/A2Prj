@@ -93,8 +93,10 @@ public class SummaryScreen extends Form {
         FilterHeader = new Container(BoxLayout.y());
 
         UIComponents.TitleObject startEndDates = new UIComponents.TitleObject(
-                dateToString(startDateFilter) + " - " +
-                        dateToString(endDateFilter));
+                Utility.dateToFormattedString(startDateFilter) + " - " +
+                Utility.dateToFormattedString(endDateFilter)
+        );
+
         startEndDates.setSize(SIZE_LARGE);
         startEndDates.setMyColor(UITheme.BLACK);
         startEndDates.removePadding();
@@ -288,11 +290,7 @@ public class SummaryScreen extends Form {
         startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
     }
-    private String dateToString(Date date) {
-        String pattern = "MM/dd/yy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        return simpleDateFormat.format(date);
-    }
+
 
     // TODO: refactor
     private void updateSizeFilter(String size, boolean wasFilter) {

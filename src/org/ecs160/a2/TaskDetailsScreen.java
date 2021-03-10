@@ -12,9 +12,13 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
+import java.util.logging.Filter;
 
 import static com.codename1.ui.CN.*;
 
@@ -26,10 +30,16 @@ public class TaskDetailsScreen extends Form {
     private Container timeRow = new Container();
     private Container Header = new Container();
     private Container Footer = new Container();
+    private Dialog FilterDialog;
+    private Picker startDatePicker;
+    private Picker endDatePicker;
 
-    private String allTime; // TODO: get allTimeData
-    private String weekTime; // TODO: get weekTimeData
-    private String dayTime; // TODO: get dayTimeData
+    private String allTime;
+    private String weekTime;
+    private String dayTime;
+
+    private Date startDateFilter;
+    private Date endDateFilter;
 
     private Task taskData;
     private UINavigator ui;
@@ -37,6 +47,7 @@ public class TaskDetailsScreen extends Form {
     TaskDetailsScreen(Task task, UINavigator ui) {
         taskData =  task;
         this.ui = ui;
+        resetStartEndDate();
         createDetailsScreen();
     }
 
@@ -50,6 +61,11 @@ public class TaskDetailsScreen extends Form {
     public void showBack() {
         createDetailsScreen();
         super.showBack();
+    }
+
+    private void resetStartEndDate() {
+        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
+        endDateFilter = new Date();
     }
 
     private void createDetailsScreen() {
@@ -80,7 +96,7 @@ public class TaskDetailsScreen extends Form {
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body.addAll(titleRow, timeRow);
+            Body.addAll(titleRow, graphRow, timeRow);
 
             if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
                 Body.add(graphRow);
@@ -182,10 +198,53 @@ public class TaskDetailsScreen extends Form {
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
-        graphRow = new Container(new BorderLayout());
-        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-        graphRow.add(CENTER, graphPlaceHolder);
+        graphRow = new Container(BoxLayout.y());
+//        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+//        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+//        graphRow.add(CENTER, graphPlaceHolder);
+
+        UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();
+        String dateFormatted = Utility.dateToFormattedString(startDateFilter) + " - " +
+                      Utility.dateToFormattedString(endDateFilter);
+        dateButton.setAllStyles(dateFormatted, UITheme.LIGHT_GREY,
+                ' ', UITheme.PAD_3MM);
+
+        dateButton.addActionListener(e->{
+            showFilterDialog();
+        });
+
+        graphRow.add(dateButton);
+    }
+
+    private void showFilterDialog() {
+        FilterDialog = new Dialog();
+        FilterDialog.setLayout(BoxLayout.y());
+        FilterDialog.setTitle("Select Time Window");
+
+        // DATE PICKERS
+        startDatePicker = new UIComponents.DatePickerObject(startDateFilter);
+        endDatePicker = new UIComponents.DatePickerObject(endDateFilter);
+        UIComponents.StartEndPickers startEndPickers = new UIComponents.
+                StartEndPickers(startDatePicker, endDatePicker);
+
+        // RESET BUTTON
+        UIComponents.ButtonObject resetButton = new UIComponents.ButtonObject();
+        resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        resetButton.addActionListener(e -> resetStartEndDate());
+
+        // DONE BUTTON
+        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
+        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        doneButton.addActionListener(e -> {
+            startDateFilter = startDatePicker.getDate();
+            endDateFilter = endDatePicker.getDate();
+            show();
+        });
+
+        // ADD TO FILTER
+        FilterDialog.add(startEndPickers);
+        FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
+        FilterDialog.show();
     }
 
     // header/footer
