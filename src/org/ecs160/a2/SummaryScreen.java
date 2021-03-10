@@ -210,7 +210,7 @@ public class SummaryScreen extends Form {
             }
         }
     }
-    private void refreshFilterDialog() { // TODO: fix refresh speed
+    private void refreshFilterDialog() {
         FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
         FilterDialog.dispose();
         createFilterDialog();

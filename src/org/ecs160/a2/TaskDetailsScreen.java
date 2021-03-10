@@ -1,24 +1,16 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.charts.models.XYMultipleSeriesDataset;
-import com.codename1.charts.models.XYSeries;
-import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
-import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
+import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
-import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.logging.Filter;
 
 import static com.codename1.ui.CN.*;
 
@@ -210,13 +202,14 @@ public class TaskDetailsScreen extends Form {
                 ' ', UITheme.PAD_3MM);
 
         dateButton.addActionListener(e->{
-            showFilterDialog();
+            createFilterDialog();
+            FilterDialog.show();
         });
 
         graphRow.add(dateButton);
     }
 
-    private void showFilterDialog() {
+    private void createFilterDialog() {
         FilterDialog = new Dialog();
         FilterDialog.setLayout(BoxLayout.y());
         FilterDialog.setTitle("Select Time Window");
@@ -230,7 +223,10 @@ public class TaskDetailsScreen extends Form {
         // RESET BUTTON
         UIComponents.ButtonObject resetButton = new UIComponents.ButtonObject();
         resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
-        resetButton.addActionListener(e -> resetStartEndDate());
+        resetButton.addActionListener(e -> {
+            resetStartEndDate();
+            refreshFilterDialog();
+        });
 
         // DONE BUTTON
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
@@ -251,6 +247,13 @@ public class TaskDetailsScreen extends Form {
         // ADD TO FILTER
         FilterDialog.add(startEndPickers);
         FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
+    }
+
+    private void refreshFilterDialog() { // TODO: DRY violation (also in summaryscreen)
+        FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
+        FilterDialog.dispose();
+        createFilterDialog();
+        FilterDialog.setTransitionInAnimator(CommonTransitions.createEmpty());
         FilterDialog.show();
     }
 
