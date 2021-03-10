@@ -40,8 +40,6 @@ class HistoryTaskObject1 extends Container {
 }
 
 public class TaskHistoryScreen extends Form {
-    private Container Header;
-    private Container Footer;
     private Container TaskList;
 
     private String name;
@@ -76,6 +74,7 @@ public class TaskHistoryScreen extends Form {
     public TaskHistoryScreen(Task task, UINavigator ui){
         taskData = task;
         this.ui = ui;
+        createToolbar();
         createTaskHistoryScreen();
     }
 
@@ -92,13 +91,12 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void createTaskHistoryScreen() {
+        removeAll();
         setTitle("Task History");
         setLayout(new BorderLayout());
 
-        createHeader();
         createTaskList();
 
-        add(NORTH, Header);
         add(CENTER, TaskList);
     }
 
@@ -107,7 +105,6 @@ public class TaskHistoryScreen extends Form {
         TaskList.setLayout(BoxLayout.y());
         TaskList.setScrollableY(true);
 
-        //Because Border Layout Acts wierd I had to
         Container EastContainer = new Container();
         EastContainer.setLayout(BoxLayout.x());
         EastContainer.add("Label");
@@ -247,17 +244,9 @@ public class TaskHistoryScreen extends Form {
 
         d.show();
     }
-
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-
-        backButton.addActionListener(e-> ui.goBack());
-        Header.add(BorderLayout.WEST, backButton);
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("",
+                FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM,
+                e->ui.goBack());
     }
-
 }

@@ -57,11 +57,7 @@ public class TaskDetailsScreen extends Form {
         setTitle("Details");
         setLayout(new BorderLayout());
 
-        // create body
         Container Body = createBody();
-
-        // create header, footer
-//        createHeader();
         createFooter();
 
         // add components
