@@ -75,9 +75,10 @@ public class HomeScreen extends Form{
         TaskMenu.setScrollableY(true);
 
         if (activeTask != null) {
-            UIComponents.TitleObject activeHeader = new UIComponents.TitleObject("Now Playing");
-            activeHeader.setSize(Font.SIZE_MEDIUM);
-            TaskMenu.add(activeHeader);
+            UIComponents.TextObject activeTitle = new UIComponents.TextObject(
+                    "Now Playing", UITheme.GREY,
+                    UITheme.PAD_3MM, Font.SIZE_MEDIUM);
+            TaskMenu.add(activeTitle);
 
             UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
             TaskMenu.add(t);
@@ -85,9 +86,10 @@ public class HomeScreen extends Form{
         }
 
         if (!unarchivedTasks.isEmpty()) {
-            UIComponents.TitleObject inactiveHeader =new UIComponents.TitleObject("My Tasks");
-            inactiveHeader.setSize(Font.SIZE_MEDIUM);
-            TaskMenu.add(inactiveHeader);
+            UIComponents.TextObject inactiveTitle =new UIComponents.TextObject(
+                    "My Tasks", UITheme.GREY,
+                    UITheme.PAD_3MM, Font.SIZE_MEDIUM);
+            TaskMenu.add(inactiveTitle);
         }
 
         for (Task taskObj: unarchivedTasks) {

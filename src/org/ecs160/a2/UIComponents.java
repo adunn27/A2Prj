@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.geom.Dimension;
@@ -38,7 +39,8 @@ public class UIComponents {
             );
 
             if (icon != ' ')
-                this.setIcon(FontImage.createMaterial(icon,getUnselectedStyle()));
+                this.setIcon(FontImage.createMaterial(icon,
+                        getUnselectedStyle()));
 
             this.getAllStyles().setPadding(pad,pad,pad,pad);
         }
@@ -70,14 +72,9 @@ public class UIComponents {
             );
         }
 
-        // pass in String
+//         pass in String
         public void setMyText(String text) {
             this.setText(text);
-        }
-
-        public void setMyMargin(int margin) {
-            this.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            this.getAllStyles().setMargin(margin,margin,margin,margin);
         }
 
         public void setMyPadding(int pad) {
@@ -86,8 +83,11 @@ public class UIComponents {
         }
     }
 
+
+
     // args: size
     // used in: StandardTaskObject, SummaryTaskObject
+    // TODO: REMOVE?
     static class SizeLabelObject extends Label {
         public SizeLabelObject(String size) {
             setText(size);
@@ -95,17 +95,17 @@ public class UIComponents {
 
             getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
 
-            getAllStyles().setPadding(UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,
-                    UITheme.PAD_3MM);
+            getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,
+                    UITheme.PAD_3MM, UITheme.PAD_3MM);
 
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM,UITheme.PAD_3MM);
+            getAllStyles().setMargin(UITheme.PAD_3MM, UITheme.PAD_3MM,
+                    UITheme.PAD_3MM,UITheme.PAD_3MM);
 
-            getAllStyles().setBorder(RoundBorder.create().color(setColor(size)));
-
+            getAllStyles().setBorder(RoundBorder.create()
+                    .color(setSizeColor(size)));
         }
+
         public void setSelectedColor() {
             this.getAllStyles().setFgColor(UITheme.BLACK);
             this.getAllStyles().setBorder(
@@ -113,15 +113,16 @@ public class UIComponents {
                             .color(UITheme.COL_SELECTED)
             );
         }
-        private int setColor(String size) {
-            if (size.equals("XL")) {
-                return UITheme.COL_SIZE_XL;
-            } else if (size.equals("L")) {
-                return UITheme.COL_SIZE_L;
-            } else if (size.equals("M")) {
-                return UITheme.COL_SIZE_M;
-            } else {
-                return UITheme.COL_SIZE_S;
+        private int setSizeColor(String size) {
+            switch (size) {
+                case "XL":
+                    return UITheme.COL_SIZE_XL;
+                case "L":
+                    return UITheme.COL_SIZE_L;
+                case "M":
+                    return UITheme.COL_SIZE_M;
+                default:
+                    return UITheme.COL_SIZE_S;
             }
         }
     }
@@ -160,6 +161,9 @@ public class UIComponents {
             getAllStyles().setFgColor(UITheme.GREY);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+            getAllStyles().setFont((
+                    Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_MEDIUM))
+            );
         }
 
         public void setSize(int size) {
@@ -172,6 +176,24 @@ public class UIComponents {
 
         public void removePadding() {
             getAllStyles().setMargin(Component.LEFT, 0);
+        }
+    }
+
+    static class TextObject extends SpanLabel {
+        private int size;
+        public TextObject(String title, int color, int margin, int size) {
+            setText(title);
+            getTextAllStyles().setFgColor(color);
+            getTextAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
+            getTextAllStyles().setMargin(Component.LEFT, margin);
+            getTextAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM,
+                    STYLE_PLAIN, size)));
+            this.size = size;
+        }
+
+        public void setBold() {
+            getTextAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM,
+                    STYLE_BOLD, size)));
         }
     }
 

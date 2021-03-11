@@ -26,9 +26,9 @@ public class TaskDetailsScreen extends Form {
     private Container timeRow = new Container();
     private Container Footer = new Container();
 
-    private String allTime; // TODO: get allTimeData
-    private String weekTime; // TODO: get weekTimeData
-    private String dayTime; // TODO: get dayTimeData
+    private String allTime;
+    private String weekTime;
+    private String dayTime;
 
     private Task taskData;
     private UINavigator ui;
@@ -69,24 +69,25 @@ public class TaskDetailsScreen extends Form {
         Container Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
-        if (taskData != null) {
-            // add rows to body
-            createTitleRow();
-            createGraphRow();
-            createTimeRow();
-            createTagRow();
-            createDescRow();
-            Body.addAll(titleRow, timeRow);
+        createTitleRow();
+        createTimeRow();
+        Body.addAll(titleRow, timeRow);
 
-            if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
-                Body.add(graphRow);
-            if (!taskData.getTags().isEmpty())
-                Body.add(tagRow);
-            if (!taskData.getDescription().isEmpty())
-                Body.add(descRow);
-        } else {
-            Body.add("Task not found...");
+        if (!taskData.getTimeBetween(LocalDateTime.MIN,
+                LocalDateTime.MAX).isZero()) {
+            createGraphRow();
+            Body.add(graphRow);
         }
+        if (!taskData.getTags().isEmpty()) {
+            createTagRow();
+            Body.add(tagRow);
+        }
+
+        if (!taskData.getDescription().isEmpty()) {
+            createDescRow();
+            Body.add(descRow);
+        }
+
         return Body;
     }
 
@@ -95,15 +96,14 @@ public class TaskDetailsScreen extends Form {
         descRow = new Container();
         descRow.setLayout(BoxLayout.y());
 
-        UIComponents.TitleObject descTitle = new UIComponents.TitleObject("Description");
-        descTitle.setSize(SIZE_SMALL);
+        UIComponents.TextObject descTitle = new UIComponents.TextObject(
+                "Description", UITheme.GREY, UITheme.PAD_3MM, SIZE_SMALL
+        );
 
-        SpanLabel descData = new SpanLabel();
-        descData.setText(taskData.getDescription());
-        Style descDataStyle = descData.getTextAllStyles();
-        descDataStyle.setFgColor(UITheme.BLACK);
-        descDataStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
-        descDataStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+        UIComponents.TextObject descData = new UIComponents.TextObject(
+                taskData.getDescription(),
+                UITheme.BLACK, UITheme.PAD_3MM, SIZE_SMALL
+        );
 
         descRow.add(descTitle);
         descRow.add(descData);
@@ -111,19 +111,16 @@ public class TaskDetailsScreen extends Form {
     private void createTitleRow() {
         titleRow = new Container();
         titleRow.setLayout(BoxLayout.x());
-        titleRow.setScrollableY(false);
-        titleRow.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
 
         // task name
-        Label nameLabel = new Label(taskData.getName());
-        Style nameStyle = nameLabel.getAllStyles();
-        nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE)));
-        nameStyle.setFgColor(UITheme.BLACK);
-        nameStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
-        nameStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+        UIComponents.TextObject nameLabel = new UIComponents.TextObject(
+                taskData.getName(), UITheme.BLACK, UITheme.PAD_3MM, SIZE_LARGE
+        );
+        nameLabel.setBold();
 
         // task size
-        UIComponents.SizeLabelObject sizeLabel = new UIComponents.SizeLabelObject(taskData.getTaskSizeString());
+        UIComponents.SizeLabelObject sizeLabel = new
+                UIComponents.SizeLabelObject(taskData.getTaskSizeString());
 
         // add components
         titleRow.add(nameLabel);
@@ -154,23 +151,21 @@ public class TaskDetailsScreen extends Form {
         timeRow.setLayout(BoxLayout.y());
 
         // time title
-        UIComponents.TitleObject timeTitle = new UIComponents.TitleObject("Time Elapsed");
-        timeTitle.setSize(SIZE_SMALL);
-
-        // times
-        allTime = taskData.getTotalTimeString(); // end time?;
-        weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
-        dayTime = taskData.getTotalTimeTodayString(); // end time?;
-
-        SpanLabel timeData = new SpanLabel(
-        "All Time:\t" + allTime + "\n"+
-            "This Week:\t" + weekTime + "\n" +
-            "Today:\t" + dayTime
+        UIComponents.TextObject timeTitle = new UIComponents.TextObject(
+                "Time Elapsed", UITheme.GREY, UITheme.PAD_3MM, SIZE_SMALL
         );
 
-        timeData.getTextAllStyles().setFgColor(UITheme.BLACK);
-        timeData.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        timeData.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+        // times
+        allTime = taskData.getTotalTimeString();
+        weekTime = taskData.getTotalTimeThisWeekString();
+        dayTime = taskData.getTotalTimeTodayString();
+
+        String timeText = "All Time:\t" + allTime + "\n"+
+                "This Week:\t" + weekTime + "\n" +
+                "Today:\t" + dayTime;
+        UIComponents.TextObject timeData = new UIComponents.TextObject(
+                timeText, UITheme.BLACK, UITheme.PAD_3MM, SIZE_SMALL
+        );
 
         timeRow.add(timeTitle);
         timeRow.add(timeData);
@@ -184,7 +179,6 @@ public class TaskDetailsScreen extends Form {
         graphRow.add(CENTER, graphPlaceHolder);
     }
 
-    // header/footer
     private void createToolbar() {
         getToolbar().addMaterialCommandToLeftBar("",
                 FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
@@ -202,10 +196,9 @@ public class TaskDetailsScreen extends Form {
 
         // history
         UIComponents.ButtonObject historyButton = new UIComponents.ButtonObject();
-        historyButton.setMyText("History");
-        historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
-        historyButton.setMyColor(UITheme.LIGHT_GREY);
-        historyButton.setMyPadding(UITheme.PAD_3MM);
+        historyButton.setAllStyles("History", UITheme.LIGHT_GREY,
+                FontImage.MATERIAL_HISTORY, UITheme.PAD_3MM);
+
         historyButton.addActionListener(e-> {
             if (taskData.isActive()){
                 System.out.println("This task is currently running");
@@ -213,7 +206,8 @@ public class TaskDetailsScreen extends Form {
                 errorMessage.setLayout(BoxLayout.y());
                 errorMessage.add("This task is currently running");
 
-                Button closeDialog = new Button("Close");
+                UIComponents.ButtonObject closeDialog = new UIComponents.ButtonObject();
+                closeDialog.setAllStyles("Ok", UITheme.YELLOW, ' ', UITheme.PAD_3MM);
                 closeDialog.addActionListener(event -> {
                     errorMessage.dispose();
                 });
