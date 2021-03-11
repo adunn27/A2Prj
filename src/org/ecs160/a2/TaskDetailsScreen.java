@@ -35,6 +35,7 @@ public class TaskDetailsScreen extends Form {
     private UINavigator ui;
 
     TaskDetailsScreen(Task task, UINavigator ui) {
+        registerAnimated(this); // TODO: animate task details screen IF task is active
         taskData =  task;
         this.ui = ui;
         createToolbar();
@@ -89,7 +90,7 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.add(descRow);
         }
-        getComponentForm().registerAnimated(Body);
+//        getComponentForm().registerAnimated(Body);
     }
 
     // create rows

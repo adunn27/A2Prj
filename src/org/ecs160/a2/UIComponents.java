@@ -264,11 +264,11 @@ public class UIComponents {
 
             // OPTIONS container
             ButtonObject edit = new ButtonObject();
-            edit.setAllStyles("", UITheme.YELLOW, FontImage.MATERIAL_MODE_EDIT,0);
+            edit.setAllStyles("", UITheme.YELLOW, FontImage.MATERIAL_MODE_EDIT,UITheme.PAD_3MM);
             edit.addActionListener(e->{ui.goEdit(taskData.getName());});
 
             ButtonObject archive = new ButtonObject();
-            archive.setAllStyles("", UITheme.LIGHT_GREY, FontImage.MATERIAL_SAVE,0);
+            archive.setAllStyles("", UITheme.LIGHT_GREY, FontImage.MATERIAL_SAVE,UITheme.PAD_3MM);
             archive.addActionListener(e->{
                 if (taskData.isArchived())
                     ui.backend.getTaskByName(taskData.getName()).unarchive();

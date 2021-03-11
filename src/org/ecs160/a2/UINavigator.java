@@ -24,7 +24,7 @@ public class UINavigator {
     // navigation
 
     public void refreshScreen() {
-        log("go back");
+        log("refresh");
         Display.getInstance().getCurrent().show();
     }
 
