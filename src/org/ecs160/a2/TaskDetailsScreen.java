@@ -19,12 +19,13 @@ import java.time.LocalDateTime;
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
-    private Container titleRow = new Container();
+    private Container titleRow;
     private Container graphRow;
-    private Container descRow = new Container();
-    private Container tagRow = new Container();
-    private Container timeRow = new Container();
-    private Container Footer = new Container();
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container Body;
+    private Container Footer;
 
     private String allTime;
     private String weekTime;
@@ -66,7 +67,7 @@ public class TaskDetailsScreen extends Form {
     }
 
     private Container createBody() {
-        Container Body = new Container(BoxLayout.y());
+        Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
         createTitleRow();
@@ -87,8 +88,6 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.add(descRow);
         }
-
-        return Body;
     }
 
     // create rows
@@ -175,7 +174,6 @@ public class TaskDetailsScreen extends Form {
     private void createGraphRow() {
         graphRow = new Container(new BorderLayout());
         SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
         graphRow.add(CENTER, graphPlaceHolder);
     }
 
@@ -199,40 +197,25 @@ public class TaskDetailsScreen extends Form {
         historyButton.setAllStyles("History", UITheme.LIGHT_GREY,
                 FontImage.MATERIAL_HISTORY, UITheme.PAD_3MM);
 
-        historyButton.addActionListener(e-> {
-            if (taskData.isActive()){
-                System.out.println("This task is currently running");
-                Dialog errorMessage = new Dialog();
-                errorMessage.setLayout(BoxLayout.y());
-                errorMessage.add("This task is currently running");
-
-                UIComponents.ButtonObject closeDialog = new UIComponents.ButtonObject();
-                closeDialog.setAllStyles("Ok", UITheme.YELLOW, ' ', UITheme.PAD_3MM);
-                closeDialog.addActionListener(event -> {
-                    errorMessage.dispose();
-                });
-
-                errorMessage.add(closeDialog);
-
-                errorMessage.show();
-            } else {
-                ui.goHistory(taskData.getName());
-            }
-        });
-
         // archive
         UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
         String archiveText = (taskData.isArchived()) ? "Unarchive" : "Archive";
-        archiveButton.setMyText(archiveText);
-        archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
-        archiveButton.setMyColor(UITheme.LIGHT_GREY);
-        archiveButton.setMyPadding(UITheme.PAD_3MM);
+        archiveButton.setAllStyles(archiveText, UITheme.LIGHT_GREY,
+                FontImage.MATERIAL_SAVE, UITheme.PAD_3MM);
+
+        // action listeners
+        historyButton.addActionListener(e-> {
+            if (taskData.isActive())
+                new UIComponents.showWarningDialog("This task is currently running");
+            else
+                ui.goHistory(taskData.getName());
+        });
+
         archiveButton.addActionListener(e-> {
-            if (taskData.isArchived()) {
+            if (taskData.isArchived())
                 ui.backend.getTaskByName(taskData.getName()).unarchive();
-            } else {
+            else
                 ui.backend.getTaskByName(taskData.getName()).archive();
-            }
             ui.goBack();
         });
 

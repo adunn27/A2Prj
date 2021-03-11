@@ -407,4 +407,18 @@ public class UIComponents {
             add(EAST, EastSide);
         }
     }
+
+    static class showWarningDialog extends Dialog {
+        public showWarningDialog(String warning) {
+            setLayout(BoxLayout.y());
+            setTitle("Wait!");
+            add(new SpanLabel(warning));
+            ButtonObject okButton = new ButtonObject();
+            okButton.setAllStyles("Ok", UITheme.YELLOW,
+                    ' ', UITheme.PAD_3MM);
+            add(okButton);
+            okButton.addActionListener(e->this.dispose());
+            show();
+        }
+    }
 }
