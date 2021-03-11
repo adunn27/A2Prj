@@ -132,7 +132,7 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("EDIT");
 
         //TODO if something is broken remove this line
-        taskData= ui.backend.getTaskByName(taskData.getName());
+        //taskData= ui.backend.getTaskByName(taskData.getName());
       
         for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
 
