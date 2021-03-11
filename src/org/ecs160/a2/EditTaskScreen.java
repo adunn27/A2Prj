@@ -331,6 +331,7 @@ public class EditTaskScreen extends Form {
             tagObjs.remove(deletedComponent);
             tagField.removeComponent(deletedComponent);
             task.removeTag(deletedComponent.getName()); //TODO how?
+            ui.backend.logfile.delete_tag(task, deletedComponent.getName());
             d.dispose();
         });
 

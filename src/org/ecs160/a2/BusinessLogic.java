@@ -18,7 +18,7 @@ public class BusinessLogic {
         for(Task task : logTask){
 
             newTask(task.getName(),task.getTaskSizeString(),
-                    task.getDescription(),task.isArchive(),task.getId(),task.getAllTimeSpans(),task.getTags());
+                    task.getDescription(),task.isArchive(),task.isActive(),task.getId(),task.getAllTimeSpans(),task.getTags());
 
         }
 
@@ -34,6 +34,7 @@ public class BusinessLogic {
                         String size,
                         String description,
                         Boolean isArchive,
+                        Boolean isActive,
                         int taskid,
                         List<TimeSpan> alltimes,
                         List<String> tags) {
@@ -46,6 +47,9 @@ public class BusinessLogic {
 
             aNewTask.archive();
 
+        }
+        if(isActive){
+            aNewTask.setActive();
         }
         for(String aTag: tags) {
             aNewTask.addTag(aTag);
@@ -80,6 +84,7 @@ public class BusinessLogic {
 
     public void deleteTask(Task task) {
         everyTask.removeTask(task);
+        logfile.delete_task(task);
     }
 
     /*

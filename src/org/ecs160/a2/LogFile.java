@@ -63,24 +63,22 @@ public class LogFile {
             File myObj = new File("log");
             Scanner myReader = new Scanner(myObj);
             Task task;
-
+            TimeSpan time;
+            DateTimeFormatter formatter=DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            String taskName;
 
             while (myReader.hasNextLine()) {
 
                 String data = myReader.nextLine();
                 switch (data.split("\\|")[1]) {
                     case "add":
-                        //System.out.println("the exp is "+data.split("\\|")[1]);
-                        task = new Task(data.split("\\|")[2]);
 
+                        task = new Task(data.split("\\|")[2]);
                         task.setDescription(data.split("\\|")[3]);
-                        //  task.setName(data.split("|")[3]);
                         task.setTaskSize(data.split("\\|")[4]);
                         TaskId = Integer.parseInt(data.split("\\|")[6]);
                         task.setId(TaskId);
-                        //TaskId;
                         List<String> tags_a= new ArrayList<>();
-                        // String stringTags= data.split("\\,")[0];
                         for(String tag : data.split("\\|")[5].split(" ")){
                             tags_a.add(tag);
                         }
@@ -113,41 +111,74 @@ public class LogFile {
 
                         break;
                     case "start":
-                        String taskName_s = data.split("\\|")[2];
+                        taskName= data.split("\\|")[2];
                         String stringTime_s = data.split("\\|")[3];
-                        DateTimeFormatter formatter_s= DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime taskTime_s= LocalDateTime.parse(stringTime_s,formatter_s);
+                        LocalDateTime taskTime_s= LocalDateTime.parse(stringTime_s,formatter);
 
-                        task = retrieveTask.getTaskByName(taskName_s);
-                        //System.out.println(taskName_s);
+                        task = retrieveTask.getTaskByName(taskName);
                         task.getAllTimeSpans().add(new TimeSpan(taskTime_s));
-                        // System.out.println("!!!"+task.getAllTimes().size());
+                        task.setActive();
 
                         break;
                     case "stop":
 
-                        String taskName_e = data.split("\\|")[2];
+                        taskName = data.split("\\|")[2];
                         String stringTime_e = data.split("\\|")[3];
-                        DateTimeFormatter formatter_e= DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                        LocalDateTime taskTime_e= LocalDateTime.parse(stringTime_e,formatter_e);
-                        task = retrieveTask.getTaskByName(taskName_e);
+                        LocalDateTime taskTime_e= LocalDateTime.parse(stringTime_e,formatter);
+                        task = retrieveTask.getTaskByName(taskName);
                         task.getAllTimeSpans().get(task.getAllTimeSpans().size() - 1).setEndTime(taskTime_e);
-
+                        task.setInActive();
                         break;
 
                     case "archive":
-                        String taskName_ar = data.split("\\|")[2];
-                        task = retrieveTask.getTaskByName(taskName_ar);
+                        taskName = data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
                         task.archive();
                         break;
                     case "unarchive":
-                        String taskName_uar = data.split("\\|")[2];
-                        task = retrieveTask.getTaskByName(taskName_uar);
+                        taskName= data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
                         task.unarchive();
                         break;
+                    case "delete_task":
+                        taskName = data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
+                        retrieveTask.removeTask(task);
+                        break;
+                    case "delete_tag":
+                        taskName = data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
+                        task.removeTag(data.split("\\|")[3]);
+                        break;
+                    case "delete_time":
+                        taskName = data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
+                        String timeString = data.split("\\|")[3];
+                        LocalDateTime dateTime = LocalDateTime.parse(timeString, formatter);
+                        time = task.getTimeSpanByTime(dateTime);
+                        task.removeTimeSpanComponent(time);
+                        break;
+                    case "edit_time":
+                        taskName = data.split("\\|")[2];
+                        task = retrieveTask.getTaskByName(taskName);
+                        String oldStartTimeString = data.split("\\|")[3];
+                        String newStartTimeString = data.split("\\|")[4];
+                        String oldEndTimeString = data.split("\\|")[5];
+                        String newEndTimeString = data.split("\\|")[6];
+
+                        LocalDateTime oldStartDateTime = LocalDateTime.parse(oldStartTimeString, formatter);
+                        LocalDateTime newStartDateTime = LocalDateTime.parse(newStartTimeString, formatter);
+                        LocalDateTime oldEndDateTime = LocalDateTime.parse(oldEndTimeString, formatter);
+                        LocalDateTime newEndDateTime = LocalDateTime.parse(newEndTimeString, formatter);
+
+
+                        time = task.getTimeSpanByTime(oldStartDateTime);
+                        time.setStartTime(newStartDateTime);
+                        time.setEndTime(newEndDateTime);
+
 
                     default:
-                        System.out.println("No Match Command, Try Again!");
+                        System.out.println("No Match Command, Try Again! Command :" +data.split("\\|")[1] );
 
                 }
 
@@ -222,9 +253,8 @@ public class LogFile {
 
 
 
-    public void startTask(Task task){
+    public void startTask(Task task,LocalDateTime time){
 
-        LocalDateTime time= LocalDateTime.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = time.format(formatter);
 
@@ -240,7 +270,6 @@ public class LogFile {
                     new FileWriter("log", true));
 
             //  String placeholder = "" + task.
-            System.out.println(LocalDateTime.now());
 
             writer.write(sdf.format(new Date(time_in_long)) + "|start|"+
                     task.getName()+  "|" +  formatTime +"\n");
@@ -256,8 +285,8 @@ public class LogFile {
 
 
 
-    public void stopTask(Task task){
-        LocalDateTime time= LocalDateTime.now();
+    public void stopTask(Task task, LocalDateTime time){
+
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = time.format(formatter);
         System.out.println("log stop");
@@ -344,6 +373,109 @@ public class LogFile {
         }
     }
 
+    public void delete_task (Task task){
+
+        try {
+            // convert epoch to date and time format
+            System.out.println("log delete_task");
+            long time_in_long = System.currentTimeMillis();
+
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
+
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter("log", true));
+
+            writer.write(sdf.format(new Date(time_in_long)) + "|delete_task|"+
+                    task.getName() + "\n");
+            writer.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void delete_tag (Task task,String tag){
+
+        try {
+            // convert epoch to date and time format
+            System.out.println("log delete_tag");
+            long time_in_long = System.currentTimeMillis();
+
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
+
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter("log", true));
+
+            writer.write(sdf.format(new Date(time_in_long)) + "|delete_tag|"+
+                    task.getName() + "|" + tag +"\n");
+            writer.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void delete_time (Task task, LocalDateTime time){
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatTime = time.format(formatter);
+
+        try {
+            // convert epoch to date and time format
+            System.out.println("log delete_time");
+            long time_in_long = System.currentTimeMillis();
+
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
+
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter("log", true));
+
+            writer.write(sdf.format(new Date(time_in_long)) + "|delete_time|"+
+                    task.getName() + "|" + formatTime +"\n");
+            writer.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
+
+    public void edit_time (Task task, LocalDateTime startTime,LocalDateTime newStartTime,
+                           LocalDateTime endTime,LocalDateTime newEndTime){
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        String formatStartTime = startTime.format(formatter);
+        String formatEndTime = endTime.format(formatter);
+        String formatNewStartTime = newStartTime.format(formatter);
+        String formatNewEndTime = newEndTime.format(formatter);
+
+
+        try {
+            // convert epoch to date and time format
+            System.out.println("log edit_time");
+            long time_in_long = System.currentTimeMillis();
+
+            SimpleDateFormat sdf =
+                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
+
+            BufferedWriter writer = new BufferedWriter(
+                    new FileWriter("log", true));
+
+            writer.write(sdf.format(new Date(time_in_long)) + "|edit_time|"+
+                    task.getName() + "|" + formatStartTime+ "|" + formatNewStartTime+
+                    "|" + formatEndTime+"|" + formatNewEndTime + "\n");
+            writer.close();
+
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
+    }
 
 
 

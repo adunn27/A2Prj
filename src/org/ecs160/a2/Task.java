@@ -33,6 +33,10 @@ public class Task {
 
     public Boolean isArchive(){ return isArchived; }
 
+    public void setActive (){ isActive = true;}
+
+    public void setInActive(){isActive= false;}
+
     public void setId(int taskid){TaskId = taskid;}
 
     public int getId(){return TaskId;}
@@ -96,18 +100,21 @@ public class Task {
 
 
 
-    public void start() {
+    public LocalDateTime start() {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
-
-        allTimes.add(new TimeSpan(LocalDateTime.now())); //TODO make all now have same time
+        LocalDateTime time= LocalDateTime.now();
+        allTimes.add(new TimeSpan(time)); //TODO make all now have same time
         isActive = true;
+        return time;
     }
 
-    public void stop() {
+    public LocalDateTime stop() {
         assert (isActive == true): "Cannot stop an inactive task";
-        allTimes.get(allTimes.size() - 1).setEndTime(LocalDateTime.now());
+        LocalDateTime time= LocalDateTime.now();
+        allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
+        return time;
     }
 
     public Boolean hasTag(String tag) {
@@ -184,8 +191,21 @@ public class Task {
         return allTimes;
     }
 
-    public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
+    public LocalDateTime removeTimeSpanComponent(TimeSpan deletedTimeSpan){
+        LocalDateTime time= deletedTimeSpan.getStartTime();
         allTimes.remove(deletedTimeSpan);
+        return time;
+    }
+
+    public TimeSpan getTimeSpanByTime(LocalDateTime time){
+
+        for(TimeSpan ts : allTimes){
+
+            if (ts.getStartTime().isEqual(time)){
+                return ts;
+            }
+        }
+        return null;
     }
 
     public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}
