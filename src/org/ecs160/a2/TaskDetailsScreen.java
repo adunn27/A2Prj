@@ -7,7 +7,6 @@ import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
@@ -197,11 +196,11 @@ public class TaskDetailsScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
- //      SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-//       graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-//       graphRow.add(CENTER, graphPlaceHolder);
+
         TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
         ChartComponent c = graph.createLineChart();
+        //Transform chart component
+       // c.setTransform(Transform.makeScale(0.75f, 0.75f));
 
 
         UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();

@@ -49,7 +49,7 @@ public class TaskDetailsGraph {
     private XYMultipleSeriesRenderer buildRenderer() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
 
-        //renderer.setScale(0.50F);
+
        // renderer.setMargins(new int[]{10,  10, 10, 10});
         renderer.setAxisTitleTextSize(50);
         renderer.setLabelsTextSize(40);
