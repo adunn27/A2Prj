@@ -39,23 +39,32 @@ public class TaskDetailsGraph {
         maxDailyTime = max;
     }
 
-    XYMultipleSeriesRenderer buildRenderer() {
+    private XYMultipleSeriesRenderer buildRenderer() {
         XYMultipleSeriesRenderer renderer = new XYMultipleSeriesRenderer();
         renderer.setAxisTitleTextSize(50);
-        renderer.setChartTitleTextSize(50);
         renderer.setLabelsTextSize(50);
-        renderer.setLabelsColor(UITheme.BLACK);
-        renderer.clearXTextLabels();
+        renderer.setAxesColor(ColorUtil.BLACK);
         renderer.setShowLegend(false);
 
+        renderer.setYTitle("Time Spent");
+
+        renderer.setXLabels(0);
+        //renderer.setYLabels(10);
+        renderer.setYLabelsColor(0, ColorUtil.BLACK);
+
+        renderer.setShowGrid(true);
+        renderer.setXLabelsAlign(Component.RIGHT);
+        renderer.setYLabelsAlign(Component.RIGHT);
+
         renderer.setPointSize(10f);
-        renderer.setMargins(new int[] { 0, 0, 15,0 });
         renderer.setMarginsColor(UITheme.WHITE);
+        renderer.setPanEnabled(false);
 
         XYSeriesRenderer r = new XYSeriesRenderer();
         r.setColor(ColorUtil.BLUE);
         r.setPointStyle(PointStyle.CIRCLE);
         r.setFillPoints(true);
+        r.setLineWidth(5);
         renderer.addSeriesRenderer(r);
 
         return renderer;
@@ -65,22 +74,20 @@ public class TaskDetailsGraph {
     XYMultipleSeriesDataset buildDataset(String[] titles, List<double[]> xValues,
                                          List<double[]> yValues) {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
-        addXYSeries(dataset, titles, xValues, yValues, 0);
+        addXYSeries(dataset, titles, xValues, yValues);
         return dataset;
     }
     void addXYSeries(XYMultipleSeriesDataset dataset, String[] titles, List<double[]> xValues,
-                     List<double[]> yValues, int scale) {
-        int length = titles.length;
-        for (int i = 0; i < length; i++) {
-            XYSeries series = new XYSeries(titles[i], scale);
-            double[] xV = xValues.get(i);
-            double[] yV = yValues.get(i);
+                     List<double[]> yValues) {
+
+            XYSeries series = new XYSeries(titles[0], 0);
+            double[] xV = xValues.get(0);
+            double[] yV = yValues.get(0);
             int seriesLength = xV.length;
             for (int k = 0; k < seriesLength; k++) {
                 series.add(xV[k], yV[k]);
             }
             dataset.addSeries(series);
-        }
     }
     private List<double[]> createXValues(){
         List<double[]> xValues = new ArrayList<double[]>();
@@ -91,6 +98,7 @@ public class TaskDetailsGraph {
         xValues.add(days);
         return xValues;
     }
+
     public ChartComponent createLineChart() {
         String[] titles = new String[]{"Selected Task"};
 
@@ -99,14 +107,8 @@ public class TaskDetailsGraph {
         List<double[]> y = new ArrayList<double[]>();
         y.add(dailyTimes);
 
-
-
         XYMultipleSeriesRenderer renderer = buildRenderer();
 
-       // (XYSeriesRenderer) renderer.getSeriesRendererAt(0).setFillPoints(true);
-        //renderer.setChartTitle(title);
-        //renderer.setXTitle(xTitle);
-        renderer.setYTitle("TimeSpent");
         renderer.setXAxisMin(0);
         renderer.setXAxisMax((double)numberOfDays);
 
@@ -115,13 +117,7 @@ public class TaskDetailsGraph {
         else
             renderer.setYAxisMin(0);
         renderer.setYAxisMax(maxDailyTime);
-        renderer.setAxesColor(ColorUtil.BLACK);
-        renderer.setLabelsColor(ColorUtil.BLACK);
-        renderer.setXLabels(12);
-        renderer.setYLabels(10);
-        renderer.setShowGrid(true);
-        renderer.setXLabelsAlign(Component.RIGHT);
-        renderer.setYLabelsAlign(Component.RIGHT);
+
 
         XYMultipleSeriesDataset dataset = buildDataset(titles, x, y);
 
