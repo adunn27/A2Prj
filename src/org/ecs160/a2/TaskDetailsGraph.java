@@ -44,6 +44,7 @@ public class TaskDetailsGraph {
         renderer.setAxisTitleTextSize(50);
         renderer.setLabelsTextSize(50);
         renderer.setAxesColor(ColorUtil.BLACK);
+        renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setShowLegend(false);
 
         renderer.setYTitle("Time Spent");
@@ -109,14 +110,11 @@ public class TaskDetailsGraph {
 
         XYMultipleSeriesRenderer renderer = buildRenderer();
 
-        renderer.setXAxisMin(0);
-        renderer.setXAxisMax((double)numberOfDays);
+        renderer.setXAxisMin(-0.5);
+        renderer.setXAxisMax((double)numberOfDays - 0.5);
 
-        if(minDailyTime < maxDailyTime)
-            renderer.setYAxisMin(minDailyTime);
-        else
-            renderer.setYAxisMin(0);
-        renderer.setYAxisMax(maxDailyTime);
+        renderer.setYAxisMin(0);
+        renderer.setYAxisMax(maxDailyTime + 1);
 
 
         XYMultipleSeriesDataset dataset = buildDataset(titles, x, y);
