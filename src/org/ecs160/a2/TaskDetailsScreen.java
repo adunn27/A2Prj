@@ -90,10 +90,11 @@ public class TaskDetailsScreen extends Form {
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body.addAll(titleRow, graphRow, timeRow);
-
+            Body.add(titleRow);
             if (taskData.occurredBetween(LocalDateTime.MIN, LocalDateTime.MAX))
                 Body.add(graphRow);
+            Body.add(timeRow);
+
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
             if (!taskData.getDescription().isEmpty())
