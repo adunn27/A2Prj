@@ -20,10 +20,17 @@ public class TaskDetailsGraph {
     private double minDailyTime;
 
     TaskDetailsGraph(double[] times) {
-        dailyTimes = times;
+        dailyTimes = convertTimesToSeconds(times);
         numberOfDays = times.length;
 
         calculateDailyTimeBounds();
+    }
+    private double[] convertTimesToSeconds(double[] times){
+        double[] timesInSeconds = new double[times.length];
+        for(int i = 0; i<times.length; i++){
+            timesInSeconds[i] = times[i] / (1000);
+        }
+        return timesInSeconds;
     }
     private void calculateDailyTimeBounds(){
         double min = 0;
@@ -50,7 +57,7 @@ public class TaskDetailsGraph {
         renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setShowLegend(false);
 
-        renderer.setYTitle("Time Spent");
+        renderer.setYTitle("Daily Time Spent (s)");
 
         renderer.setXLabels(0);
         //renderer.setYLabels(10);

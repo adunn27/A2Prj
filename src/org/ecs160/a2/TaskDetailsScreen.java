@@ -1,11 +1,13 @@
 package org.ecs160.a2;
 
+import com.codename1.charts.ChartComponent;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
+import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
@@ -91,9 +93,10 @@ public class TaskDetailsScreen extends Form {
             createTagRow();
             createDescRow();
             Body.add(titleRow);
+            Body.add(timeRow);
             if (taskData.occurredBetween(LocalDateTime.MIN, LocalDateTime.MAX))
                 Body.add(graphRow);
-            Body.add(timeRow);
+
 
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
@@ -194,9 +197,12 @@ public class TaskDetailsScreen extends Form {
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-//        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-//        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-//        graphRow.add(CENTER, graphPlaceHolder);
+ //      SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+//       graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+//       graphRow.add(CENTER, graphPlaceHolder);
+        TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
+        ChartComponent c = graph.createLineChart();
+
 
         UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();
         String dateFormatted = Utility.dateToFormattedString(startDateFilter) + " - " +
@@ -210,6 +216,7 @@ public class TaskDetailsScreen extends Form {
         });
 
         graphRow.add(dateButton);
+        graphRow.add(c);
     }
 
     private double[] getGraphData() {
