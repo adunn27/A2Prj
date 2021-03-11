@@ -99,7 +99,6 @@ public class Task {
     }
 
 
-
     public LocalDateTime start() {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
@@ -115,7 +114,8 @@ public class Task {
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
         return time;
-    }
+
+
 
     public Boolean hasTag(String tag) {
         return tags.contains(tag);

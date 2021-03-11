@@ -10,20 +10,11 @@ public class BusinessLogic {
     public int TaskId;
 
     public BusinessLogic() {
-        //TODO load it in somehow
-        everyTask = new TaskContainer();
         logfile = new LogFile();
-        logTask = logfile.retrieveTask;
 
-        for(Task task : logTask){
-
-            newTask(task.getName(),task.getTaskSizeString(),
-                    task.getDescription(),task.isArchive(),task.isActive(),task.getId(),task.getAllTimeSpans(),task.getTags());
-
-        }
+        everyTask = logfile.retrieveTask;
 
         TaskId= logfile.TaskId + 1;
-
     }
 
     public List<String> getAllTags() {

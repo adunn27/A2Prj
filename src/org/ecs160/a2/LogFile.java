@@ -114,7 +114,6 @@ public class LogFile {
                         taskName= data.split("\\|")[2];
                         String stringTime_s = data.split("\\|")[3];
                         LocalDateTime taskTime_s= LocalDateTime.parse(stringTime_s,formatter);
-
                         task = retrieveTask.getTaskByName(taskName);
                         task.getAllTimeSpans().add(new TimeSpan(taskTime_s));
                         task.setActive();
@@ -128,6 +127,7 @@ public class LogFile {
                         task = retrieveTask.getTaskByName(taskName);
                         task.getAllTimeSpans().get(task.getAllTimeSpans().size() - 1).setEndTime(taskTime_e);
                         task.setInActive();
+
                         break;
 
                     case "archive":
@@ -135,6 +135,7 @@ public class LogFile {
                         task = retrieveTask.getTaskByName(taskName);
                         task.archive();
                         break;
+
                     case "unarchive":
                         taskName= data.split("\\|")[2];
                         task = retrieveTask.getTaskByName(taskName);
