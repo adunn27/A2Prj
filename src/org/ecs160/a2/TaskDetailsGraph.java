@@ -44,14 +44,17 @@ public class TaskDetailsGraph {
         renderer.setAxisTitleTextSize(50);
         renderer.setChartTitleTextSize(50);
         renderer.setLabelsTextSize(50);
+        renderer.setLabelsColor(UITheme.BLACK);
+        renderer.clearXTextLabels();
+        renderer.setShowLegend(false);
 
-        renderer.setPointSize(5f);
+        renderer.setPointSize(10f);
         renderer.setMargins(new int[] { 0, 0, 15,0 });
         renderer.setMarginsColor(UITheme.WHITE);
 
         XYSeriesRenderer r = new XYSeriesRenderer();
-        r.setColor(ColorUtil.CYAN);
-        r.setPointStyle(PointStyle.TRIANGLE);
+        r.setColor(ColorUtil.BLUE);
+        r.setPointStyle(PointStyle.CIRCLE);
         r.setFillPoints(true);
         renderer.addSeriesRenderer(r);
 
