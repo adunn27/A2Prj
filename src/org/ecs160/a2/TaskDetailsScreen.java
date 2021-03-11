@@ -58,7 +58,7 @@ public class TaskDetailsScreen extends Form {
         setTitle("Details");
         setLayout(new BorderLayout());
 
-        Container Body = createBody();
+        createBody();
         createFooter();
 
         // add components
@@ -66,7 +66,8 @@ public class TaskDetailsScreen extends Form {
         add(BorderLayout.CENTER, Body);
     }
 
-    private Container createBody() {
+    private void createBody() {
+
         Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
@@ -88,6 +89,7 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.add(descRow);
         }
+        getComponentForm().registerAnimated(Body);
     }
 
     // create rows
@@ -223,6 +225,4 @@ public class TaskDetailsScreen extends Form {
         Footer.add(historyButton);
         Footer.add(archiveButton);
     }
-
-
 }
