@@ -109,13 +109,13 @@ public class Task {
     }
 
     public LocalDateTime stop() {
-        assert (isActive == true): "Cannot stop an inactive task";
-        LocalDateTime time= LocalDateTime.now();
+        assert (isActive == true) : "Cannot stop an inactive task";
+        LocalDateTime time = LocalDateTime.now();
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
         return time;
 
-
+    }
 
     public Boolean hasTag(String tag) {
         return tags.contains(tag);

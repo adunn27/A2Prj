@@ -131,11 +131,7 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        //TODO if something is broken remove this line
-        //taskData= ui.backend.getTaskByName(taskData.getName());
-      
         for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
-
 
             TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
 
@@ -187,6 +183,7 @@ public class TaskHistoryScreen extends Form {
             ui.backend.logfile.delete_time(taskData,time);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
+
         });
 
         UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
@@ -287,19 +284,6 @@ public class TaskHistoryScreen extends Form {
             LocalDateTime endDateTime = end_1.toInstant().
                     atZone(ZoneId.systemDefault()).toLocalDateTime();
 
-
-            ui.backend.logfile.edit_time(taskData,editedTimeSpan.getStartTime(),
-                    startDateTime,editedTimeSpan.getEndTime(),endDateTime);
-
-
-            editedTimeSpan.setStartTime(startDateTime);
-            editedTimeSpan.setEndTime(endDateTime);
-            editedTimeSpan.setStartTime(startDateTime);
-
-
-            d.dispose();
-            ui.refreshScreen();
-            ui.refreshScreen();
             if (startDateTime.isAfter(endDateTime)){
                 System.out.println("You can't have a negative duration!");
                 Dialog newDialog = new Dialog();
@@ -318,6 +302,10 @@ public class TaskHistoryScreen extends Form {
                 newDialog.add(warningDialog);
                 newDialog.show();
             } else {
+
+                ui.backend.logfile.edit_time(taskData,editedTimeSpan.getStartTime(),
+                        startDateTime,editedTimeSpan.getEndTime(),endDateTime);
+
                 editedTimeSpan.setStartTime(startDateTime);
                 editedTimeSpan.setEndTime(endDateTime);
 
