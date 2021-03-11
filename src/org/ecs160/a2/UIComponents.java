@@ -14,17 +14,15 @@ import javafx.scene.paint.Material;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
 
 // Contains Buttons and Components frequently used in UI
 public class UIComponents {
     static class ButtonObject extends Button {
         public ButtonObject () {
-            getAllStyles().setFgColor(UITheme.BLACK);
+            getAllStyles().setFgColor(BLACK);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(UITheme.PAD_1MM,
-                                     UITheme.PAD_1MM,
-                                     UITheme.PAD_1MM,
-                                     UITheme.PAD_1MM);
+            getAllStyles().setMargin(PAD_1MM, PAD_1MM, PAD_1MM, PAD_1MM);
             getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
         }
 
@@ -50,11 +48,10 @@ public class UIComponents {
             this.getAllStyles().setBorder(
                     RoundBorder.create()
                             .rectangle(true)
-                            .color(UITheme.COL_SELECTED)
+                            .color(COL_SELECTED)
             );
         }
 
-        // pass in UITheme.[color]
         public void setMyColor(int color) {
             this.getAllStyles().setBorder(
                     RoundBorder.create()
@@ -92,42 +89,40 @@ public class UIComponents {
     static class SizeLabelObject extends Label {
         public SizeLabelObject(String size) {
             setText(size);
-            getAllStyles().setFgColor(UITheme.WHITE);
+            getAllStyles().setFgColor(WHITE);
 
             getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
 
-            getAllStyles().setPadding(UITheme.PAD_3MM, UITheme.PAD_3MM,
-                    UITheme.PAD_3MM, UITheme.PAD_3MM);
+            getAllStyles().setPadding(PAD_3MM, PAD_3MM, PAD_3MM, PAD_3MM);
 
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(UITheme.PAD_3MM, UITheme.PAD_3MM,
-                    UITheme.PAD_3MM,UITheme.PAD_3MM);
+            getAllStyles().setMargin(PAD_3MM, PAD_3MM, PAD_3MM, PAD_3MM);
 
             getAllStyles().setBorder(RoundBorder.create()
                     .color(setSizeColor(size)));
         }
 
         public void setSelectedColor() {
-            this.getAllStyles().setFgColor(UITheme.BLACK);
+            this.getAllStyles().setFgColor(BLACK);
             this.getAllStyles().setBorder(
-                    RoundBorder.create()
-                            .color(UITheme.COL_SELECTED)
+                    RoundBorder.create().color(COL_SELECTED)
             );
         }
         private int setSizeColor(String size) {
             switch (size) {
                 case "XL":
-                    return UITheme.COL_SIZE_XL;
+                    return COL_SIZE_XL;
                 case "L":
-                    return UITheme.COL_SIZE_L;
+                    return COL_SIZE_L;
                 case "M":
-                    return UITheme.COL_SIZE_M;
+                    return COL_SIZE_M;
                 default:
-                    return UITheme.COL_SIZE_S;
+                    return COL_SIZE_S;
             }
         }
     }
 
+    // TODO: REMOVE?
     static class SizeButtonObject extends Container {
         ButtonObject b = new ButtonObject();
 
@@ -135,33 +130,34 @@ public class UIComponents {
             setLayout(new BorderLayout());
             b.setText(size);
 
-            Dimension d = new Dimension(UITheme.PAD_3MM, UITheme.PAD_3MM);
+            Dimension d = new Dimension(PAD_3MM, PAD_3MM);
             b.setSize(d);
 
             b.setMyColor(setColor(size));
-            b.getAllStyles().setFgColor(UITheme.WHITE);
+            b.getAllStyles().setFgColor(WHITE);
             add(BorderLayout.CENTER, b);
         }
 
         private int setColor(String size) {
             if (size == "XL") {
-                return UITheme.COL_SIZE_XL;
+                return COL_SIZE_XL;
             } else if (size == "L") {
-                return UITheme.COL_SIZE_L;
+                return COL_SIZE_L;
             } else if (size == "M") {
-                return UITheme.COL_SIZE_M;
+                return COL_SIZE_M;
             } else {
-                return UITheme.COL_SIZE_S;
+                return COL_SIZE_S;
             }
         }
     }
 
+    // TODO: REMOVE?
     static class TitleObject extends Label {
         public TitleObject(String title)  {
             setText(title);
-            getAllStyles().setFgColor(UITheme.GREY);
+            getAllStyles().setFgColor(GREY);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+            getAllStyles().setMargin(Component.LEFT, PAD_3MM);
             getAllStyles().setFont((
                     Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_MEDIUM))
             );
@@ -193,8 +189,9 @@ public class UIComponents {
         }
 
         public void setBold() {
-            getTextAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM,
-                    STYLE_BOLD, size)));
+            getTextAllStyles().setFont((Font.createSystemFont(
+                    FACE_SYSTEM, STYLE_BOLD, size))
+            );
         }
     }
 
@@ -212,16 +209,16 @@ public class UIComponents {
             name = tagName;
             setLayout(new BorderLayout());
             tagLabel = new Button(tagName);
-            tagLabel.getAllStyles().setFgColor(UITheme.BLACK);
+            tagLabel.getAllStyles().setFgColor(BLACK);
 
             Font smallFont = Font.createSystemFont(FACE_MONOSPACE, STYLE_PLAIN, SIZE_SMALL);
             tagLabel.getAllStyles().setFont(smallFont);
 
             tagLabel.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            tagLabel.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
-            tagLabel.getAllStyles().setMargin(Component.BOTTOM, UITheme.PAD_1MM);
+            tagLabel.getAllStyles().setMargin(Component.LEFT, PAD_3MM);
+            tagLabel.getAllStyles().setMargin(Component.BOTTOM, PAD_1MM);
             tagLabel.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(UITheme.YELLOW)
+                    RoundBorder.create().rectangle(true).color(YELLOW)
             );
             add(BorderLayout.CENTER, tagLabel);
         }
@@ -242,7 +239,7 @@ public class UIComponents {
                     " (" + taskData.getTaskSizeString() + ')');
             taskContainer.setTextLine2(taskData.getTotalTimeString());
 
-            taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
+            taskContainer.getSelectedStyle().setBgColor(BLACK);
 
             if (taskData.isActive()) {
                 taskContainer.setEmblem(
@@ -264,11 +261,14 @@ public class UIComponents {
 
             // OPTIONS container
             ButtonObject edit = new ButtonObject();
-            edit.setAllStyles("", UITheme.YELLOW, FontImage.MATERIAL_MODE_EDIT,UITheme.PAD_3MM);
+            edit.setAllStyles("", YELLOW, FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
             edit.addActionListener(e->{ui.goEdit(taskData.getName());});
 
             ButtonObject archive = new ButtonObject();
-            archive.setAllStyles("", UITheme.LIGHT_GREY, FontImage.MATERIAL_SAVE,UITheme.PAD_3MM);
+            archive.setAllStyles("", LIGHT_GREY, ICON_ARCHIVE,PAD_3MM);
+            if (taskData.isArchived())
+                archive.setAllStyles("", LIGHT_GREY, ICON_UNARCHIVE,PAD_3MM);
+
             archive.addActionListener(e->{
                 if (taskData.isArchived())
                     ui.backend.getTaskByName(taskData.getName()).unarchive();
@@ -284,7 +284,7 @@ public class UIComponents {
             SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
             add(taskPanel);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM,UITheme.PAD_1MM);
+            getAllStyles().setMargin(PAD_1MM,PAD_1MM,PAD_1MM,PAD_1MM);
         }
 
         private void longPressEvent() {
@@ -325,14 +325,16 @@ public class UIComponents {
             setLayout(BoxLayout.xRight());
             getAllStyles().setMarginLeft(100);
             TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
-            searchBar.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
-            searchBar.getAllStyles().setFgColor(UITheme.BLACK);
+            searchBar.getAllStyles().setBorder(
+                    RoundBorder.create().rectangle(true).color(LIGHT_GREY)
+            );
+            searchBar.getAllStyles().setFgColor(BLACK);
             add(searchBar);
 
             Button filterButton = new Button("Filter");
-            filterButton.getAllStyles().setFgColor(UITheme.BLACK);
+            filterButton.getAllStyles().setFgColor(BLACK);
             filterButton.setIcon(FontImage.createMaterial(
-                    FontImage.MATERIAL_FILTER_LIST,
+                    ICON_FILTER,
                     filterButton.getUnselectedStyle()
             ));
             add(filterButton);
@@ -348,12 +350,12 @@ public class UIComponents {
                                  LocalDateTime endTime, UINavigator ui) {
             this.taskObj = task;
             this.ui = ui;
-
             setLayout(new BorderLayout());
+
             // left side (size, name)
             Label sizeLabel = new SizeLabelObject(taskObj.getTaskSizeString());
             Label nameLabel = new Label(taskObj.getName());
-            nameLabel.getAllStyles().setFgColor(UITheme.BLACK);
+            nameLabel.getAllStyles().setFgColor(BLACK);
 
             Container leftContainer = new Container(new BorderLayout());
             leftContainer.add(BorderLayout.WEST, sizeLabel);
@@ -381,7 +383,7 @@ public class UIComponents {
     static class HistoryTaskObject extends Container {
         public HistoryTaskObject(String startTime, String stopTime){
             setLayout(new BorderLayout());
-            Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
+            Border simpleBorder = Border.createLineBorder(1,BLACK);
             getAllStyles().setBorder(simpleBorder);
 
             Label startLabel = new Label("Start: " + startTime);
@@ -389,13 +391,12 @@ public class UIComponents {
 
 
             UIComponents.ButtonObject Delete = new UIComponents.ButtonObject();
-            Delete.setMyIcon(FontImage.MATERIAL_DELETE);
-            Delete.setMyColor(UITheme.WHITE);
-            Delete.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.RED));
+            Delete.setAllStyles("", RED, ICON_DELETE, PAD_3MM);
 
             UIComponents.ButtonObject Edit = new UIComponents.ButtonObject();
+            Delete.setAllStyles("", RED, ICON_EDIT, PAD_3MM);
             Edit.setMyIcon(FontImage.MATERIAL_EDIT);
-            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(LIGHT_GREY));
 
             Container EastSide = new Container(BoxLayout.x());
 
@@ -414,8 +415,7 @@ public class UIComponents {
             setTitle("Wait!");
             add(new SpanLabel(warning));
             ButtonObject okButton = new ButtonObject();
-            okButton.setAllStyles("Ok", UITheme.YELLOW,
-                    ' ', UITheme.PAD_3MM);
+            okButton.setAllStyles("Ok", YELLOW, ' ', PAD_3MM);
             add(okButton);
             okButton.addActionListener(e->this.dispose());
             show();

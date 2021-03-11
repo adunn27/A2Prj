@@ -56,7 +56,7 @@ public class HomeScreen extends Form{
 
         UIComponents.ButtonObject archived = new UIComponents.ButtonObject();
         archived.setAllStyles("", UITheme.YELLOW,
-                FontImage.MATERIAL_INBOX, UITheme.PAD_3MM);
+                UITheme.ICON_ARCHIVE, UITheme.PAD_3MM);
         archived.addActionListener(e-> ui.goArchive());
 
         UIComponents.ButtonObject addTask = new UIComponents.ButtonObject();

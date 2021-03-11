@@ -154,6 +154,7 @@ public class EditTaskScreen extends Form {
             ui.backend.saveTask(task);
             isNewTask = false;
         }
+
         log("new task data" + tagsData);
 
         task.setName(nameData);
@@ -166,7 +167,7 @@ public class EditTaskScreen extends Form {
     private void createToolbar() {
         if (isNewTask)
             getToolbar().addMaterialCommandToLeftBar("",
-                    FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
+                    UITheme.ICON_BACK, UITheme.PAD_6MM, e->ui.goBack());
 
         getToolbar().addMaterialCommandToRightBar("Save",
                 ' ', UITheme.PAD_6MM, e->saveChanges());
@@ -284,17 +285,13 @@ public class EditTaskScreen extends Form {
     }
 }
 
-
-
 class SizeMultiButton extends MultiButton {
     final String[] sizeOptions = {"S", "M", "L", "XL"};
     public SizeMultiButton(String size) {
         setText(size);
         getUnselectedStyle().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        getUnselectedStyle().setMargin(UITheme.PAD_1MM,
-                                       UITheme.PAD_1MM,
-                                       UITheme.PAD_1MM,
-                                       UITheme.PAD_1MM);
+        getUnselectedStyle().setMargin(UITheme.PAD_1MM, UITheme.PAD_1MM,
+                UITheme.PAD_1MM, UITheme.PAD_1MM);
 
         getAllStyles().setBorder(
                 RoundBorder.create()

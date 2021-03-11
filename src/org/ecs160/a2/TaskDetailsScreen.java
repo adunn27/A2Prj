@@ -182,7 +182,7 @@ public class TaskDetailsScreen extends Form {
 
     private void createToolbar() {
         getToolbar().addMaterialCommandToLeftBar("",
-                FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
+                UITheme.ICON_BACK, UITheme.PAD_6MM, e->ui.goBack());
 
         getToolbar().addMaterialCommandToRightBar("",
                 FontImage.MATERIAL_MODE_EDIT, UITheme.PAD_6MM,
