@@ -9,6 +9,7 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import javafx.scene.paint.Material;
 
 import java.time.LocalDateTime;
 
@@ -237,7 +238,8 @@ public class UIComponents {
             this.ui = ui;
 
             // TASK container
-            taskContainer = new SpanMultiButton(taskData.getName() + " (" + taskData.getTaskSizeString() + ')');
+            taskContainer = new SpanMultiButton(taskData.getName() +
+                    " (" + taskData.getTaskSizeString() + ')');
             taskContainer.setTextLine2(taskData.getTotalTimeString());
 
             taskContainer.getSelectedStyle().setBgColor(UITheme.BLACK);
@@ -262,18 +264,16 @@ public class UIComponents {
 
             // OPTIONS container
             ButtonObject edit = new ButtonObject();
-            edit.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
-            edit.setMyColor(UITheme.YELLOW);
+            edit.setAllStyles("", UITheme.YELLOW, FontImage.MATERIAL_MODE_EDIT,0);
             edit.addActionListener(e->{ui.goEdit(taskData.getName());});
+
             ButtonObject archive = new ButtonObject();
-            archive.setMyIcon(FontImage.MATERIAL_SAVE);
-            archive.setMyColor(UITheme.LIGHT_GREY);
+            archive.setAllStyles("", UITheme.LIGHT_GREY, FontImage.MATERIAL_SAVE,0);
             archive.addActionListener(e->{
                 if (taskData.isArchived())
                     ui.backend.getTaskByName(taskData.getName()).unarchive();
                 else
                     ui.backend.getTaskByName(taskData.getName()).archive();
-//                currPage.animate();
                 ui.refreshScreen();
                 log("archived/unarchived task");
             });
