@@ -1,35 +1,39 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.charts.models.XYMultipleSeriesDataset;
-import com.codename1.charts.models.XYSeries;
-import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
-import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
+import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.spinner.Picker;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 import static com.codename1.ui.CN.*;
 
 public class TaskDetailsScreen extends Form {
-    private Container titleRow = new Container();
+    private Container titleRow;
     private Container graphRow;
-    private Container descRow = new Container();
-    private Container tagRow = new Container();
-    private Container timeRow = new Container();
-    private Container Header = new Container();
-    private Container Footer = new Container();
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container Header;
+    private Container Footer;
+    private Dialog FilterDialog;
+    private Picker startDatePicker;
+    private Picker endDatePicker;
 
-    private String allTime; // TODO: get allTimeData
-    private String weekTime; // TODO: get weekTimeData
-    private String dayTime; // TODO: get dayTimeData
+    private String allTime;
+    private String weekTime;
+    private String dayTime;
+
+    private Date startDateFilter;
+    private Date endDateFilter;
 
     private Task taskData;
     private UINavigator ui;
@@ -37,6 +41,7 @@ public class TaskDetailsScreen extends Form {
     TaskDetailsScreen(Task task, UINavigator ui) {
         taskData =  task;
         this.ui = ui;
+        resetStartEndDate();
         createDetailsScreen();
     }
 
@@ -50,6 +55,11 @@ public class TaskDetailsScreen extends Form {
     public void showBack() {
         createDetailsScreen();
         super.showBack();
+    }
+
+    private void resetStartEndDate() {
+        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
+        endDateFilter = new Date();
     }
 
     private void createDetailsScreen() {
@@ -80,10 +90,11 @@ public class TaskDetailsScreen extends Form {
             createTimeRow();
             createTagRow();
             createDescRow();
-            Body.addAll(titleRow, timeRow);
-
-          //  if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
+            Body.add(titleRow);
+            if (taskData.occurredBetween(LocalDateTime.MIN, LocalDateTime.MAX))
                 Body.add(graphRow);
+            Body.add(timeRow);
+
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
             if (!taskData.getDescription().isEmpty())
@@ -182,13 +193,81 @@ public class TaskDetailsScreen extends Form {
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
-        graphRow = new Container(new BorderLayout());
-        //SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-        //graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
-        double[] placeholder = new double[]{2.0, 15.0, 17.0, 6.0, 33.0, 14.2};
-        TaskDetailsGraph graph = new TaskDetailsGraph(placeholder);
-        ChartComponent c = graph.createLineChart();
-        graphRow.add(CENTER, c);
+        graphRow = new Container(BoxLayout.y());
+//        SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
+//        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
+//        graphRow.add(CENTER, graphPlaceHolder);
+
+        UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();
+        String dateFormatted = Utility.dateToFormattedString(startDateFilter) + " - " +
+                      Utility.dateToFormattedString(endDateFilter);
+        dateButton.setAllStyles(dateFormatted, UITheme.LIGHT_GREY,
+                ' ', UITheme.PAD_3MM);
+
+        dateButton.addActionListener(e->{
+            createFilterDialog();
+            FilterDialog.show();
+        });
+
+        graphRow.add(dateButton);
+    }
+
+    private double[] getGraphData() {
+        LocalDate startLocalDate = Utility.convertToLocalDate(startDateFilter);
+        LocalDate endLocalDate = Utility.convertToLocalDate(endDateFilter);
+        java.util.List<Duration> dailyTimes = taskData.getDailyTimesBetween(
+                                                        startLocalDate,
+                                                        endLocalDate);
+
+        return dailyTimes.stream().mapToDouble(Duration::toMillis).toArray();
+    }
+
+    private void createFilterDialog() {
+        FilterDialog = new Dialog();
+        FilterDialog.setLayout(BoxLayout.y());
+        FilterDialog.setTitle("Select Time Window");
+
+        // DATE PICKERS
+        startDatePicker = new UIComponents.DatePickerObject(startDateFilter);
+        endDatePicker = new UIComponents.DatePickerObject(endDateFilter);
+        UIComponents.StartEndPickers startEndPickers = new UIComponents.
+                StartEndPickers(startDatePicker, endDatePicker);
+
+        // RESET BUTTON
+        UIComponents.ButtonObject resetButton = new UIComponents.ButtonObject();
+        resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        resetButton.addActionListener(e -> {
+            resetStartEndDate();
+            refreshFilterDialog();
+        });
+
+        // DONE BUTTON
+        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
+        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        doneButton.addActionListener(e -> {
+            startDateFilter = startDatePicker.getDate();
+            endDateFilter = endDatePicker.getDate();
+
+            if (startDateFilter.compareTo(endDateFilter) > 0) {
+                new UIComponents.showWarningDialog(
+                        "Please set start date on or before end date"
+                );
+            } else {
+                show();
+            }
+        });
+
+        // ADD TO FILTER
+        FilterDialog.add(startEndPickers);
+        FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
+    }
+
+    private void refreshFilterDialog() { // TODO: DRY violation (also in summaryscreen)
+        FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
+        FilterDialog.dispose();
+        createFilterDialog();
+        FilterDialog.setTransitionInAnimator(CommonTransitions.createEmpty());
+        FilterDialog.show();
     }
 
     // header/footer

@@ -66,44 +66,29 @@ public class TimeSpan {
     }
 
     public Duration getTimeSpanDurationBetween
-            (LocalDateTime startDate, LocalDateTime endDate){
-        LocalDateTime trueStartTime = startDate;
-        LocalDateTime trueEndTime = endDate;
-        if (startTime.isAfter(startDate)){
+            (LocalDateTime startOfTimeWindow, LocalDateTime endOfTimeWindow){
+
+        LocalDateTime trueStartTime = startOfTimeWindow;
+        if (startTime.isAfter(startOfTimeWindow))
             trueStartTime = startTime;
-        }
 
-        LocalDateTime tempEndTime;
-        if (endTime == null)
-            tempEndTime = LocalDateTime.now();
-        else
-            tempEndTime = endTime;
-
-        if (tempEndTime.isBefore(endDate)){
+        LocalDateTime tempEndTime = getEndTimeElseNow();
+        LocalDateTime trueEndTime = endOfTimeWindow;
+        if (tempEndTime.isBefore(endOfTimeWindow))
             trueEndTime = tempEndTime;
-        }
-        return Duration.between(trueStartTime, trueEndTime);
+
+        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
+
+        // Necessary to check as if the timespan had no overlap with the
+        // give time window, then this will return a negative value
+        if (timeBetween.isNegative()) return Duration.ofMillis(0);
+        return timeBetween;
     }
 
-    public static LocalDateTime getStartOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MIN);
-    }
-
-    public static LocalDateTime getEndOfDay(LocalDateTime present) {
-        return present.with(LocalTime.MAX);
-    }
-
-    // Decided that since this tool will be mainly for work related purposes
-    // a week should start with the work week on Monday rather than the calendar
-    // week on Sunday
-    public static LocalDateTime getStartOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY))
-                .with(LocalDateTime.MIN);
-    }
-
-    public static LocalDateTime getEndOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
-                .with(LocalDateTime.MAX);
+    private LocalDateTime getEndTimeElseNow() {
+        if (endTime == null)
+            return LocalDateTime.now();
+        return endTime;
     }
 
     public static void main(String[] args){
