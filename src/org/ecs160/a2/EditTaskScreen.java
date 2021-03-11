@@ -27,14 +27,13 @@ public class EditTaskScreen extends Form {
     private Container TitleRow;
     private Container TagRow;
 
-    // IMPORTANT DATA FIELDS
+    // EDIT FIELDS
     private TextField nameField;
     private SizeMultiButton sizeButton;
     private Container tagField;
     private TextComponent descField;
-//    private java.util.List<UIComponents.ButtonObject> tagObjs;
-    private java.util.List<String> tagList;
 
+    // DATA
     private Task task;
     private String nameData;
     private String sizeData;
@@ -80,21 +79,26 @@ public class EditTaskScreen extends Form {
         setTitle("Edit Task");
         setLayout(new BorderLayout());
 
-        createFooter();
         Container body = new Container(BoxLayout.y());
 
         createTitleRow();
         createTagRow();
+        createDescField();
+        createFooter();
+
+        body.addAll(TitleRow, TagRow, descField);
+        add(BorderLayout.CENTER, body);
+
+        if (!isNewTask)
+            add(BorderLayout.SOUTH, Footer);
+    }
+
+    private void createDescField() {
         // description row
         descField = new TextComponent();
         descField.label("Description").multiline(true);
         descField.onTopMode(true);
         descField.text(descriptionData);
-
-        body.addAll(TitleRow, TagRow, descField);
-
-        add(BorderLayout.SOUTH, Footer);
-        add(BorderLayout.CENTER, body);
     }
 
     private void createTitleRow() {
@@ -125,7 +129,6 @@ public class EditTaskScreen extends Form {
             tagButton.setAllStyles(tag, UITheme.YELLOW,
                     FontImage.MATERIAL_CLOSE, UITheme.PAD_3MM);
             tagButton.addActionListener(e-> RemoveTag(tagButton, tag));
-
             tagField.add(tagButton);
         }
 
@@ -140,15 +143,9 @@ public class EditTaskScreen extends Form {
         sizeData = sizeButton.getText();
         descriptionData = descField.getText();
         log("tags: " + tagsData);
-//        tagsData = tagList;
-
-//        for (String : tagList) {
-//            log("saving" + tagComponent);
-//            log("saving" + tagComponent.getSelectCommandText());
-//            tagsData.add(tagComponent.getSelectCommandText());
-//        }
 
         if (nameData.isEmpty()) { //TODO check if name already taken
+            new UIComponents.showWarningDialog("Missing task name.\nReturning to the HomeScreen");
             ui.goBack();
             return;
         }
@@ -167,7 +164,11 @@ public class EditTaskScreen extends Form {
     }
 
     private void createToolbar() {
-        getToolbar().addMaterialCommandToRightBar("Done",
+        if (isNewTask)
+            getToolbar().addMaterialCommandToLeftBar("",
+                    FontImage.MATERIAL_ARROW_BACK, UITheme.PAD_6MM, e->ui.goBack());
+
+        getToolbar().addMaterialCommandToRightBar("Save",
                 ' ', UITheme.PAD_6MM, e->saveChanges());
     }
 
@@ -283,6 +284,8 @@ public class EditTaskScreen extends Form {
     }
 }
 
+
+
 class SizeMultiButton extends MultiButton {
     final String[] sizeOptions = {"S", "M", "L", "XL"};
     public SizeMultiButton(String size) {
@@ -315,6 +318,5 @@ class SizeMultiButton extends MultiButton {
             }
             d.showPopupDialog(this);
         });
-
     }
 }
