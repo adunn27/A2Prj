@@ -119,9 +119,7 @@ public class LogFile {
                         LocalDateTime taskTime_s= LocalDateTime.parse(stringTime_s,formatter_s);
 
                         task = retrieveTask.getTaskByName(taskName_s);
-                        //System.out.println(taskName_s);
-                        task.getAllTimeSpans().add(new TimeSpan(taskTime_s));
-                        // System.out.println("!!!"+task.getAllTimes().size());
+                        task.start(taskTime_s);
 
                         break;
                     case "stop":
@@ -131,7 +129,7 @@ public class LogFile {
                         DateTimeFormatter formatter_e= DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
                         LocalDateTime taskTime_e= LocalDateTime.parse(stringTime_e,formatter_e);
                         task = retrieveTask.getTaskByName(taskName_e);
-                        task.getAllTimeSpans().get(task.getAllTimeSpans().size() - 1).setEndTime(taskTime_e);
+                        task.stop(taskTime_e);
 
                         break;
 
@@ -140,6 +138,7 @@ public class LogFile {
                         task = retrieveTask.getTaskByName(taskName_ar);
                         task.archive();
                         break;
+
                     case "unarchive":
                         String taskName_uar = data.split("\\|")[2];
                         task = retrieveTask.getTaskByName(taskName_uar);

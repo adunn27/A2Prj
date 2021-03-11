@@ -97,16 +97,24 @@ public class Task {
 
 
     public void start() {
+        start(LocalDateTime.now());
+    }
+
+    public void start(LocalDateTime time) {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
 
-        allTimes.add(new TimeSpan(LocalDateTime.now())); //TODO make all now have same time
+        allTimes.add(new TimeSpan(time)); //TODO make all now have same time
         isActive = true;
     }
 
     public void stop() {
+        stop(LocalDateTime.now());
+    }
+
+    public void stop(LocalDateTime time) {
         assert (isActive == true): "Cannot stop an inactive task";
-        allTimes.get(allTimes.size() - 1).setEndTime(LocalDateTime.now());
+        allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
     }
 
