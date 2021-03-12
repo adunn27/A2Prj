@@ -137,7 +137,7 @@ public class EditTaskScreen extends Form {
 
         tagField = new Container();
         ButtonObject addButton = new ButtonObject();
-        addButton.setAllStyles("", GREEN, ICON_NEW, PAD_3MM);
+        addButton.setAllStyles("", COL_SELECTED, ICON_NEW, PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
         for (String tag : tagsData) {
@@ -165,9 +165,8 @@ public class EditTaskScreen extends Form {
     private void newTagPrompt() {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
-        d.addComponent(FlowLayout.encloseCenterMiddle(
-                new SpanLabel("Enter a new tag name")));
-        TextField tagNameField = new TextField("", "New name");
+        d.setTitle("Add a tag");
+        TextField tagNameField = new TextField("", "New tag");
         tagNameField.setWidth(12);
         d.add(tagNameField);
 
@@ -176,7 +175,7 @@ public class EditTaskScreen extends Form {
         for (String tag : allTags) {
             if (!tagsData.contains(tag)) {
                 ButtonObject tagSelect = new ButtonObject();
-                tagSelect.setAllStyles(tag, LIGHT_GREEN, ' ', PAD_3MM);
+                tagSelect.setAllStyles(tag, COL_TAG, ' ', PAD_3MM);
                 availableTags.addComponent(tagSelect);
 
                 tagSelect.addActionListener(e -> {
@@ -212,7 +211,7 @@ public class EditTaskScreen extends Form {
         });
 
         ButtonObject cancel = new ButtonObject();
-        cancel.setAllStyles("Cancel", LIGHT_GREY,
+        cancel.setAllStyles("Cancel", COL_UNSELECTED,
                 ' ',PAD_3MM);
         cancel.addActionListener(y -> { d.dispose(); });
         d.add(GridLayout.encloseIn(2, cancel, confirm));
@@ -271,12 +270,12 @@ public class EditTaskScreen extends Form {
 
         // DELETE
         ButtonObject confirm = new ButtonObject();
-        confirm.setAllStyles("Confirm", UITheme.RED, ' ', UITheme.PAD_3MM);
+        confirm.setAllStyles("Confirm", RED, ' ', PAD_3MM);
         confirm.addActionListener(e -> ui.goDelete(task));
 
         // CANCEL
         ButtonObject cancel = new ButtonObject();
-        cancel.setAllStyles("Cancel", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        cancel.setAllStyles("Cancel", LIGHT_GREY, ' ', PAD_3MM);
         cancel.addActionListener(y -> { d.dispose(); });
 
         d.addComponent(FlowLayout.encloseCenterMiddle(
@@ -292,12 +291,11 @@ class SizeMultiButton extends MultiButton {
     public SizeMultiButton(String size) {
         setText(size);
         getUnselectedStyle().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        getUnselectedStyle().setMargin(UITheme.PAD_1MM, UITheme.PAD_1MM,
-                UITheme.PAD_1MM, UITheme.PAD_1MM);
+        getUnselectedStyle().setMargin(PAD_1MM,PAD_1MM,PAD_1MM,PAD_1MM);
 
         getAllStyles().setBorder(RoundBorder.create()
                         .rectangle(true)
-                        .color(UITheme.LIGHT_GREY));
+                        .color(COL_UNSELECTED));
 
         addActionListener(e -> {
             Dialog d = new Dialog();

@@ -1,17 +1,11 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.charts.models.XYMultipleSeriesDataset;
-import com.codename1.charts.models.XYSeries;
-import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
-import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
@@ -139,7 +133,7 @@ public class TaskDetailsScreen extends Form {
         Container objects = new Container();
         for (String tag : taskData.getTags()) {
             ButtonObject tagObj = new ButtonObject();
-            tagObj.setAllStyles(tag, LIGHT_GREEN,' ', PAD_3MM);
+            tagObj.setAllStyles(tag, COL_TAG,' ', PAD_3MM);
             objects.add(tagObj);
         }
 
@@ -183,7 +177,7 @@ public class TaskDetailsScreen extends Form {
 
         // history
         ButtonObject historyButton = new ButtonObject();
-        historyButton.setAllStyles("History", LIGHT_GREY,
+        historyButton.setAllStyles("History", COL_UNSELECTED,
                 ICON_HISTORY, PAD_3MM);
 
         // archive

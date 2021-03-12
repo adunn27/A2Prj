@@ -1,7 +1,5 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BoxLayout;
@@ -13,10 +11,7 @@ import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
@@ -115,7 +110,7 @@ public class SummaryScreen extends Form {
         }
         for (String tag : tagFilters) {
             ButtonObject b = new ButtonObject();
-            b.setAllStyles(tag, LIGHT_GREEN,' ', PAD_1MM);
+            b.setAllStyles(tag, COL_TAG,' ', PAD_1MM);
             filters.add(b);
         }
 
@@ -238,7 +233,7 @@ public class SummaryScreen extends Form {
         Container tagButtons = FlowLayout.encloseCenterMiddle();
         for (String tag : tagData) {
             ButtonObject tagButton = new ButtonObject();
-            tagButton.setAllStyles(tag, LIGHT_GREEN, ' ', PAD_3MM);
+            tagButton.setAllStyles(tag, COL_TAG, ' ', PAD_3MM);
             if (tagFilters.contains(tag))
                 tagButton.setSelectedColor();
 
@@ -250,14 +245,14 @@ public class SummaryScreen extends Form {
         }
 
         ButtonObject reset = new ButtonObject();
-        reset.setAllStyles("Reset",LIGHT_GREY,' ',PAD_3MM);
+        reset.setAllStyles("Reset",COL_UNSELECTED,' ',PAD_3MM);
         reset.addActionListener(e -> {
             resetFilters();
             refreshFilterDialog();
         });
 
         ButtonObject done = new ButtonObject();
-        done.setAllStyles("Done",LIGHT_GREY,' ',PAD_3MM);
+        done.setAllStyles("Done",COL_UNSELECTED,' ',PAD_3MM);
         done.addActionListener(e -> {
             startDateFilter = startDate.getDate();
             endDateFilter = endDate.getDate();
@@ -324,7 +319,7 @@ public class SummaryScreen extends Form {
         Picker datePicker = new Picker();
         datePicker.setType(Display.PICKER_TYPE_CALENDAR);
         datePicker.getStyle().setBorder(
-                RoundBorder.create().rectangle(true).color(LIGHT_GREY));
+                RoundBorder.create().rectangle(true).color(COL_UNSELECTED));
         datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
         datePicker.getStyle().setPadding(PAD_3MM,PAD_3MM, PAD_3MM,PAD_3MM);
         datePicker.setDate(date);

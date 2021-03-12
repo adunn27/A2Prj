@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
 
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Form;
@@ -142,7 +143,7 @@ public class TaskHistoryScreen extends Form {
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
-            deleteButton.setMyColor(UITheme.RED);
+            deleteButton.setMyColor(RED);
             deleteButton.addActionListener(e -> {
                 DeleteTimeSpan(thisTimeSpan, newHTO);
             });
@@ -163,7 +164,7 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Yes");
-        cancelButton.setMyColor(UITheme.RED);
+        cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
             //TODO add delete code right here
             taskData.removeTimeSpanComponent(deletedTimeSpan);
@@ -173,7 +174,7 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
         submitButton.setMyText("No");
-        submitButton.setMyColor(UITheme.LIGHT_GREY);
+        submitButton.setMyColor(COL_UNSELECTED);
         submitButton.addActionListener(e -> {
             d.dispose();
         });
@@ -211,7 +212,7 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Cancel");
-        cancelButton.setMyColor(UITheme.RED);
+        cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
             d.dispose();
         });

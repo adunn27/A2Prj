@@ -229,13 +229,13 @@ public class UIComponents {
 
             // OPTIONS container
             ButtonObject edit = new ButtonObject();
-            edit.setAllStyles("", YELLOW, FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
+            edit.setAllStyles("", COL_SELECTED, FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
             edit.addActionListener(e->{ui.goEdit(taskData.getName());});
 
             ButtonObject archive = new ButtonObject();
-            archive.setAllStyles("", LIGHT_GREY, ICON_ARCHIVE,PAD_3MM);
+            archive.setAllStyles("", COL_UNSELECTED,ICON_ARCHIVE,PAD_3MM);
             if (taskData.isArchived())
-                archive.setAllStyles("", LIGHT_GREY, ICON_UNARCHIVE,PAD_3MM);
+                archive.setAllStyles("", COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
 
             archive.addActionListener(e->{
                 if (taskData.isArchived())
@@ -294,7 +294,7 @@ public class UIComponents {
             getAllStyles().setMarginLeft(100);
             TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
             searchBar.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(LIGHT_GREY)
+                    RoundBorder.create().rectangle(true).color(COL_UNSELECTED)
             );
             searchBar.getAllStyles().setFgColor(BLACK);
             add(searchBar);
@@ -364,7 +364,7 @@ public class UIComponents {
             UIComponents.ButtonObject Edit = new UIComponents.ButtonObject();
             Delete.setAllStyles("", RED, ICON_EDIT, PAD_3MM);
             Edit.setMyIcon(FontImage.MATERIAL_EDIT);
-            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(LIGHT_GREY));
+            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(COL_UNSELECTED));
 
             Container EastSide = new Container(BoxLayout.x());
 
@@ -383,7 +383,7 @@ public class UIComponents {
             setTitle("Wait!");
             add(new SpanLabel(warning));
             ButtonObject okButton = new ButtonObject();
-            okButton.setAllStyles("Ok", YELLOW, ' ', PAD_3MM);
+            okButton.setAllStyles("Ok", COL_SELECTED, ' ', PAD_3MM);
             add(okButton);
             okButton.addActionListener(e->this.dispose());
             show();

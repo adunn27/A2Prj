@@ -1,9 +1,12 @@
 package org.ecs160.a2;
 
+import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import static com.codename1.ui.CN.log;
+import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
 
 public class HomeScreen extends Form{
     private Container Footer = new Container();
@@ -49,19 +52,22 @@ public class HomeScreen extends Form{
         Footer = new Container();
         Footer.setLayout(new BorderLayout());
 
-        UIComponents.ButtonObject summary = new UIComponents.ButtonObject();
-        summary.setAllStyles("Summary", UITheme.YELLOW,
-                FontImage.MATERIAL_LEADERBOARD, UITheme.PAD_3MM);
+        ButtonObject summary = new ButtonObject();
+        summary.setAllStyles("Summary", COL_SELECTED,
+                ICON_SUMMARY, UITheme.PAD_3MM);
         summary.addActionListener(e-> ui.goSummary());
 
-        UIComponents.ButtonObject archived = new UIComponents.ButtonObject();
-        archived.setAllStyles("", UITheme.YELLOW,
-                UITheme.ICON_ARCHIVE, UITheme.PAD_3MM);
-        archived.addActionListener(e-> ui.goArchive());
+        ButtonObject archived = new ButtonObject();
+        archived.setAllStyles("", COL_SELECTED, ICON_ARCHIVE, PAD_3MM);
+        archived.addActionListener(e-> {
+            if (ui.backend.getArchivedTasks().isEmpty())
+                showWarning(archived, "No tasks are archived");
+            else
+                ui.goArchive();
+        });
 
         UIComponents.ButtonObject addTask = new UIComponents.ButtonObject();
-        addTask.setAllStyles("", UITheme.YELLOW,
-                FontImage.MATERIAL_ADD, UITheme.PAD_3MM);
+        addTask.setAllStyles("", COL_SELECTED, ICON_NEW, PAD_3MM);
         addTask.addActionListener(e-> ui.goNew());
 
         Footer.add(BorderLayout.WEST, archived);
@@ -75,27 +81,32 @@ public class HomeScreen extends Form{
         TaskMenu.setScrollableY(true);
 
         if (activeTask != null) {
-            UIComponents.TextObject activeTitle = new UIComponents.TextObject(
-                    "Now Playing", UITheme.GREY,
-                    UITheme.PAD_3MM, Font.SIZE_MEDIUM);
-            TaskMenu.add(activeTitle);
+//            TextObject activeTitle = new TextObject(
+//                    "Now Playing", GREY, PAD_3MM, Font.SIZE_MEDIUM);
+//            TaskMenu.add(activeTitle);
 
-            UIComponents.TaskObject t = new UIComponents.TaskObject(activeTask, ui);
+            TaskObject t = new TaskObject(activeTask, ui);
             TaskMenu.add(t);
             getComponentForm().registerAnimated(t);
         }
 
         if (!unarchivedTasks.isEmpty()) {
-            UIComponents.TextObject inactiveTitle =new UIComponents.TextObject(
-                    "My Tasks", UITheme.GREY,
-                    UITheme.PAD_3MM, Font.SIZE_MEDIUM);
-            TaskMenu.add(inactiveTitle);
+//            TextObject inactiveTitle = new TextObject(
+//                    "My Tasks", GREY, PAD_3MM, Font.SIZE_MEDIUM);
+//            TaskMenu.add(inactiveTitle);
         }
 
         for (Task taskObj: unarchivedTasks) {
-            UIComponents.TaskObject task = new UIComponents.TaskObject(taskObj, ui);
+            TaskObject task = new TaskObject(taskObj, ui);
             TaskMenu.add(task);
         }
+    }
+
+    private void showWarning(Component button, String warning) {
+        Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+        d.addComponent(BorderLayout.center(new SpanLabel(warning)));
+        d.showPopupDialog(button);
     }
 
 
