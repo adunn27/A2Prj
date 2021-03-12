@@ -199,9 +199,7 @@ public class TaskDetailsScreen extends Form {
                 ui.backend.getTaskByName(taskData.getName()).unarchive();
                 ui.backend.logfile.unarchiveTask(taskData);
             } else if (taskData.isActive()) {
-                LocalDateTime time = taskData.stop();
-                ui.backend.getTaskByName(taskData.getName()).archive();
-                ui.backend.logfile.stopTask(taskData, time);
+                ui.backend.stopTask(taskData);
                 ui.backend.logfile.archiveTask(taskData);
             } else {
                 ui.backend.getTaskByName(taskData.getName()).archive();

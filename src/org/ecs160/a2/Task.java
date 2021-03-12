@@ -98,23 +98,17 @@ public class Task {
         isArchived = false;
     }
 
-
-    public LocalDateTime start() {
+    public void start(LocalDateTime time) {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
-        LocalDateTime time= LocalDateTime.now();
-        allTimes.add(new TimeSpan(time)); //TODO make all now have same time
+        allTimes.add(new TimeSpan(time));
         isActive = true;
-        return time;
     }
 
-    public LocalDateTime stop() {
+    public void stop(LocalDateTime time) {
         assert (isActive == true) : "Cannot stop an inactive task";
-        LocalDateTime time = LocalDateTime.now();
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
-        return time;
-
     }
 
     public Boolean hasTag(String tag) {
@@ -155,8 +149,6 @@ public class Task {
         Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
         return Utility.durationToFormattedString(duration);
     }
-
-    
 
     private Duration getTotalTimeOfDay(LocalDate day) {
         return getTimeBetween(day.atStartOfDay(),

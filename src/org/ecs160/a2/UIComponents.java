@@ -212,8 +212,7 @@ public class UIComponents {
                     ui.backend.logfile.unarchiveTask(taskData);
                 }
                 else if (taskData.isActive()){
-                    LocalDateTime time= taskData.stop();
-                    ui.backend.logfile.stopTask(taskData, time);
+                    ui.backend.stopTask(taskData);
                     ui.backend.logfile.archiveTask(taskData);
                     ui.backend.getTaskByName(taskData.getName()).archive();
                 }
@@ -249,17 +248,15 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
-                LocalDateTime time = taskData.stop();
-                ui.backend.logfile.stopTask(taskData,time);
-
+                ui.backend.stopTask(taskData);
             } else {
                 Task activeTask = ui.backend.getActiveTask();
                 if (activeTask != null) {
-                    LocalDateTime time= activeTask.stop();
-                    ui.backend.logfile.stopTask(activeTask,time);
+                    ui.backend.stopTask(activeTask);
                 }
-                LocalDateTime time= taskData.start();
-                ui.backend.logfile.startTask(taskData,time);
+                LocalDateTime time = LocalDateTime.now();
+                taskData.start(time);
+                ui.backend.logfile.startTask(taskData, time);
             }
             ui.refreshScreen();
         }
