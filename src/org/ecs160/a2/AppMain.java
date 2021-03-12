@@ -49,7 +49,6 @@ public class AppMain {
             current.show();
             return;
         }
-
         BusinessLogic backend = new BusinessLogic();
         UINavigator frontend = new UINavigator(backend);
     }

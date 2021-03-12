@@ -56,7 +56,8 @@ public class TimeSpan {
                 findConstrictingUpperBoundOfWindow(endOfTimeWindow);
 
         Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
-        // Need to check if the timeframe was outside
+        // Necessary to check as if the timespan had no overlap with the
+        // given time window, then this will return a negative value
         if (timeBetween.isNegative()) return Duration.ofMillis(0);
         return timeBetween;
     }

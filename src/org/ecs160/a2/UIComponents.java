@@ -4,14 +4,22 @@ import static org.ecs160.a2.UITheme.*;
 import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
+import com.codename1.ui.animations.CommonTransitions;
+import com.codename1.ui.animations.Transition;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
+import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
+import com.codename1.ui.Label;
+import com.codename1.ui.spinner.Picker;
 
 import java.time.LocalDateTime;
+import java.util.Date;
+
 import static com.codename1.ui.CN.*;
 
 public class UIComponents {
@@ -30,9 +38,11 @@ public class UIComponents {
             if (!text.isEmpty())
                 this.setText(text);
 
-            this.getAllStyles().setBorder(RoundBorder.create()
-                    .rectangle(true).color(color)
-            );
+            if (color >= 0) {
+                this.getAllStyles().setBorder(RoundBorder.create()
+                        .rectangle(true).color(color)
+                );
+            }
 
             if (icon != ' ')
                 this.setIcon(FontImage.createMaterial(icon,
@@ -206,12 +216,33 @@ public class UIComponents {
                 archive.setAllStyles("", COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
 
             archive.addActionListener(e->{
-                if (taskData.isArchived())
+                if (taskData.isArchived()) {
                     ui.backend.unarchiveTask(taskData);
-                else
+                    ui.refreshScreen();
+
+                } else if (taskData.isActive()) {
+                    Dialog areYouSure = new Dialog(BoxLayout.y());
+                    areYouSure.add("Archive this currently running task?");
+                    ButtonObject yesB = new ButtonObject();
+                    yesB.setAllStyles("Yes", COL_UNSELECTED,  ' ',PAD_3MM);
+                    yesB.addActionListener(yes -> {
+                        ui.backend.archiveTask(taskData);
+                        areYouSure.setTransitionOutAnimator(CommonTransitions.createEmpty());
+                        areYouSure.dispose();
+                        ui.refreshScreen();
+                    });
+
+                    ButtonObject noB = new ButtonObject();
+                    noB.setAllStyles("Cancel", COL_SELECTED,  ' ',PAD_3MM);
+                    noB.addActionListener(cancel -> areYouSure.dispose());
+
+
+                    areYouSure.add(GridLayout.encloseIn(2,noB, yesB));
+                    areYouSure.showPopupDialog(archive);
+                } else {
                     ui.backend.archiveTask(taskData);
-//                currPage.animate();
-                ui.refreshScreen();
+                    ui.refreshScreen();
+                }
                 log("archived/unarchived task");
             });
             Container options = new Container(BoxLayout.x());
@@ -316,6 +347,29 @@ public class UIComponents {
 
             add(WEST, startLabel);
             add(EAST, EastSide);
+        }
+    }
+
+    static class DatePickerObject extends Picker {
+        public DatePickerObject(Date date) {
+            setType(Display.PICKER_TYPE_CALENDAR);
+            getStyle().setBorder(
+                    RoundBorder.create().rectangle(true).
+                            color(UITheme.LIGHT_GREY));
+            getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+            getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
+                    UITheme.PAD_3MM, UITheme.PAD_3MM);
+            setDate(date);
+        }
+    }
+
+    static class StartEndPickers extends Container {
+        public StartEndPickers(Picker start, Picker end) {
+            setLayout(BoxLayout.y());
+            addAll(FlowLayout.encloseCenterMiddle(
+                    new Label("Start"), start,
+                    end, new Label("End"))
+            );
         }
     }
 
