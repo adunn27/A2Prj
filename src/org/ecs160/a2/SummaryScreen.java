@@ -13,15 +13,15 @@ import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.DayOfWeek;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.TimeZone;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
+
 
 public class SummaryScreen extends Form {
     Container Header;
@@ -87,30 +87,32 @@ public class SummaryScreen extends Form {
         createTaskList();
         createGraphRow();
 
-        addAll(FilterHeader,StatsList,graphRow,TaskList);
+        if (filteredTaskData.isEmpty()) {
+            addAll(FilterHeader,TaskList);
+        } else {
+            addAll(FilterHeader,StatsList,graphRow,TaskList);
+        }
     }
 
     private void createFilterDisplay() {
-        FilterHeader = new Container(BoxLayout.y());
+        String dateHeader = dateToString(startDateFilter) + " - " +
+                            dateToString(endDateFilter);
 
-        UIComponents.TitleObject startEndDates = new UIComponents.TitleObject(
-                dateToString(startDateFilter) + " - " +
-                        dateToString(endDateFilter));
-        startEndDates.setSize(SIZE_LARGE);
-        startEndDates.setMyColor(UITheme.BLACK);
-        startEndDates.removePadding();
+        FilterHeader = new Container(BoxLayout.y());
+        TextObject startEndDates = new TextObject(
+                dateHeader, BLACK, 0, SIZE_LARGE);
 
         FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
 
         Container filters = new Container();
         filters.add(new Label("Showing: "));
         for (String size : sizeFilters) {
-            UIComponents.SizeButtonObject b = new UIComponents.SizeButtonObject(size);
+            SizeButtonObject b = new SizeButtonObject(size);
             filters.add(b);
         }
         for (String tag : tagFilters) {
-            UIComponents.ButtonObject b = new UIComponents.ButtonObject();
-            b.setAllStyles(tag, UITheme.LIGHT_GREEN,' ',UITheme.PAD_1MM);
+            ButtonObject b = new ButtonObject();
+            b.setAllStyles(tag, COL_TAG,' ', PAD_1MM);
             filters.add(b);
         }
 
@@ -134,23 +136,20 @@ public class SummaryScreen extends Form {
                 Utility.convertToLocalDate(endDateFilter));
     }
     private void createToolbar() {
-        getToolbar().addCommandToLeftBar("",
-                FontImage.createMaterial(FontImage.MATERIAL_ARROW_BACK,
-                        new Style()), e->ui.goBack());
+        getToolbar().addMaterialCommandToLeftBar("",
+                ICON_BACK, PAD_6MM, e->ui.goBack());
 
-        getToolbar().addCommandToRightBar("",
-                FontImage.createMaterial(FontImage.MATERIAL_FILTER_LIST,
-                        new Style()),
-                        e->{
-                            createFilterDialog();
-                            FilterDialog.show();
-                        }
-                );
+        getToolbar().addMaterialCommandToRightBar("",
+                FontImage.MATERIAL_FILTER_LIST, PAD_6MM,
+                e->{
+                    createFilterDialog();
+                    FilterDialog.show();
+                });
     }
+
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
-        UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");
-        statTitle.setSize(SIZE_LARGE);
+        TextObject statTitle = new TextObject("Stats", GREY, PAD_3MM, SIZE_LARGE);
         StatsList.add(statTitle);
         LocalDateTime startTime = Utility.getStartOfDay(
                 Utility.convertToLocalDate(startDateFilter));
@@ -191,10 +190,8 @@ public class SummaryScreen extends Form {
     }
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
+        TextObject taskTitle = new TextObject("Tasks", GREY, PAD_3MM,SIZE_LARGE);
 
-        UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
-        taskTitle.setSize(SIZE_LARGE);
-        TaskList.add(taskTitle);
         LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
                 Utility.convertToLocalDate(startDateFilter));
         LocalDateTime endTime = Utility.getEndOfDay(
@@ -204,8 +201,9 @@ public class SummaryScreen extends Form {
             noTasks.add("No Tasks to Display");
             TaskList.add(noTasks);
         } else {
+            TaskList.add(taskTitle);
             for (Task taskObj : filteredTaskData) {
-                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
+                TaskList.add(new SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
     }
@@ -223,7 +221,7 @@ public class SummaryScreen extends Form {
         // TODO: refactor
         Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeData) {
-            UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
+            SizeLabelObject button = new SizeLabelObject(size);
             if (sizeFilters.contains(size))
                 button.setSelectedColor();
             button.addPointerPressedListener(e ->
@@ -233,8 +231,8 @@ public class SummaryScreen extends Form {
 
         Container tagButtons = FlowLayout.encloseCenterMiddle();
         for (String tag : tagData) {
-            UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setAllStyles(tag, UITheme.LIGHT_GREEN, ' ', UITheme.PAD_3MM);
+            ButtonObject tagButton = new ButtonObject();
+            tagButton.setAllStyles(tag, COL_TAG, ' ', PAD_3MM);
             if (tagFilters.contains(tag))
                 tagButton.setSelectedColor();
 
@@ -245,15 +243,15 @@ public class SummaryScreen extends Form {
             tagButtons.add(tagButton);
         }
 
-        UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
-        reset.setAllStyles("Reset",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        ButtonObject reset = new ButtonObject();
+        reset.setAllStyles("Reset",COL_UNSELECTED,' ',PAD_3MM);
         reset.addActionListener(e -> {
             resetFilters();
             refreshFilterDialog();
         });
 
-        UIComponents.ButtonObject done = new UIComponents.ButtonObject();
-        done.setAllStyles("Done",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        ButtonObject done = new ButtonObject();
+        done.setAllStyles("Done",COL_UNSELECTED,' ',PAD_3MM);
         done.addActionListener(e -> {
             startDateFilter = startDate.getDate();
             endDateFilter = endDate.getDate();
@@ -324,10 +322,9 @@ public class SummaryScreen extends Form {
         Picker datePicker = new Picker();
         datePicker.setType(Display.PICKER_TYPE_CALENDAR);
         datePicker.getStyle().setBorder(
-                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+                RoundBorder.create().rectangle(true).color(COL_UNSELECTED));
         datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-        datePicker.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
-                UITheme.PAD_3MM, UITheme.PAD_3MM);
+        datePicker.getStyle().setPadding(PAD_3MM,PAD_3MM, PAD_3MM,PAD_3MM);
         datePicker.setDate(date);
         return datePicker;
     }
