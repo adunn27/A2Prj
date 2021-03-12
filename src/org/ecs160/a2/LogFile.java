@@ -33,7 +33,7 @@ public class LogFile {
 
     public LogFile() throws IOException {
         // BELOW IS A CLEAR BUTTON !!! THIS IS EQUIVALENT TO DELETE LOG FILE
-        Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
+        //Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
         lastTaskId = 0;
         retrievedTasks = new TaskContainer();
         readInLog();
