@@ -2,7 +2,6 @@ package org.ecs160.a2;
 
 import java.io.*;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.io.File; // Import the File class
 import java.io.IOException; // Import the IOException class to handle errors
 import java.io.FileWriter; // Import the FileWriter class
@@ -21,11 +20,15 @@ public class LogFile {
     //public static final String DELIMITER_REGEX = String.format("%c(?!%c)",
     //                                            LOG_DELIMITER, ESCAPE_CHAR);
     public static final String LOG_FILE_NAME = "log";
-    public static final DateTimeFormatter formatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public static final int NAME_INDEX = 3;
     public static final int TASK_ID_INDEX = 2;
     public static final int TIME_INDEX = 0;
+    public static final int DELETE_TASK_INDEX = 4;
+    public static final int DESCRIPTION_INDEX = 4;
+    public static final int TASK_SIZE_INDEX = 5;
+    public static final int TIMESPAN_INDEX_INDEX = 4;
+
     public TaskContainer retrieveTask;
     public int TaskId;
     private OutputStream os;
@@ -87,7 +90,7 @@ public class LogFile {
         case "archive":     task.archive(); break;
         case "unarchive":   task.unarchive(); break;
         case "delete_task": retrieveTask.removeTask(task); break;
-        case "delete_tag":  task.removeTag(split[4]); break;
+        case "delete_tag":  task.removeTag(split[DELETE_TASK_INDEX]); break;
         case "delete_time": executeDeleteTimeFromLog(split, task); break;
         case "edit_time":   executeEditTimeFromLog(split, task); break;
         default: throw new IllegalArgumentException("Invalid command: "
@@ -96,12 +99,14 @@ public class LogFile {
     }
 
     private void executeStartFromLog(String time, Task task) {
-        LocalDateTime taskTime_s = LocalDateTime.parse(time, formatter);
+        LocalDateTime taskTime_s =
+                LocalDateTime.parse(time, Utility.timeFormatter24hr);
         task.start(taskTime_s);
     }
 
     private void executeStopFromLog(String time, Task task) {
-        LocalDateTime taskTime_e= LocalDateTime.parse(time, formatter);
+        LocalDateTime taskTime_e=
+                LocalDateTime.parse(time, Utility.timeFormatter24hr);
         task.stop(taskTime_e);
     }
 
@@ -115,8 +120,8 @@ public class LogFile {
 
     private void executeEditFromLog(String[] split, Task task) {
         task.setName(split[NAME_INDEX]);
-        task.setDescription(split[4]);
-        task.setTaskSize(split[5]);
+        task.setDescription(split[DESCRIPTION_INDEX]);
+        task.setTaskSize(split[TASK_SIZE_INDEX]);
 
         List<String> tags_e = new ArrayList<>(
                 Arrays.asList(split).subList(6, split.length)
@@ -126,12 +131,13 @@ public class LogFile {
     }
 
     private void executeEditTimeFromLog(String[] split, Task task) {
-        TimeSpan time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+        TimeSpan time = task.getTimeSpanByIndex(
+                Integer.parseInt(split[TIMESPAN_INDEX_INDEX]));
 
         LocalDateTime newStartDateTime =
-                LocalDateTime.parse(split[5], formatter);
+                LocalDateTime.parse(split[5], Utility.timeFormatter24hr);
         LocalDateTime newEndDateTime =
-                LocalDateTime.parse(split[6], formatter);
+                LocalDateTime.parse(split[6], Utility.timeFormatter24hr);
 
         time.setStartTime(newStartDateTime);
         time.setEndTime(newEndDateTime);
@@ -139,7 +145,8 @@ public class LogFile {
 
     private void executeDeleteTimeFromLog(String[] split, Task task) {
         TimeSpan time;
-        time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+        time = task.getTimeSpanByIndex(
+                Integer.parseInt(split[TIMESPAN_INDEX_INDEX]));
         task.removeTimeSpanComponent(time);
     }
 
@@ -198,8 +205,10 @@ public class LogFile {
 
     public void edit_time (Task task, int timeSpanIndex,
                            LocalDateTime newStartTime,LocalDateTime newEndTime){
-        String formatNewStartTime = newStartTime.format(formatter);
-        String formatNewEndTime = newEndTime.format(formatter);
+        String formatNewStartTime =
+                newStartTime.format(Utility.timeFormatter24hr);
+        String formatNewEndTime =
+                newEndTime.format(Utility.timeFormatter24hr);
 
         System.out.println("log edit_time");
         writeToLog( createLogEntry(task,"edit_time",
@@ -217,7 +226,7 @@ public class LogFile {
                                   String command, String ... arguments) {
         StringBuilder line = new StringBuilder();
 
-        line.append(when.format(formatter))
+        line.append(when.format(Utility.timeFormatter24hr))
             .append(LOG_DELIMITER).append(command)
             .append(LOG_DELIMITER).append(task.getId())
             .append(LOG_DELIMITER).append(task.getName());
