@@ -237,9 +237,13 @@ public class LogFile {
 
             }
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|edit|"+
-                    task.getName() + "|" + task.getDescription() +
-                    "|" + task.getTaskSize() + "|" + tags+ "|"+task.getId()+"\n");
+            writer.write(sdf.format(new Date(time_in_long)) +
+                    "|" + "edit" +
+                    "|" + task.getName() +
+                    "|" + task.getDescription() +
+                    "|" + task.getTaskSize() +
+                    "|" + tags +
+                    "|" + task.getId() + "\n");
             writer.close();
 
 
@@ -354,9 +358,9 @@ public class LogFile {
 
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
-            String tags= new String("");
+            String tags = new String("");
             for(String tag : task.getTags()){
-                tags= tags+tag+" ";
+                tags= tags + tag.replace(" ", "\\ ") + " ";
 
             }
 
