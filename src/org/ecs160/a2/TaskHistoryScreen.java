@@ -147,10 +147,7 @@ public class TaskHistoryScreen extends Form {
         cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
             //TODO add delete code right here
-            LocalDateTime time;
-            ui.backend.logfile.delete_time(taskData,
-                    taskData.getIndexOfTimeSpan(deletedTimeSpan));
-            taskData.removeTimeSpan(deletedTimeSpan);
+            ui.backend.removeTimeSpan(taskData, deletedTimeSpan);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
 
@@ -257,13 +254,8 @@ public class TaskHistoryScreen extends Form {
                 newDialog.add(warningDialog);
                 newDialog.show();
             } else {
-
-                ui.backend.logfile.edit_time(taskData,
-                        taskData.getIndexOfTimeSpan(editedTimeSpan),
+                ui.backend.editTimeSpan(taskData, editedTimeSpan,
                         startDateTime, endDateTime);
-
-                editedTimeSpan.setStartTime(startDateTime);
-                editedTimeSpan.setEndTime(endDateTime);
 
                 PopupDialog.dispose();
                 ui.refreshScreen();

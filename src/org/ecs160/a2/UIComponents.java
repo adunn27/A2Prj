@@ -10,7 +10,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
-import javafx.scene.paint.Material;
 
 import java.time.LocalDateTime;
 import static com.codename1.ui.CN.*;
@@ -207,19 +206,10 @@ public class UIComponents {
                 archive.setAllStyles("", COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
 
             archive.addActionListener(e->{
-                if (taskData.isArchived()){
-                    ui.backend.getTaskByName(taskData.getName()).unarchive();
-                    ui.backend.logfile.unarchiveTask(taskData);
-                }
-                else if (taskData.isActive()){
-                    ui.backend.stopTask(taskData);
-                    ui.backend.logfile.archiveTask(taskData);
-                    ui.backend.getTaskByName(taskData.getName()).archive();
-                }
-                else{
-                    ui.backend.getTaskByName(taskData.getName()).archive();
-                    ui.backend.logfile.archiveTask(taskData);
-                }
+                if (taskData.isArchived())
+                    ui.backend.unarchiveTask(taskData);
+                else
+                    ui.backend.archiveTask(taskData);
 //                currPage.animate();
                 ui.refreshScreen();
                 log("archived/unarchived task");
@@ -236,8 +226,7 @@ public class UIComponents {
 
         private void longPressEvent() {
             if (taskData.isArchived()) {
-                taskData.unarchive();
-                ui.backend.logfile.unarchiveTask(this.taskData);
+                ui.backend.unarchiveTask(taskData);
                 ui.refreshScreen();
             } else {
                 ui.goDetails(taskData.getName());
@@ -250,13 +239,7 @@ public class UIComponents {
             } else if (taskData.isActive()) {
                 ui.backend.stopTask(taskData);
             } else {
-                Task activeTask = ui.backend.getActiveTask();
-                if (activeTask != null) {
-                    ui.backend.stopTask(activeTask);
-                }
-                LocalDateTime time = LocalDateTime.now();
-                taskData.start(time);
-                ui.backend.logfile.startTask(taskData, time);
+                ui.backend.startTask(taskData);
             }
             ui.refreshScreen();
         }

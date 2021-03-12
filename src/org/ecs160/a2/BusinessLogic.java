@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BusinessLogic {
     private final TaskContainer everyTask;
-    public final LogFile logfile;
+    private final LogFile logfile;
     private int nextTaskId;
 
     public BusinessLogic() {
@@ -19,8 +19,9 @@ public class BusinessLogic {
     }
 
     public void saveTask(Task newTask) {
-        everyTask.addTask(newTask);
         newTask.setId(nextTaskId);
+        everyTask.addTask(newTask);
+        logfile.addTask(newTask);
         nextTaskId++;
     }
 
@@ -48,9 +49,55 @@ public class BusinessLogic {
         logfile.delete_task(task);
     }
 
+    public void startTask(Task task) {
+        if (getActiveTask() != null)
+            stopTask(getActiveTask());
+        LocalDateTime time = LocalDateTime.now();
+        task.start(time);
+        logfile.stopTask(task, time);
+    }
+
     public void stopTask(Task activeTask) {
         LocalDateTime time = LocalDateTime.now();
         activeTask.stop(time);
-        logfile.stopTask(activeTask,time);
+        logfile.stopTask(activeTask, time);
+    }
+
+    public void removeTag(Task task, String tag) {
+        task.removeTag(tag);
+        logfile.delete_tag(task, tag);
+    }
+
+    public void archiveTask(Task task) {
+        if (task.isActive())
+            stopTask(task);
+        getTaskByName(task.getName()).archive();
+        logfile.archiveTask(task);
+    }
+
+    public void unarchiveTask(Task task) {
+        getTaskByName(task.getName()).unarchive();
+        logfile.unarchiveTask(task);
+    }
+
+    public void removeTimeSpan(Task task, TimeSpan deletedTimeSpan) {
+        logfile.delete_time(task,
+                task.getIndexOfTimeSpan(deletedTimeSpan));
+        task.removeTimeSpan(deletedTimeSpan);
+    }
+
+    public void editTimeSpan(Task task, TimeSpan timeSpan,
+                              LocalDateTime startDateTime,
+                              LocalDateTime endDateTime) {
+        logfile.edit_time(task,
+                task.getIndexOfTimeSpan(timeSpan),
+                startDateTime, endDateTime);
+
+        timeSpan.setStartTime(startDateTime);
+        timeSpan.setEndTime(endDateTime);
+    }
+
+    public void editTask(Task task, String nameData, String sizeData, String descriptionData, List<String> tagsData) {
+
     }
 }

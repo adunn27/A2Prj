@@ -100,14 +100,13 @@ public class EditTaskScreen extends Form {
         descriptionData = descField.getText();
         log("tags: " + tagsData);
 
-        //TODO check if name already taken
         if (nameData.isEmpty()) {
             new showWarningDialog("Please enter a task name");
             return;
         }
 
         Task lookupTask = ui.backend.getTaskByName(nameData);
-        if (lookupTask != null && isNewTask){
+        if (lookupTask != null && lookupTask != task){
             System.out.println("Task already exists");
             Dialog taskExistsDialog = new Dialog();
             taskExistsDialog.setLayout(BoxLayout.y());
@@ -124,20 +123,13 @@ public class EditTaskScreen extends Form {
             taskExistsDialog.show();
             return;
         }
-        task.setId(task.getId());
-        task.setName(nameData);
-        task.setTaskSizeWithString(sizeData);
-        task.addAllTags(tagsData);
-        task.setDescription(descriptionData);
+
+        ui.backend.editTask(task, nameData, sizeData,
+                descriptionData, tagsData);
 
         if (isNewTask) {
             ui.backend.saveTask(task);
-            ui.backend.logfile.addTask(task);
-            ui.backend.logfile.editTask(task);
             isNewTask = false;
-        }else {
-
-            ui.backend.logfile.editTask(task);
         }
 
         ui.goBack();
@@ -189,7 +181,7 @@ public class EditTaskScreen extends Form {
 
         tagField.add(tagButton);
         tagsData.add(tagName);
-        task.addTag(tagName);
+        //task.addTag(tagName); //TODO do we need this?
     }
     private void newTagPrompt() {
         Dialog d = new Dialog();
@@ -262,8 +254,7 @@ public class EditTaskScreen extends Form {
             System.out.println("REMOVING TAG");
             tagsData.remove(name);
             tagField.removeComponent(deletedComponent);
-            task.removeTag(deletedComponent.getName()); //TODO how?
-            ui.backend.logfile.delete_tag(task, deletedComponent.getName());
+            ui.backend.removeTag(task, deletedComponent.getName());
             d.dispose();
         });
 
