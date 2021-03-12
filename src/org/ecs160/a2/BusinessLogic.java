@@ -1,21 +1,17 @@
 package org.ecs160.a2;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 public class BusinessLogic {
-    private TaskContainer everyTask;
-    public LogFile logfile;
-    public TaskContainer logTask;
-    public int TaskId;
+    private final TaskContainer everyTask;
+    public final LogFile logfile;
+    private int nextTaskId;
 
     public BusinessLogic() {
         logfile = new LogFile();
-
-        everyTask = logfile.retrieveTask;
-
-        TaskId = logfile.TaskId + 1;
+        everyTask = logfile.getRetrievedTasks();
+        nextTaskId = logfile.getLastTaskId() + 1;
     }
 
     public List<String> getAllTags() {
@@ -24,8 +20,8 @@ public class BusinessLogic {
 
     public void saveTask(Task newTask) {
         everyTask.addTask(newTask);
-        newTask.setId(TaskId);
-        TaskId++;
+        newTask.setId(nextTaskId);
+        nextTaskId++;
     }
 
     public Task getActiveTask() {
