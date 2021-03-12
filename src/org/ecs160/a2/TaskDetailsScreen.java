@@ -86,7 +86,6 @@ public class TaskDetailsScreen extends Form {
                 .toMillis() / 1000 > lastRenderedTime / 1000;
     }
 
-
     private void resetStartEndDate() {
         startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
