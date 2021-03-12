@@ -20,8 +20,6 @@ import com.codename1.ui.spinner.Picker;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-import javafx.scene.paint.Material;
-
 import static com.codename1.ui.CN.*;
 
 public class UIComponents {
