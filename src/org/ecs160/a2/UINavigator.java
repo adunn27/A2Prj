@@ -14,9 +14,11 @@ public class UINavigator {
 
     public UINavigator(BusinessLogic backendLogic) {
         backend = backendLogic;
-
-        (new HomeScreen(this)).show();
         previousForm = new ArrayDeque<>();
+    }
+
+    public void start() {
+        (new HomeScreen(this)).show();
         previousForm.push(Display.getInstance().getCurrent());
     }
 

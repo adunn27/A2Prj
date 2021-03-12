@@ -51,6 +51,7 @@ public class AppMain {
         }
         BusinessLogic backend = new BusinessLogic();
         UINavigator frontend = new UINavigator(backend);
+        frontend.start();
     }
 
     public void stop() {
