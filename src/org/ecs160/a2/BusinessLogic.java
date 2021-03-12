@@ -74,7 +74,8 @@ public class BusinessLogic {
     }
 
     public void deleteTask(Task task) {
-        if(task.getName() == null) return;
+        if(task.getName().isEmpty()) return;
+        System.out.println(task.getName());
         everyTask.removeTask(task);
         logfile.delete_task(task);
     }
