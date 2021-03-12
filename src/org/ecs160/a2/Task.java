@@ -11,38 +11,26 @@ public class Task {
     private static final TaskSize DEFAULT_TASK_SIZE = TaskSize.S;
 
     private String name;
-    private int TaskId;
-    private TaskSize size;
+    private int taskId;
+    private TaskSize size = DEFAULT_TASK_SIZE;
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
-    private List<TimeSpan> allTimes;
-    private Set<String> tags;
+    private final List<TimeSpan> allTimes;
+    private final Set<String> tags;
 
-    private void construct(String newTaskName, TaskSize newTaskSize) {
+    public Task(String newTaskName) {
         this.name = newTaskName;
-        this.size = newTaskSize;
         this.tags = new HashSet<>();
-        this.allTimes = new Vector<TimeSpan>();
-
+        this.allTimes = new Vector<>();
     }
 
-    public Boolean isArchive(){ return isArchived; }
-
-    public void setId(int taskid){
-        TaskId = taskid;
+    public void setId(int taskId){
+        this.taskId = taskId;
     }
 
     public int getId(){
-        return TaskId;
-    }
-
-    public Task(String newTaskName, TaskSize newTaskSize) {
-        construct(newTaskName, newTaskSize);
-    }
-
-    public Task(String newTaskName) {
-        construct(newTaskName, DEFAULT_TASK_SIZE);
+        return taskId;
     }
 
     public String getName() {
@@ -82,26 +70,26 @@ public class Task {
     }
 
     public void archive() {
-        assert (isArchived == false): "Cannot archive an already archived task";
-        assert (isActive == false): "Cannot archive an active task";
+        assert (!isArchived): "Cannot archive an already archived task";
+        assert (!isActive): "Cannot archive an active task";
         isArchived = true;
     }
 
     public void unarchive() {
-        assert (isArchived == true): "Cannot unarchive a " +
+        assert (isArchived): "Cannot unarchive a " +
                                      "task that isn't archived";
         isArchived = false;
     }
 
     public void start(LocalDateTime time) {
-        assert (isActive == false): "Cannot start an already active task";
-        assert (isArchived == false): "Cannot start an archived task";
+        assert (!isActive): "Cannot start an already active task";
+        assert (!isArchived): "Cannot start an archived task";
         allTimes.add(new TimeSpan(time));
         isActive = true;
     }
 
     public void stop(LocalDateTime time) {
-        assert (isActive == true) : "Cannot stop an inactive task";
+        assert (isActive) : "Cannot stop an inactive task";
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
     }
@@ -179,10 +167,8 @@ public class Task {
         return allTimes;
     }
 
-    public LocalDateTime removeTimeSpanComponent(TimeSpan deletedTimeSpan){
-        LocalDateTime time = deletedTimeSpan.getStartTime();
+    public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
         allTimes.remove(deletedTimeSpan);
-        return time;
     }
 
     public TimeSpan getTimeSpanByIndex(int index){

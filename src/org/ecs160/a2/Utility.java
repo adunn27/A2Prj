@@ -50,16 +50,15 @@ public final class Utility {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
-    public static LocalDateTime convertToLocalDateTime(Date date) { //TODO: Consider cleaning up
+    public static LocalDateTime convertToLocalDateTime(Date date) {
         return date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
     public static String durationToFormattedString(Duration duration) {
-        String hms = String.format("%d:%02d:%02d",
+        return String.format("%d:%02d:%02d",
                 duration.toHours(),
                 duration.toMinutesPart(),
                 duration.toSecondsPart());
-        return hms;
     }
 }
