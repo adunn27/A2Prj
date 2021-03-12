@@ -119,18 +119,22 @@ public class LogFile {
         case "unarchive":
             task.unarchive();
             break;
+
         case "delete_task":
             retrieveTask.removeTask(task);
             break;
+
         case "delete_tag":
-            task.removeTag(split[NAME_INDEX]);
+            task.removeTag(split[4]);
             break;
+
         case "delete_time":
             String timeString = split[NAME_INDEX];
             LocalDateTime dateTime = LocalDateTime.parse(timeString, formatter);
             time = task.getTimeSpanByTime(dateTime);
             task.removeTimeSpanComponent(time);
             break;
+
         case "edit_time":
             String oldStartTimeString = split[NAME_INDEX];
             String newStartTimeString = split[4];
@@ -147,14 +151,16 @@ public class LogFile {
             time.setStartTime(newStartDateTime);
             time.setEndTime(newEndDateTime);
             break;
+
         default:
-            System.out.println("Invalid command: " + split[COMMAND_INDEX] );
+            throw new IllegalArgumentException(
+                    "Invalid command: " + split[COMMAND_INDEX] );
         }
     }
 
     public void addTask (Task task){
         System.out.println("log edit");
-        writeToLog(createLogEntry(task));
+        writeToLog(createLogEntry(task, "add"));
     }
     public void editTask (Task task){
         System.out.println("log edit");
@@ -233,10 +239,6 @@ public class LogFile {
         return createLogEntry(LocalDateTime.now(), task, arguments);
     }
 
-    private String encode(String str) {
-        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE);
-    }
-
     private String createLogEntry(LocalDateTime when, Task task,
                                   String ... arguments) {
         StringBuilder line = new StringBuilder();
@@ -252,6 +254,10 @@ public class LogFile {
         line.append("\n");
 
         return line.toString();
+    }
+
+    private String encode(String str) {
+        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE);
     }
 
     private void writeToLog(String output) {
