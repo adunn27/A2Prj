@@ -38,9 +38,11 @@ public class UIComponents {
             if (!text.isEmpty())
                 this.setText(text);
 
-            this.getAllStyles().setBorder(RoundBorder.create()
-                    .rectangle(true).color(color)
-            );
+            if (color >= 0) {
+                this.getAllStyles().setBorder(RoundBorder.create()
+                        .rectangle(true).color(color)
+                );
+            }
 
             if (icon != ' ')
                 this.setIcon(FontImage.createMaterial(icon,getUnselectedStyle()));

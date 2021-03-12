@@ -4,6 +4,7 @@ import com.codename1.ui.FontImage;
 
 public class UITheme {
     // colors
+    public static final int COL_ACTIVE = 0x546747;
 
     // https://colorpalettes.net/color-palette-4291/
     public static final int WHITE = 0xffffff;
@@ -16,6 +17,7 @@ public class UITheme {
     public static final int LIGHT_GREEN = 0xbbc8ba;
     public static final int GREEN = 0x546747;
     public static final int DARK_GREEN = 0x2b331f;
+
 
     public static final int LIGHT_YELLOW = 0xfddca5;
     public static final int YELLOW = 0xfab73d;
@@ -36,4 +38,5 @@ public class UITheme {
 
     public static final char ICON_REFRESH = FontImage.MATERIAL_REFRESH;
     public static final char ICON_CHART = FontImage.MATERIAL_INSIGHTS;
+    public static final char ICON_ACTIVE = FontImage.MATERIAL_ALARM_ON;
 }
