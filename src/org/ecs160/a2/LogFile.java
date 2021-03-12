@@ -176,11 +176,9 @@ public class LogFile {
                         time = task.getTimeSpanByTime(oldStartDateTime);
                         time.setStartTime(newStartDateTime);
                         time.setEndTime(newEndDateTime);
-
-
+                        break;
                     default:
-                        System.out.println("No Match Command, Try Again! Command :" +data.split("\\|")[1] );
-
+                        System.out.println("Invalid command: " +data.split("\\|")[1] );
                 }
 
             }
