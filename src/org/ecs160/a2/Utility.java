@@ -28,7 +28,7 @@ public final class Utility {
     }
 
     public static LocalDateTime getEndOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+        return present.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
                 .with(LocalTime.MAX);
     }
 
