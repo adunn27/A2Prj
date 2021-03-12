@@ -163,13 +163,15 @@ public class Task {
                 day.atTime(LocalTime.MAX));
     }
 
-    public List<Long> getDailyTimesBetween(LocalDate start, LocalDate stop) {
+    public List<Duration> getDailyTimesBetween(LocalDate start, LocalDate stop) {
+        List<Duration> dailyTimes = new ArrayList<>();
+
         LocalDate currDay = start;
-        List<Long> dailyTimes = new ArrayList<>();
         while (!currDay.isAfter(stop)) {
-            dailyTimes.add(getTotalTimeOfDay(currDay).toMillis());
+            dailyTimes.add(getTotalTimeOfDay(currDay));
             currDay = currDay.plusDays(1);
         }
+
         return dailyTimes;
     }
 

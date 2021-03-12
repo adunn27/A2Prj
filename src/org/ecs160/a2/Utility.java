@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -45,6 +46,7 @@ public final class Utility {
                 .toInstant()
         );
     }
+
     public static LocalDate convertToLocalDate(Date date) {
         return date.toInstant()
                 .atZone(ZoneId.systemDefault())
@@ -61,5 +63,11 @@ public final class Utility {
                 duration.toMinutesPart(),
                 duration.toSecondsPart());
         return hms;
+    }
+
+    public static String dateToFormattedString(Date date) {
+        String pattern = "MM/dd/yy";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
     }
 }
