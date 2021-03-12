@@ -13,7 +13,7 @@ public final class Utility {
     public static final DateTimeFormatter timeFormatter12hr =
             DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
     public static final DateTimeFormatter timeFormatter24hr =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // Decided that since this tool will be mainly for work related purposes
     // a week should start with the work week on Monday rather than the calendar
