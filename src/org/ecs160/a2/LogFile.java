@@ -21,6 +21,7 @@ public class LogFile {
     private static final String ESCAPE_CHAR = "\\";
     public static final String LOG_DELIMITER = "|";
     public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
+    public static final String LOG_FILE_NAME = "log";
     public TaskContainer retrieveTask;
     public int TaskId;
     private File myObj;
@@ -268,23 +269,23 @@ public class LogFile {
 
     private String createLogEntry(String ... arguments) {
         long time_in_long = System.currentTimeMillis();
-        String line = sdf.format(new Date(time_in_long));
+        StringBuilder line = new StringBuilder();
+        line.append(sdf.format(new Date(time_in_long)));
         for (String anArg: arguments) {
-            line += LOG_DELIMITER + anArg;
+            line.append(LOG_DELIMITER).append(anArg);
         }
-        line += "\n";
-        return line;
+        line.append("\n");
+        return line.toString();
     }
 
     private void writeToLog(String output) {
         try {
             BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
+                new FileWriter(LOG_FILE_NAME, true));
 
             writer.write(output);
             writer.close();
         } catch (IOException e) {
-            System.out.println("An error occurred.");
             e.printStackTrace();
         }
     }
