@@ -32,13 +32,12 @@ public class EditTaskScreen extends Form {
     // DATA
     private Task task;
     private String nameData;
-    private int taskid;
     private String sizeData;
     private String descriptionData;
     private java.util.List<String> tagsData;
     private Boolean isNewTask = false;
 
-    private UINavigator ui;
+    private final UINavigator ui;
 
     private void initData(Task passedTask) {
         this.task = passedTask;
@@ -46,7 +45,6 @@ public class EditTaskScreen extends Form {
             this.task = new Task();
             isNewTask = true;
         }
-       // taskid = task.getId();
         nameData = task.getName();
         sizeData = task.getTaskSizeString();
         descriptionData = task.getDescription();
@@ -94,7 +92,6 @@ public class EditTaskScreen extends Form {
             add(BorderLayout.SOUTH, Footer);
     }
     private void saveChanges() {
-        taskid = task.getId();
         nameData = nameField.getText();
         sizeData = sizeButton.getText();
         descriptionData = descField.getText();
@@ -115,9 +112,7 @@ public class EditTaskScreen extends Form {
             UIComponents.ButtonObject continueButton = new UIComponents.ButtonObject();
             continueButton.setMyText("Continue");
             continueButton.setMyColor(UITheme.LIGHT_YELLOW);
-            continueButton.addActionListener(e -> {
-                taskExistsDialog.dispose();
-            });
+            continueButton.addActionListener(e -> taskExistsDialog.dispose());
 
             taskExistsDialog.add(continueButton);
             taskExistsDialog.show();
@@ -181,7 +176,6 @@ public class EditTaskScreen extends Form {
 
         tagField.add(tagButton);
         tagsData.add(tagName);
-        //task.addTag(tagName); //TODO do we need this?
     }
     private void newTagPrompt() {
         Dialog d = new Dialog();
@@ -233,7 +227,7 @@ public class EditTaskScreen extends Form {
         ButtonObject cancel = new ButtonObject();
         cancel.setAllStyles("Cancel", COL_UNSELECTED,
                 ' ',PAD_3MM);
-        cancel.addActionListener(y -> { d.dispose(); });
+        cancel.addActionListener(y -> d.dispose());
         d.add(GridLayout.encloseIn(2, cancel, confirm));
         d.show();
 
@@ -242,7 +236,7 @@ public class EditTaskScreen extends Form {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.addComponent(FlowLayout.encloseCenterMiddle(
-                new SpanLabel("Remove \'" + name + "\'?")));
+                new SpanLabel("Remove '" + name + "'?")));
 
         ButtonObject confirmButton = new ButtonObject();
         confirmButton.setAllStyles("Confirm", RED, ' ', PAD_3MM);
@@ -296,7 +290,7 @@ public class EditTaskScreen extends Form {
         // CANCEL
         ButtonObject cancel = new ButtonObject();
         cancel.setAllStyles("Cancel", LIGHT_GREY, ' ', PAD_3MM);
-        cancel.addActionListener(y -> { d.dispose(); });
+        cancel.addActionListener(y -> d.dispose());
 
         d.addComponent(FlowLayout.encloseCenterMiddle(
                 new SpanLabel("Permanently delete this task?")));
@@ -321,8 +315,8 @@ class SizeMultiButton extends MultiButton {
             Dialog d = new Dialog();
             d.setLayout(BoxLayout.y());
             d.getContentPane().setScrollableY(false);
-            for(int iter = 0; iter < sizeOptions.length ; iter++) {
-                MultiButton mb = new MultiButton(sizeOptions[iter]);
+            for (String sizeOption : sizeOptions) {
+                MultiButton mb = new MultiButton(sizeOption);
                 d.add(mb);
                 mb.addActionListener(ee -> {
                     setTextLine1(mb.getTextLine1());
