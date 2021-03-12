@@ -80,50 +80,40 @@ public class LogFile {
                 Integer.parseInt(split[TASK_ID_INDEX]));
 
         switch (split[COMMAND_INDEX]) {
-        case "add": executeAdd(split); break;
-        case "edit": executeEdit(split, task); break;
-        case "start": executeStart(split[TIME_INDEX], task); break;
-        case "stop": executeStop(split[TIME_INDEX], task); break;
-        case "archive": task.archive(); break;
-        case "unarchive": task.unarchive(); break;
+        case "add":     executeAddFromLog(split); break;
+        case "edit":    executeEditFromLog(split, task); break;
+        case "start":   executeStartFromLog(split[TIME_INDEX], task); break;
+        case "stop":    executeStopFromLog(split[TIME_INDEX], task); break;
+        case "archive":     task.archive(); break;
+        case "unarchive":   task.unarchive(); break;
         case "delete_task": retrieveTask.removeTask(task); break;
-        case "delete_tag": task.removeTag(split[4]); break;
-        case "delete_time": executeDeleteTime(split, task); break;
-        case "edit_time": executeEditTime(split, task); break;
+        case "delete_tag":  task.removeTag(split[4]); break;
+        case "delete_time": executeDeleteTimeFromLog(split, task); break;
+        case "edit_time":   executeEditTimeFromLog(split, task); break;
         default: throw new IllegalArgumentException("Invalid command: "
                                                     + split[COMMAND_INDEX]);
         }
     }
 
-    private void executeEditTime(String[] split, Task task) {
-        TimeSpan time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
-
-        LocalDateTime newStartDateTime =
-                LocalDateTime.parse(split[5], formatter);
-        LocalDateTime newEndDateTime =
-                LocalDateTime.parse(split[6], formatter);
-
-        time.setStartTime(newStartDateTime);
-        time.setEndTime(newEndDateTime);
-    }
-
-    private void executeDeleteTime(String[] split, Task task) {
-        TimeSpan time;
-        time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
-        task.removeTimeSpanComponent(time);
-    }
-
-    private void executeStop(String time, Task task) {
-        LocalDateTime taskTime_e= LocalDateTime.parse(time, formatter);
-        task.stop(taskTime_e);
-    }
-
-    private void executeStart(String time, Task task) {
+    private void executeStartFromLog(String time, Task task) {
         LocalDateTime taskTime_s = LocalDateTime.parse(time, formatter);
         task.start(taskTime_s);
     }
 
-    private void executeEdit(String[] split, Task task) {
+    private void executeStopFromLog(String time, Task task) {
+        LocalDateTime taskTime_e= LocalDateTime.parse(time, formatter);
+        task.stop(taskTime_e);
+    }
+
+    private void executeAddFromLog(String[] split) {
+        Task task;
+        TaskId = Integer.parseInt(split[TASK_ID_INDEX]);
+        task = new Task(split[NAME_INDEX]);
+        task.setId(TaskId);
+        retrieveTask.addTask(task);
+    }
+
+    private void executeEditFromLog(String[] split, Task task) {
         task.setName(split[NAME_INDEX]);
         task.setDescription(split[4]);
         task.setTaskSize(split[5]);
@@ -135,12 +125,22 @@ public class LogFile {
         task.addAllTags(tags_e);
     }
 
-    private void executeAdd(String[] split) {
-        Task task;
-        TaskId = Integer.parseInt(split[TASK_ID_INDEX]);
-        task = new Task(split[NAME_INDEX]);
-        task.setId(TaskId);
-        retrieveTask.addTask(task);
+    private void executeEditTimeFromLog(String[] split, Task task) {
+        TimeSpan time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+
+        LocalDateTime newStartDateTime =
+                LocalDateTime.parse(split[5], formatter);
+        LocalDateTime newEndDateTime =
+                LocalDateTime.parse(split[6], formatter);
+
+        time.setStartTime(newStartDateTime);
+        time.setEndTime(newEndDateTime);
+    }
+
+    private void executeDeleteTimeFromLog(String[] split, Task task) {
+        TimeSpan time;
+        time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+        task.removeTimeSpanComponent(time);
     }
 
     public void addTask (Task task){
