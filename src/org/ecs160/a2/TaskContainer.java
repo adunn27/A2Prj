@@ -31,6 +31,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public void addTask(Task newTask) {
+        assert(!newTask.getName().isEmpty()): "Need a task name";
         taskSet.add(newTask);
     }
 
@@ -43,7 +44,12 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Task getTaskById(int taskid) {
-        return find(aTask -> aTask.getId() == taskid);
+        for (Task task : taskSet){
+            if(task.getId()==taskid){
+                return task;
+            }
+        }
+        return null;
     }
 
     public Task getActiveTask() {

@@ -278,15 +278,17 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
-                ui.backend.stopTask(taskData);
+                LocalDateTime time = taskData.stop();
+                ui.backend.logfile.stopTask(taskData,time);
+
             } else {
                 Task activeTask = ui.backend.getActiveTask();
                 if (activeTask != null) {
-                    ui.backend.stopTask(activeTask);
+                    LocalDateTime time= activeTask.stop();
+                    ui.backend.logfile.stopTask(activeTask,time);
                 }
-                LocalDateTime time = LocalDateTime.now();
-                taskData.start(time);
-                ui.backend.logfile.startTask(taskData, time);
+                LocalDateTime time= taskData.start();
+                ui.backend.logfile.startTask(taskData,time);
             }
             ui.refreshScreen();
         }
