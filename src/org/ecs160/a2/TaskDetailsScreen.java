@@ -118,15 +118,12 @@ public class TaskDetailsScreen extends Form {
         titleRow = new Container();
         titleRow.setLayout(BoxLayout.x());
 
-        // task name
         TextObject name = new TextObject(
                 taskData.getName(), BLACK, PAD_3MM, SIZE_LARGE);
         name.setBold();
 
-        // task size
         SizeLabelObject size = new SizeLabelObject(taskData.getTaskSizeString());
 
-        // add components
         titleRow.add(name);
         titleRow.add(size);
     }
@@ -211,7 +208,6 @@ public class TaskDetailsScreen extends Form {
             ui.goBack();
         });
 
-        // add to container
         Footer.add(historyButton);
         Footer.add(archiveButton);
     }

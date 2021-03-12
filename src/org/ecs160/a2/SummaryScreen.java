@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import com.codename1.charts.ChartComponent;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
@@ -22,6 +23,7 @@ import java.util.TimeZone;
 
 import static com.codename1.ui.CN.*;
 import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
 
 
 public class SummaryScreen extends Form {
@@ -100,7 +102,7 @@ public class SummaryScreen extends Form {
                             dateToString(endDateFilter);
 
         FilterHeader = new Container(BoxLayout.y());
-        UIComponents.TextObject startEndDates = new UIComponents.TextObject(
+        TextObject startEndDates = new TextObject(
                 dateHeader, SIZE_LARGE, 0, SIZE_LARGE);
 
         FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
@@ -108,12 +110,12 @@ public class SummaryScreen extends Form {
         Container filters = new Container();
         filters.add(new Label("Showing: "));
         for (String size : sizeFilters) {
-            UIComponents.SizeButtonObject b = new UIComponents.SizeButtonObject(size);
+            SizeButtonObject b = new SizeButtonObject(size);
             filters.add(b);
         }
         for (String tag : tagFilters) {
-            UIComponents.ButtonObject b = new UIComponents.ButtonObject();
-            b.setAllStyles(tag, UITheme.LIGHT_GREEN,' ',UITheme.PAD_1MM);
+            ButtonObject b = new ButtonObject();
+            b.setAllStyles(tag, LIGHT_GREEN,' ', PAD_1MM);
             filters.add(b);
         }
 
@@ -138,10 +140,10 @@ public class SummaryScreen extends Form {
     }
     private void createToolbar() {
         getToolbar().addMaterialCommandToLeftBar("",
-                UITheme.ICON_BACK, UITheme.PAD_6MM, e->ui.goBack());
+                ICON_BACK, PAD_6MM, e->ui.goBack());
 
         getToolbar().addMaterialCommandToRightBar("",
-                FontImage.MATERIAL_FILTER_LIST, UITheme.PAD_6MM,
+                FontImage.MATERIAL_FILTER_LIST, PAD_6MM,
                 e->{
                     createFilterDialog();
                     FilterDialog.show();
@@ -150,7 +152,7 @@ public class SummaryScreen extends Form {
 
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
-        UIComponents.TitleObject statTitle = new UIComponents.TitleObject("Stats");
+        TitleObject statTitle = new TitleObject("Stats");
         statTitle.setSize(SIZE_LARGE);
         StatsList.add(statTitle);
         LocalDateTime startTime = Utility.getStartOfDay(
@@ -193,7 +195,7 @@ public class SummaryScreen extends Form {
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
 
-        UIComponents.TitleObject taskTitle = new UIComponents.TitleObject("Tasks");
+        TitleObject taskTitle = new TitleObject("Tasks");
         taskTitle.setSize(SIZE_LARGE);
 
         LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
@@ -207,7 +209,7 @@ public class SummaryScreen extends Form {
         } else {
             TaskList.add(taskTitle);
             for (Task taskObj : allTaskData) {
-                TaskList.add(new UIComponents.SummaryTaskObject(taskObj, startTime, endTime, ui));
+                TaskList.add(new SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
     }
@@ -225,7 +227,7 @@ public class SummaryScreen extends Form {
         // TODO: refactor
         Container sizeButtons = new Container(new GridLayout(4));
         for (String size : sizeData) {
-            UIComponents.SizeLabelObject button = new UIComponents.SizeLabelObject(size);
+            SizeLabelObject button = new SizeLabelObject(size);
             if (sizeFilters.contains(size))
                 button.setSelectedColor();
             button.addPointerPressedListener(e ->
@@ -235,8 +237,8 @@ public class SummaryScreen extends Form {
 
         Container tagButtons = FlowLayout.encloseCenterMiddle();
         for (String tag : tagData) {
-            UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setAllStyles(tag, UITheme.LIGHT_GREEN, ' ', UITheme.PAD_3MM);
+            ButtonObject tagButton = new ButtonObject();
+            tagButton.setAllStyles(tag, LIGHT_GREEN, ' ', PAD_3MM);
             if (tagFilters.contains(tag))
                 tagButton.setSelectedColor();
 
@@ -247,15 +249,15 @@ public class SummaryScreen extends Form {
             tagButtons.add(tagButton);
         }
 
-        UIComponents.ButtonObject reset = new UIComponents.ButtonObject();
-        reset.setAllStyles("Reset",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        ButtonObject reset = new ButtonObject();
+        reset.setAllStyles("Reset",LIGHT_GREY,' ',PAD_3MM);
         reset.addActionListener(e -> {
             resetFilters();
             refreshFilterDialog();
         });
 
-        UIComponents.ButtonObject done = new UIComponents.ButtonObject();
-        done.setAllStyles("Done",UITheme.LIGHT_GREY,' ',UITheme.PAD_3MM);
+        ButtonObject done = new ButtonObject();
+        done.setAllStyles("Done",LIGHT_GREY,' ',PAD_3MM);
         done.addActionListener(e -> {
             startDateFilter = startDate.getDate();
             endDateFilter = endDate.getDate();
@@ -310,6 +312,7 @@ public class SummaryScreen extends Form {
 
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
+
 //        SummaryGraph summaryGraph = new SummaryGraph(ui);
 //        ChartComponent c = summaryGraph.createPieChart();
 //        graphRow.add(c);
@@ -321,10 +324,9 @@ public class SummaryScreen extends Form {
         Picker datePicker = new Picker();
         datePicker.setType(Display.PICKER_TYPE_CALENDAR);
         datePicker.getStyle().setBorder(
-                RoundBorder.create().rectangle(true).color(UITheme.LIGHT_GREY));
+                RoundBorder.create().rectangle(true).color(LIGHT_GREY));
         datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-        datePicker.getStyle().setPadding(UITheme.PAD_3MM,UITheme.PAD_3MM,
-                UITheme.PAD_3MM, UITheme.PAD_3MM);
+        datePicker.getStyle().setPadding(PAD_3MM,PAD_3MM, PAD_3MM,PAD_3MM);
         datePicker.setDate(date);
         return datePicker;
     }
