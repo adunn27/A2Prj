@@ -43,24 +43,24 @@ public class LogFile {
             Log.e(err);
         }*/
         TaskId = 0;
+        File myObj;
+        retrieveTask = new TaskContainer();
 
         try {
             // initialize writing to the file
-            File myObj = new File(LOG_FILE_NAME);
+            myObj = new File(LOG_FILE_NAME);
             if (myObj.createNewFile()) {
                 System.out.println("log file created");
             } else {
-                System.out.println("File has created");
+                System.out.println("log found");
             }
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
 
-        retrieveTask = new TaskContainer();
-
         try {
-            File myObj = new File("log");
+            myObj = new File(LOG_FILE_NAME);
             Scanner myReader = new Scanner(myObj);
 
             while (myReader.hasNextLine()) {
@@ -164,10 +164,14 @@ public class LogFile {
     }
     public void editTask (Task task){
         System.out.println("log edit");
+        List<String> args = new ArrayList<>();
+        args.add(task.getDescription());
+        args.add(task.getTaskSize().toString());
+        args.addAll(task.getTags());
+
         writeToLog(createLogEntry(task, "edit",
-                task.getDescription(),
-                task.getTaskSize().toString(),
-                getTagsAsString(task)));
+                args.toArray(new String[0])
+        ));
     }
 
     private String getTagsAsString(Task task) {
@@ -235,15 +239,17 @@ public class LogFile {
                 formatNewEndTime));
     }
 
-    private String createLogEntry(Task task, String ... arguments) {
-        return createLogEntry(LocalDateTime.now(), task, arguments);
+    private String createLogEntry(Task task, String command,
+                                  String ... arguments) {
+        return createLogEntry(LocalDateTime.now(), task, command, arguments);
     }
 
     private String createLogEntry(LocalDateTime when, Task task,
-                                  String ... arguments) {
+                                  String command, String ... arguments) {
         StringBuilder line = new StringBuilder();
 
         line.append(when.format(formatter))
+            .append(LOG_DELIMITER).append(command)
             .append(LOG_DELIMITER).append(task.getId())
             .append(LOG_DELIMITER).append(task.getName());
 
