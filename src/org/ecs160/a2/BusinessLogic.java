@@ -15,7 +15,7 @@ public class BusinessLogic {
 
         everyTask = logfile.retrieveTask;
 
-        TaskId= logfile.TaskId + 1;
+        TaskId = logfile.TaskId + 1;
     }
 
     public List<String> getAllTags() {
@@ -57,36 +57,4 @@ public class BusinessLogic {
         activeTask.stop(time);
         logfile.stopTask(activeTask,time);
     }
-
-    /*
-    newTask(name, size, description, tags)
-
-    getTaskName
-    setTaskName
-
-    getTaskSize
-    setTaskSize(size)
-
-    getTags(taskName)
-    addTag(tagName)
-    removeTag(tagName)
-
-    getTaskDescription
-    updateTaskDescription(desc)
-    setTaskDescription(desc)
-
-    getTaskHistory
-    updateTaskHistory(?)
-
-    getTotalTime
-    getTodayTime
-    getWeekTime
-
-    getTasks
-    getArchiveTasks
-    getTasksWithSize(size)
-    getTasksWithTag(tagName)
-
-    deleteTask
-     */
 }
