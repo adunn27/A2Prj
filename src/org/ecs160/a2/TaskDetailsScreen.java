@@ -74,7 +74,7 @@ public class TaskDetailsScreen extends Form {
         if (taskData.isActive() && oneSecondLater()) {
             lastRenderedTime = taskData.getTimeBetween(LocalDateTime.MIN,
                     LocalDateTime.MAX).toMillis();
-            log("graph is not open");
+            log("Update time display");
             timeData.setText(getStringTimeStats());
             return true;
         }
@@ -90,6 +90,7 @@ public class TaskDetailsScreen extends Form {
     private void resetStartEndDate() {
         startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
+    }
 
     private void createToolbar() {
         getToolbar().addMaterialCommandToLeftBar("", ICON_BACK, PAD_6MM,
@@ -211,8 +212,7 @@ public class TaskDetailsScreen extends Form {
         TextObject timeTitle = new TextObject(
                 "Time Elapsed", GREY, PAD_3MM, SIZE_SMALL);
 
-        TextObject timeData = new TextObject(
-                "", BLACK, PAD_3MM, SIZE_SMALL);
+        timeData = new TextObject("", BLACK, PAD_3MM, SIZE_SMALL);
         timeData.setText(getStringTimeStats());
 
         timeRow.add(timeTitle);
@@ -228,8 +228,6 @@ public class TaskDetailsScreen extends Form {
                 ICON_CHART, UITheme.PAD_3MM);
 
         dateButton.addActionListener(e->{
-            log("open graph");
-            graphIsOpen = true;
             createChartDialog();
             FilterDialog.show();
         });

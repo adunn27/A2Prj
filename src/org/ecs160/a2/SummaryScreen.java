@@ -95,8 +95,8 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDisplay() {
-        String dateHeader = dateToString(startDateFilter) + " - " +
-                            dateToString(endDateFilter);
+        String dateHeader = Utility.dateToFormattedString(startDateFilter) + " - " +
+                            Utility.dateToFormattedString(endDateFilter);
 
         FilterHeader = new Container(BoxLayout.y());
         TextObject startEndDates = new TextObject(
