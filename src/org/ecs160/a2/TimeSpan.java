@@ -35,9 +35,7 @@ public class TimeSpan {
     }
 
     public Duration getTimeSpanDuration(){
-        if (endTime == null)
-            return Duration.between(startTime, LocalDateTime.now());
-        return Duration.between(startTime, endTime);
+        return getTimeSpanDurationBetween(LocalDateTime.MIN, LocalDateTime.MAX);
     }
 
     public LocalDateTime getStartTimeAsDate(){
@@ -64,7 +62,7 @@ public class TimeSpan {
     }
 
     private LocalDateTime findConstrictingLowerBoundOfWindow(
-            LocalDateTime startOfTimeWindow) {
+                                            LocalDateTime startOfTimeWindow) {
         LocalDateTime trueStartTime = startOfTimeWindow;
         if (startTime.isAfter(startOfTimeWindow))
             trueStartTime = startTime;
@@ -72,7 +70,7 @@ public class TimeSpan {
     }
 
     private LocalDateTime findConstrictingUperBoundOfWindow(
-            LocalDateTime endOfTimeWindow) {
+                                            LocalDateTime endOfTimeWindow) {
         LocalDateTime trueEndTime = endOfTimeWindow;
         LocalDateTime tempEndTime = getEndTimeElseNow();
         if (tempEndTime.isBefore(endOfTimeWindow))
