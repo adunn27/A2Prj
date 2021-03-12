@@ -183,20 +183,21 @@ public class Task {
     }
 
     public LocalDateTime removeTimeSpanComponent(TimeSpan deletedTimeSpan){
-        LocalDateTime time= deletedTimeSpan.getStartTime();
+        LocalDateTime time = deletedTimeSpan.getStartTime();
         allTimes.remove(deletedTimeSpan);
         return time;
     }
 
-    public TimeSpan getTimeSpanByTime(LocalDateTime time){
+    public TimeSpan getTimeSpanByIndex(int index){
+        return allTimes.get(index);
+    }
 
-        for(TimeSpan ts : allTimes){
-
-            if (ts.getStartTime().isEqual(time)){
-                return ts;
-            }
+    public int getIndexOfTimeSpan(TimeSpan timeSpan){
+        for (int i = 0; i < allTimes.size(); i++) {
+            if (allTimes.get(i) == timeSpan)
+                return i;
         }
-        return null;
+        return -1;
     }
 
     public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}

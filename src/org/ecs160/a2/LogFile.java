@@ -129,25 +129,19 @@ public class LogFile {
             break;
 
         case "delete_time":
-            String timeString = split[NAME_INDEX];
-            LocalDateTime dateTime = LocalDateTime.parse(timeString, formatter);
-            time = task.getTimeSpanByTime(dateTime);
+            time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
             task.removeTimeSpanComponent(time);
             break;
 
         case "edit_time":
-            String oldStartTimeString = split[NAME_INDEX];
-            String newStartTimeString = split[4];
-            String oldEndTimeString = split[5];
+            time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+
+            String newStartTimeString = split[5];
             String newEndTimeString = split[6];
 
-            LocalDateTime oldStartDateTime = LocalDateTime.parse(oldStartTimeString, formatter);
             LocalDateTime newStartDateTime = LocalDateTime.parse(newStartTimeString, formatter);
-            LocalDateTime oldEndDateTime = LocalDateTime.parse(oldEndTimeString, formatter);
             LocalDateTime newEndDateTime = LocalDateTime.parse(newEndTimeString, formatter);
 
-
-            time = task.getTimeSpanByTime(oldStartDateTime);
             time.setStartTime(newStartDateTime);
             time.setEndTime(newEndDateTime);
             break;
@@ -223,19 +217,14 @@ public class LogFile {
         writeToLog(createLogEntry(task,"delete_time", formatTime));
     }
 
-    public void edit_time (Task task, LocalDateTime startTime,LocalDateTime newStartTime,
-                           LocalDateTime endTime,LocalDateTime newEndTime){
-
-        String formatStartTime = startTime.format(formatter);
-        String formatEndTime = endTime.format(formatter);
+    public void edit_time (Task task, int timeSpanIndex, LocalDateTime newStartTime,LocalDateTime newEndTime){
         String formatNewStartTime = newStartTime.format(formatter);
         String formatNewEndTime = newEndTime.format(formatter);
 
         System.out.println("log edit_time");
         writeToLog( createLogEntry(task,"edit_time",
-                formatStartTime,
+                Integer.toString(timeSpanIndex),
                 formatNewStartTime,
-                formatEndTime,
                 formatNewEndTime));
     }
 

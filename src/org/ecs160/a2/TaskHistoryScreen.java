@@ -259,8 +259,9 @@ public class TaskHistoryScreen extends Form {
                 newDialog.show();
             } else {
 
-                ui.backend.logfile.edit_time(taskData,editedTimeSpan.getStartTime(),
-                        startDateTime,editedTimeSpan.getEndTime(),endDateTime);
+                ui.backend.logfile.edit_time(taskData,
+                        taskData.getIndexOfTimeSpan(editedTimeSpan),
+                        startDateTime, endDateTime);
 
                 editedTimeSpan.setStartTime(startDateTime);
                 editedTimeSpan.setEndTime(endDateTime);
