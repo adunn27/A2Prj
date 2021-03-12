@@ -195,10 +195,18 @@ public class TaskDetailsScreen extends Form {
         });
 
         archiveButton.addActionListener(e-> {
-            if (taskData.isArchived())
+            if (taskData.isArchived()) {
                 ui.backend.getTaskByName(taskData.getName()).unarchive();
-            else
+                ui.backend.logfile.unarchiveTask(taskData);
+            } else if (taskData.isActive()) {
+                LocalDateTime time = taskData.stop();
                 ui.backend.getTaskByName(taskData.getName()).archive();
+                ui.backend.logfile.stopTask(taskData, time);
+                ui.backend.logfile.archiveTask(taskData);
+            } else {
+                ui.backend.getTaskByName(taskData.getName()).archive();
+                ui.backend.logfile.archiveTask(taskData);
+            }
             ui.goBack();
         });
 
