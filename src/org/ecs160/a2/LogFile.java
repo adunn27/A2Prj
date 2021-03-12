@@ -20,6 +20,7 @@ public class LogFile {
     private static final String TAG_DELIMITER = ",";
     private static final String ESCAPE_CHAR = "\\";
     public static final String LOG_DELIMITER = "|";
+    public static final SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
     public TaskContainer retrieveTask;
     public int TaskId;
     private File myObj;
@@ -185,36 +186,18 @@ public class LogFile {
     }
 
     private void addOrEditATask(Task task, String commandName) {
-        try {
-            // convert epoch to date and time format
-            System.out.println("log " + commandName);
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-            String tags = "";
-            for(String tag : task.getTags()){
-                tags= tags + tag + TAG_DELIMITER;
-            }
-
-            writer.write(sdf.format(new Date(time_in_long)) +
-                    LOG_DELIMITER + commandName +
-                    LOG_DELIMITER + task.getName() +
-                    LOG_DELIMITER + task.getDescription() +
-                    LOG_DELIMITER + task.getTaskSize() +
-                    LOG_DELIMITER + tags +
-                    LOG_DELIMITER + task.getId() + "\n");
-            writer.close();
-
-
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
+        String tags = "";
+        for(String tag : task.getTags()){
+            tags= tags + tag + TAG_DELIMITER;
         }
+
+        System.out.println("log " + commandName);
+        writeToLog( commandName +
+                LOG_DELIMITER + task.getName() +
+                LOG_DELIMITER + task.getDescription() +
+                LOG_DELIMITER + task.getTaskSize() +
+                LOG_DELIMITER + tags +
+                LOG_DELIMITER + task.getId() + "\n");
     }
 
 
@@ -224,158 +207,45 @@ public class LogFile {
         String formatTime = time.format(formatter);
 
         System.out.println("log start");
-        try {
-            // convert epoch to date and time format
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "start"
-                    + LOG_DELIMITER + task.getName()
-                    + LOG_DELIMITER +  formatTime + "\n");
-            writer.close();
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        writeToLog("start"
+                + LOG_DELIMITER + task.getName()
+                + LOG_DELIMITER + formatTime + "\n");
     }
-
-
 
     public void stopTask(Task task, LocalDateTime time){
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = time.format(formatter);
         System.out.println("log stop");
-
-        try {
-            // convert epoch to date and time format
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "stop"
-                    + LOG_DELIMITER + task.getName()
-                    + LOG_DELIMITER + formatTime +"\n");
-            writer.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        writeToLog( "stop"
+                + LOG_DELIMITER + task.getName()
+                + LOG_DELIMITER + formatTime +"\n");
     }
 
 
     public void unarchiveTask (Task task){
-
-        try {
-            // convert epoch to date and time format
-            System.out.println("log unarchive");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "unarchive"
-                    + LOG_DELIMITER + task.getName() + "\n");
-            writer.close();
-
-
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        System.out.println("log unarchive");
+        writeToLog( "unarchive"
+                + LOG_DELIMITER + task.getName() + "\n");
     }
 
     public void archiveTask (Task task){
-
-        try {
-            // convert epoch to date and time format
-            System.out.println("log archive");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "archive"
-                    + LOG_DELIMITER + task.getName() + "\n");
-            writer.close();
-
-
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        System.out.println("log archive");
+        writeToLog("archive"
+                + LOG_DELIMITER + task.getName() + "\n");
     }
 
     public void delete_task (Task task){
-
-        try {
-            // convert epoch to date and time format
-            System.out.println("log delete_task");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "delete_task"
-                    + LOG_DELIMITER + task.getName() + "\n");
-            writer.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        System.out.println("log delete_task");
+        writeToLog("delete_task"
+                + LOG_DELIMITER + task.getName() + "\n");
     }
 
-    public void delete_tag (Task task,String tag){
-
-        try {
-            // convert epoch to date and time format
-            System.out.println("log delete_tag");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "delete_tag"
-                    + LOG_DELIMITER + task.getName()
-                    + LOG_DELIMITER + tag +"\n");
-            writer.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+    public void delete_tag (Task task, String tag){
+        System.out.println("log delete_tag");
+        writeToLog( "delete_tag"
+                + LOG_DELIMITER + task.getName()
+                + LOG_DELIMITER + tag +"\n");
     }
 
     public void delete_time (Task task, LocalDateTime time){
@@ -383,27 +253,10 @@ public class LogFile {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = time.format(formatter);
 
-        try {
-            // convert epoch to date and time format
-            System.out.println("log delete_time");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "delete_time"
-                    + LOG_DELIMITER + task.getName()
-                    + LOG_DELIMITER + formatTime +"\n");
-            writer.close();
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+        System.out.println("log delete_time");
+        writeToLog( "delete_time"
+                + LOG_DELIMITER + task.getName()
+                + LOG_DELIMITER + formatTime +"\n");
     }
 
     public void edit_time (Task task, LocalDateTime startTime,LocalDateTime newStartTime,
@@ -415,26 +268,24 @@ public class LogFile {
         String formatNewStartTime = newStartTime.format(formatter);
         String formatNewEndTime = newEndTime.format(formatter);
 
+        System.out.println("log edit_time");
+        writeToLog( "edit_time"
+                + LOG_DELIMITER + task.getName()
+                + LOG_DELIMITER + formatStartTime
+                + LOG_DELIMITER + formatNewStartTime
+                + LOG_DELIMITER + formatEndTime
+                + LOG_DELIMITER + formatNewEndTime + "\n");
+    }
+
+    private void writeToLog(String output) {
         try {
-            // convert epoch to date and time format
-            System.out.println("log edit_time");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
+            long time_in_long = System.currentTimeMillis();
             writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + "edit_time"
-                    + LOG_DELIMITER + task.getName()
-                    + LOG_DELIMITER + formatStartTime
-                    + LOG_DELIMITER + formatNewStartTime
-                    + LOG_DELIMITER + formatEndTime
-                    + LOG_DELIMITER + formatNewEndTime + "\n");
+                    + LOG_DELIMITER + output);
             writer.close();
-
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
