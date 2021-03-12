@@ -19,8 +19,6 @@ public class Task {
     private List<TimeSpan> allTimes;
     private Set<String> tags;
 
-
-
     private void construct(String newTaskName, TaskSize newTaskSize) {
         this.name = newTaskName;
         this.size = newTaskSize;
@@ -86,8 +84,6 @@ public class Task {
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
         assert (isActive == false): "Cannot archive an active task";
-        //if (isActive)
-        //    stop();
         isArchived = true;
     }
 
@@ -134,7 +130,7 @@ public class Task {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
-    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) {
         Duration totalTime = Duration.ofMillis(0);
         for (TimeSpan timeSpan: allTimes) {
             totalTime = totalTime.plus(
@@ -165,7 +161,8 @@ public class Task {
     }
 
     public String getTotalTimeTodayString() {
-        return Utility.durationToFormattedString(getTotalTimeOfDay(LocalDate.now()));
+        return Utility.durationToFormattedString(
+                getTotalTimeOfDay(LocalDate.now()));
     }
 
     public String getTotalTimeThisWeekString() {
@@ -199,6 +196,4 @@ public class Task {
         }
         return -1;
     }
-
-    public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}
 }
