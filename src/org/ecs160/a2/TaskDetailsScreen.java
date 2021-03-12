@@ -1,44 +1,32 @@
 package org.ecs160.a2;
 
-import com.codename1.charts.ChartComponent;
-import com.codename1.charts.models.XYMultipleSeriesDataset;
-import com.codename1.charts.models.XYSeries;
-import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
-import com.codename1.charts.views.LineChart;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
-import com.codename1.ui.plaf.Style;
 
-import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
 
 public class TaskDetailsScreen extends Form {
-    private Container titleRow = new Container();
+    private Container titleRow;
     private Container graphRow;
-    private Container descRow = new Container();
-    private Container tagRow = new Container();
-    private Container timeRow = new Container();
-    private Container Header = new Container();
-    private Container Footer = new Container();
+    private Container descRow;
+    private Container tagRow;
+    private Container timeRow;
+    private Container Body;
+    private Container Footer;
 
-    private String allTime; // TODO: get allTimeData
-    private String weekTime; // TODO: get weekTimeData
-    private String dayTime; // TODO: get dayTimeData
+    private String allTime;
+    private String weekTime;
+    private String dayTime;
 
     private Task taskData;
     private UINavigator ui;
-
-    TaskDetailsScreen(Task task, UINavigator ui) {
-        taskData =  task;
-        this.ui = ui;
-        createDetailsScreen();
-    }
 
     @Override
     public void show() {
@@ -52,62 +40,70 @@ public class TaskDetailsScreen extends Form {
         super.showBack();
     }
 
+    TaskDetailsScreen(Task task, UINavigator ui) {
+        // TODO: animate task details screen IF task is active
+        registerAnimated(this);
+        taskData =  task;
+        this.ui = ui;
+        createToolbar();
+        createDetailsScreen();
+    }
+
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("", ICON_BACK, PAD_6MM,
+                e->ui.goBack());
+
+        getToolbar().addMaterialCommandToRightBar("", ICON_EDIT, PAD_6MM,
+                e-> ui.goEdit(taskData.getName()));
+    }
+
     private void createDetailsScreen() {
+        removeAll();
         setTitle("Details");
         setLayout(new BorderLayout());
 
-        // create body
-        Container Body = createBody();
-
-        // create header, footer
-        createHeader();
+        createBody();
         createFooter();
 
         // add components
-        add(BorderLayout.NORTH, Header);
         add(BorderLayout.SOUTH, Footer);
         add(BorderLayout.CENTER, Body);
     }
 
-    private Container createBody() {
-        Container Body = new Container(BoxLayout.y());
+    private void createBody() {
+
+        Body = new Container(BoxLayout.y());
         Body.setScrollableY(true);
 
-        if (taskData != null) {
-            // add rows to body
-            createTitleRow();
-            createGraphRow();
-            createTimeRow();
-            createTagRow();
-            createDescRow();
-            Body.addAll(titleRow, timeRow);
+        createTitleRow();
+        createTimeRow();
+        Body.addAll(titleRow, timeRow);
 
-            if (!taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX).isZero())
-                Body.add(graphRow);
-            if (!taskData.getTags().isEmpty())
-                Body.add(tagRow);
-            if (!taskData.getDescription().isEmpty())
-                Body.add(descRow);
-        } else {
-            Body.add("Task not found...");
+        if (!taskData.getTimeBetween(LocalDateTime.MIN,
+                LocalDateTime.MAX).isZero()) {
+            createGraphRow();
+            Body.add(graphRow);
         }
-        return Body;
+        if (!taskData.getTags().isEmpty()) {
+            createTagRow();
+            Body.add(tagRow);
+        }
+
+        if (!taskData.getDescription().isEmpty()) {
+            createDescRow();
+            Body.add(descRow);
+        }
     }
 
-    // create rows
     private void createDescRow() {
         descRow = new Container();
         descRow.setLayout(BoxLayout.y());
 
-        UIComponents.TitleObject descTitle = new UIComponents.TitleObject("Description");
-        descTitle.setSize(SIZE_SMALL);
+        TextObject descTitle = new TextObject(
+                "Description", GREY, PAD_3MM, SIZE_SMALL);
 
-        SpanLabel descData = new SpanLabel();
-        descData.setText(taskData.getDescription());
-        Style descDataStyle = descData.getTextAllStyles();
-        descDataStyle.setFgColor(UITheme.BLACK);
-        descDataStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
-        descDataStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+        TextObject descData = new TextObject(
+                taskData.getDescription(), BLACK, PAD_3MM, SIZE_SMALL);
 
         descRow.add(descTitle);
         descRow.add(descData);
@@ -115,23 +111,15 @@ public class TaskDetailsScreen extends Form {
     private void createTitleRow() {
         titleRow = new Container();
         titleRow.setLayout(BoxLayout.x());
-        titleRow.setScrollableY(false);
-        titleRow.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
 
-        // task name
-        Label nameLabel = new Label(taskData.getName());
-        Style nameStyle = nameLabel.getAllStyles();
-        nameStyle.setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_BOLD, SIZE_LARGE)));
-        nameStyle.setFgColor(UITheme.BLACK);
-        nameStyle.setMarginUnit(Style.UNIT_TYPE_DIPS);
-        nameStyle.setMargin(Component.LEFT, UITheme.PAD_3MM);
+        TextObject name = new TextObject(
+                taskData.getName(), BLACK, PAD_3MM, SIZE_LARGE);
+        name.setBold();
 
-        // task size
-        UIComponents.SizeLabelObject sizeLabel = new UIComponents.SizeLabelObject(taskData.getTaskSizeString());
+        SizeLabelObject size = new SizeLabelObject(taskData.getTaskSizeString());
 
-        // add components
-        titleRow.add(nameLabel);
-        titleRow.add(sizeLabel);
+        titleRow.add(name);
+        titleRow.add(size);
     }
     private void createTagRow() {
         if (taskData.getTags().size() == 0) {
@@ -141,40 +129,35 @@ public class TaskDetailsScreen extends Form {
         tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 
-        UIComponents.TitleObject tagTitle = new UIComponents.TitleObject("Tags");
-        tagTitle.setSize(SIZE_SMALL);
-
-        // add tags
-        Container tagObject = new Container();
+        TextObject title = new TextObject("Tags", GREY, PAD_3MM, SIZE_SMALL);
+        Container objects = new Container();
         for (String tag : taskData.getTags()) {
-            tagObject.add(new UIComponents.TagObject(tag));
+            ButtonObject tagObj = new ButtonObject();
+            tagObj.setAllStyles(tag, COL_TAG,' ', PAD_3MM);
+            objects.add(tagObj);
         }
 
-        tagRow.add(tagTitle);
-        tagRow.add(tagObject);
+        tagRow.add(title);
+        tagRow.add(objects);
     }
     private void createTimeRow() {
         timeRow = new Container();
         timeRow.setLayout(BoxLayout.y());
 
         // time title
-        UIComponents.TitleObject timeTitle = new UIComponents.TitleObject("Time Elapsed");
-        timeTitle.setSize(SIZE_SMALL);
+        TextObject timeTitle = new TextObject(
+                "Time Elapsed", GREY, PAD_3MM, SIZE_SMALL);
 
         // times
-        allTime = taskData.getTotalTimeString(); // end time?;
-        weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
-        dayTime = taskData.getTotalTimeTodayString(); // end time?;
+        allTime = taskData.getTotalTimeString();
+        weekTime = taskData.getTotalTimeThisWeekString();
+        dayTime = taskData.getTotalTimeTodayString();
 
-        SpanLabel timeData = new SpanLabel(
-        "All Time:\t" + allTime + "\n"+
-            "This Week:\t" + weekTime + "\n" +
-            "Today:\t" + dayTime
-        );
-
-        timeData.getTextAllStyles().setFgColor(UITheme.BLACK);
-        timeData.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-        timeData.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
+        String timeText = "All Time:\t" + allTime + "\n"+
+                          "This Week:\t" + weekTime + "\n" +
+                          "Today:\t" + dayTime;
+        TextObject timeData = new TextObject(
+                timeText, BLACK, PAD_3MM, SIZE_SMALL);
 
         timeRow.add(timeTitle);
         timeRow.add(timeData);
@@ -184,67 +167,42 @@ public class TaskDetailsScreen extends Form {
     private void createGraphRow() {
         graphRow = new Container(new BorderLayout());
         SpanLabel graphPlaceHolder = new SpanLabel("Insert Graph of Task's\nStart/Stop Log Durations");
-        graphPlaceHolder.getTextAllStyles().setBorder(RoundBorder.create().color(UITheme.LIGHT_GREY).rectangle(true));
         graphRow.add(CENTER, graphPlaceHolder);
     }
 
-    // header/footer
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-
-        // back button
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-        backButton.addActionListener(e-> ui.goBack());
-
-        // edit button
-        UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
-        editButton.setMyColor(UITheme.YELLOW);
-        editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
-        editButton.setMyPadding(UITheme.PAD_3MM);
-        editButton.addActionListener(e-> ui.goEdit(taskData.getName()));
-
-        Header.add(BorderLayout.EAST, editButton);
-        Header.add(BorderLayout.WEST, backButton);
-    }
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));
         Footer.setScrollableY(false);
 
         // history
-        UIComponents.ButtonObject historyButton = new UIComponents.ButtonObject();
-        historyButton.setMyText("History");
-        historyButton.setMyIcon(FontImage.MATERIAL_HISTORY);
-        historyButton.setMyColor(UITheme.LIGHT_GREY);
-        historyButton.setMyPadding(UITheme.PAD_3MM);
-        historyButton.addActionListener(e-> {
-            ui.goHistory(taskData.getName());
-        });
+        ButtonObject historyButton = new ButtonObject();
+        historyButton.setAllStyles("History", COL_UNSELECTED,
+                ICON_HISTORY, PAD_3MM);
 
         // archive
-        UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
+        ButtonObject archiveButton = new ButtonObject();
         String archiveText = (taskData.isArchived()) ? "Unarchive" : "Archive";
-        archiveButton.setMyText(archiveText);
-        archiveButton.setMyIcon(FontImage.MATERIAL_SAVE);
-        archiveButton.setMyColor(UITheme.LIGHT_GREY);
-        archiveButton.setMyPadding(UITheme.PAD_3MM);
+        archiveButton.setAllStyles(archiveText, COL_UNSELECTED,
+                ICON_ARCHIVE, PAD_3MM);
+
+        // action listeners
+        historyButton.addActionListener(e-> {
+            if (taskData.isActive())
+                new showWarningDialog("This task is currently running");
+            else
+                ui.goHistory(taskData.getName());
+        });
+
         archiveButton.addActionListener(e-> {
-            if (taskData.isArchived()) {
+            if (taskData.isArchived())
                 ui.backend.getTaskByName(taskData.getName()).unarchive();
-            } else {
+            else
                 ui.backend.getTaskByName(taskData.getName()).archive();
-            }
             ui.goBack();
         });
 
-        // add to container
         Footer.add(historyButton);
         Footer.add(archiveButton);
     }
-
-
 }

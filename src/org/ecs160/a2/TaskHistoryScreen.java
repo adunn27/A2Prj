@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
 
 import com.codename1.l10n.ParseException;
 import com.codename1.l10n.SimpleDateFormat;
@@ -46,7 +47,6 @@ class HistoryTaskObject1 extends Container {
 }
 
 public class TaskHistoryScreen extends Form {
-    private Container Header;
     private Container TaskList;
 
     private final DateTimeFormatter timeFormatter =
@@ -59,6 +59,7 @@ public class TaskHistoryScreen extends Form {
     public TaskHistoryScreen(Task task, UINavigator ui){
         taskData = task;
         this.ui = ui;
+        createToolbar();
         createTaskHistoryScreen();
     }
 
@@ -75,13 +76,12 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void createTaskHistoryScreen() {
+        removeAll();
         setTitle("Task History");
         setLayout(new BorderLayout());
 
-        createHeader();
         createTaskList();
 
-        add(NORTH, Header);
         add(CENTER, TaskList);
     }
 
@@ -125,8 +125,11 @@ public class TaskHistoryScreen extends Form {
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
-            deleteButton.setMyColor(UITheme.RED);
-            deleteButton.addActionListener(e -> DeleteTimeSpan(thisTimeSpan, newHTO));
+          
+            deleteButton.setMyColor(RED);
+            deleteButton.addActionListener(e -> {
+                DeleteTimeSpan(thisTimeSpan, newHTO);
+            });
 
             Container RightContainer = new Container(BoxLayout.y());
             RightContainer.add(editButton);
@@ -143,7 +146,7 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Yes");
-        cancelButton.setMyColor(UITheme.RED);
+        cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
             //TODO add delete code right here
             taskData.removeTimeSpanComponent(deletedTimeSpan);
@@ -153,8 +156,10 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
         submitButton.setMyText("No");
-        submitButton.setMyColor(UITheme.LIGHT_GREY);
-        submitButton.addActionListener(e -> d.dispose());
+        submitButton.setMyColor(COL_UNSELECTED);
+        submitButton.addActionListener(e -> {
+            d.dispose();
+        });
 
         d.add(cancelButton);
         d.add(submitButton);
@@ -273,17 +278,9 @@ public class TaskHistoryScreen extends Form {
                 .toLocalDate().atStartOfDay()
                 .plusMinutes(timePicker.getTime());
     }
-
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-
-        backButton.addActionListener(e-> ui.goBack());
-        Header.add(BorderLayout.WEST, backButton);
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("",
+                UITheme.ICON_BACK, UITheme.PAD_6MM,
+                e->ui.goBack());
     }
-
 }
