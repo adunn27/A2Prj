@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
 
 import com.codename1.l10n.ParseException;
 import com.codename1.l10n.SimpleDateFormat;
@@ -11,7 +12,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.spinner.Picker;
 
-import javax.swing.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -47,19 +47,19 @@ class HistoryTaskObject1 extends Container {
 }
 
 public class TaskHistoryScreen extends Form {
-    private Container Header;
     private Container TaskList;
 
     private final DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("hh:mm:ss a");
     private final DateTimeFormatter dateFormatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private final Task taskData;
     private final UINavigator ui;
 
     public TaskHistoryScreen(Task task, UINavigator ui){
         taskData = task;
         this.ui = ui;
+        createToolbar();
         createTaskHistoryScreen();
     }
 
@@ -76,48 +76,13 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void createTaskHistoryScreen() {
+        removeAll();
         setTitle("Task History");
         setLayout(new BorderLayout());
 
-        createHeader();
         createTaskList();
 
-        add(NORTH, Header);
         add(CENTER, TaskList);
-    }
-
-    public String timeFormatter(int totalMinutes){
-        String formattedTime;
-        int hour;
-        int minute = totalMinutes % 60;
-
-        if (totalMinutes < 720){
-            if (totalMinutes < 60){
-                hour = 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            } else {
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            }
-
-        } else {
-            if (totalMinutes < 780){
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            } else {
-                hour = (totalMinutes / 60) - 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            }
-        }
-        return formattedTime;
     }
 
     private void createTaskList(){
@@ -131,9 +96,12 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
-
-            TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
+        for (TimeSpan thisTimeSpan: taskData.getAllTimeSpans()){
+            if (thisTimeSpan.isActive()) {
+                TaskList.add(new Label("New run started: " +
+                        thisTimeSpan.getStartTimeAsString()));
+                continue;
+            }
 
             LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
             String startTimeString = startTime.format(timeFormatter);
@@ -157,8 +125,11 @@ public class TaskHistoryScreen extends Form {
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
-            deleteButton.setMyColor(UITheme.RED);
-            deleteButton.addActionListener(e -> DeleteTimeSpan(thisTimeSpan, newHTO));
+          
+            deleteButton.setMyColor(RED);
+            deleteButton.addActionListener(e -> {
+                DeleteTimeSpan(thisTimeSpan, newHTO);
+            });
 
             Container RightContainer = new Container(BoxLayout.y());
             RightContainer.add(editButton);
@@ -175,18 +146,23 @@ public class TaskHistoryScreen extends Form {
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Yes");
-        cancelButton.setMyColor(UITheme.RED);
+        cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
             //TODO add delete code right here
-            taskData.removeTimeSpanComponent(deletedTimeSpan);
+            LocalDateTime time;
+            time = taskData.removeTimeSpanComponent(deletedTimeSpan);
+            ui.backend.logfile.delete_time(taskData,time);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
+
         });
 
         UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
         submitButton.setMyText("No");
-        submitButton.setMyColor(UITheme.LIGHT_GREY);
-        submitButton.addActionListener(e -> d.dispose());
+        submitButton.setMyColor(COL_UNSELECTED);
+        submitButton.addActionListener(e -> {
+            d.dispose();
+        });
 
         d.add(cancelButton);
         d.add(submitButton);
@@ -258,28 +234,11 @@ public class TaskHistoryScreen extends Form {
         submitButton.setMyText("Submit");
         submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            LocalDateTime startDateTime = getTimeFromPickers(startDatePicker,
+                                                             startTimePicker);
 
-            String endDate = formatter.format(endDatePicker.getDate());
-            String startDate = formatter.format(startDatePicker.getDate());
-            String startTime = timeFormatter(startTimePicker.getTime());
-            String endTime = timeFormatter(endTimePicker.getTime());
-            String start = startDate + " " + startTime;
-            String end = endDate + " " + endTime;
-
-            Date start_1 = new Date();
-            Date end_1 = new Date();
-            try {
-                start_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(start);
-                end_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(end);
-            } catch (ParseException parseException) {
-                parseException.printStackTrace();
-            }
-
-            LocalDateTime startDateTime = start_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime endDateTime = end_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime endDateTime = getTimeFromPickers(endDatePicker,
+                                                           endTimePicker);
 
             if (startDateTime.isAfter(endDateTime)){
                 System.out.println("You can't have a negative duration!");
@@ -299,12 +258,14 @@ public class TaskHistoryScreen extends Form {
                 newDialog.add(warningDialog);
                 newDialog.show();
             } else {
+
+                ui.backend.logfile.edit_time(taskData,editedTimeSpan.getStartTime(),
+                        startDateTime,editedTimeSpan.getEndTime(),endDateTime);
+
                 editedTimeSpan.setStartTime(startDateTime);
                 editedTimeSpan.setEndTime(endDateTime);
 
-
                 PopupDialog.dispose();
-                ui.refreshScreen();
                 ui.refreshScreen();
             }
         });
@@ -317,16 +278,16 @@ public class TaskHistoryScreen extends Form {
         PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
     }
 
-    private void createHeader() {
-        Header = new Container();
-        Header.setLayout(new BorderLayout());
-        UIComponents.ButtonObject backButton = new UIComponents.ButtonObject();
-        backButton.setMyIcon(FontImage.MATERIAL_ARROW_BACK);
-        backButton.setMyColor(UITheme.YELLOW);
-        backButton.setMyPadding(UITheme.PAD_3MM);
-
-        backButton.addActionListener(e-> ui.goBack());
-        Header.add(BorderLayout.WEST, backButton);
+    private LocalDateTime getTimeFromPickers(Picker datePicker,
+                                             Picker timePicker) {
+        return datePicker.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate().atStartOfDay()
+                .plusMinutes(timePicker.getTime());
     }
-
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("",
+                UITheme.ICON_BACK, UITheme.PAD_6MM,
+                e->ui.goBack());
+    }
 }

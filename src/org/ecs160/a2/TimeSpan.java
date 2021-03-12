@@ -1,17 +1,18 @@
 package org.ecs160.a2;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class TimeSpan {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private final DateTimeFormatter timeFormat =
-            DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 
     public TimeSpan(LocalDateTime startTime){
         this.startTime = startTime;
+    }
+
+    public Boolean isActive() {
+        return endTime == null;
     }
 
     public void setStartTime(LocalDateTime startTime){
@@ -28,32 +29,19 @@ public class TimeSpan {
     public LocalDateTime getEndTime(){
         return endTime;
     }
-    public String getFormattedTimeAsString(LocalDateTime time){
-        return time.format(timeFormat);
-    }
 
     public String getStartTimeAsString(){
-        return startTime.format(timeFormat);
+        return startTime.format(Utility.timeFormatter12hr);
     }
 
     public String getEndTimeAsString(){
-        if (endTime == null){
-            return LocalDateTime.now().format(timeFormat);
-        }
-        return endTime.format(timeFormat);
-    }
-
-    public String getStartEndTimeAsString(){
-        String startTime = this.getStartTimeAsString();
-        String endTime = this.getEndTimeAsString();
-        return "Start:" + startTime + " - " + "End:" + endTime;
+        assert (endTime != null): "Time Span is still active!";
+        return endTime.format(Utility.timeFormatter12hr);
     }
 
     public Duration getTimeSpanDuration(){
-        if (endTime == null){
-            LocalDateTime nowTime = LocalDateTime.now();
-            return Duration.between(startTime, nowTime);
-        }
+        if (endTime == null)
+            return Duration.between(startTime, LocalDateTime.now());
         return Duration.between(startTime, endTime);
     }
 
@@ -65,8 +53,8 @@ public class TimeSpan {
         return endTime;
     }
 
-    public Duration getTimeSpanDurationBetween
-            (LocalDateTime startOfTimeWindow, LocalDateTime endOfTimeWindow){
+    public Duration getTimeSpanDurationBetween(LocalDateTime startOfTimeWindow,
+                                               LocalDateTime endOfTimeWindow){
 
         LocalDateTime trueStartTime = startOfTimeWindow;
         if (startTime.isAfter(startOfTimeWindow))
@@ -95,6 +83,6 @@ public class TimeSpan {
         LocalDateTime start = LocalDateTime.now().minusSeconds(5);
         LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
         TimeSpan span = new TimeSpan(start);
-
     }
 }
+

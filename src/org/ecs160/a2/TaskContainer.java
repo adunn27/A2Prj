@@ -31,6 +31,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public void addTask(Task newTask) {
+        assert(!newTask.getName().isEmpty()): "Need a task name";
         taskSet.add(newTask);
     }
 
@@ -40,6 +41,15 @@ public class TaskContainer implements Iterable<Task>{
 
     public Task getTaskByName(String taskName) {
         return find(aTask -> taskName.equals(aTask.getName()));
+    }
+
+    public Task getTaskById(int taskid) {
+        for (Task task : taskSet){
+            if(task.getId()==taskid){
+                return task;
+            }
+        }
+        return null;
     }
 
     public Task getActiveTask() {
@@ -75,11 +85,11 @@ public class TaskContainer implements Iterable<Task>{
 
     public TaskContainer getTasksThatOccurred(LocalDate start,
                                               LocalDate stop) {
-
         return filter(task -> task.occurredBetween(
                 Utility.getStartOfDay(start),
                 Utility.getEndOfDay(stop)));
     }
+
 
     public TaskContainer filter(Predicate<Task> selector) {
         Set filteredSet = taskSet.stream()
@@ -96,8 +106,8 @@ public class TaskContainer implements Iterable<Task>{
                 .mapToLong(Duration::toMillis)
                 .summaryStatistics();
     }
-
     public Long getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getSum();
@@ -105,20 +115,18 @@ public class TaskContainer implements Iterable<Task>{
 
     public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
         if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
-
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMin();
     }
 
     public Long getAverageTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
+        LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return Math.round(stats.getAverage());
     }
 
     public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
         if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
-
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMax();
     }
@@ -132,5 +140,4 @@ public class TaskContainer implements Iterable<Task>{
         }
         return setOfAllTags.stream().sorted().collect(Collectors.toList());
     }
-
 }
