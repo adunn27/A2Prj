@@ -31,7 +31,6 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public void addTask(Task newTask) {
-        assert(!newTask.getName().isEmpty()): "Need a task name";
         taskSet.add(newTask);
     }
 
