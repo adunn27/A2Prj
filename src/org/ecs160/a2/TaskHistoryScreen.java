@@ -11,7 +11,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.spinner.Picker;
 
-import javax.swing.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -53,7 +52,7 @@ public class TaskHistoryScreen extends Form {
     private final DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("hh:mm:ss a");
     private final DateTimeFormatter dateFormatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private final Task taskData;
     private final UINavigator ui;
 
@@ -86,40 +85,6 @@ public class TaskHistoryScreen extends Form {
         add(CENTER, TaskList);
     }
 
-    public String timeFormatter(int totalMinutes){
-        String formattedTime;
-        int hour;
-        int minute = totalMinutes % 60;
-
-        if (totalMinutes < 720){
-            if (totalMinutes < 60){
-                hour = 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            } else {
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            }
-
-        } else {
-            if (totalMinutes < 780){
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            } else {
-                hour = (totalMinutes / 60) - 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            }
-        }
-        return formattedTime;
-    }
-
     private void createTaskList(){
         TaskList = new Container();
         TaskList.setLayout(BoxLayout.y());
@@ -131,9 +96,12 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
-
-            TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
+        for (TimeSpan thisTimeSpan: taskData.getAllTimeSpans()){
+            if (thisTimeSpan.isActive()) {
+                TaskList.add(new Label("New run started: " +
+                        thisTimeSpan.getStartTimeAsString()));
+                continue;
+            }
 
             LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
             String startTimeString = startTime.format(timeFormatter);
@@ -258,28 +226,11 @@ public class TaskHistoryScreen extends Form {
         submitButton.setMyText("Submit");
         submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            LocalDateTime startDateTime = getTimeFromPickers(startDatePicker,
+                                                             startTimePicker);
 
-            String endDate = formatter.format(endDatePicker.getDate());
-            String startDate = formatter.format(startDatePicker.getDate());
-            String startTime = timeFormatter(startTimePicker.getTime());
-            String endTime = timeFormatter(endTimePicker.getTime());
-            String start = startDate + " " + startTime;
-            String end = endDate + " " + endTime;
-
-            Date start_1 = new Date();
-            Date end_1 = new Date();
-            try {
-                start_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(start);
-                end_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(end);
-            } catch (ParseException parseException) {
-                parseException.printStackTrace();
-            }
-
-            LocalDateTime startDateTime = start_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime endDateTime = end_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime endDateTime = getTimeFromPickers(endDatePicker,
+                                                           endTimePicker);
 
             if (startDateTime.isAfter(endDateTime)){
                 System.out.println("You can't have a negative duration!");
@@ -302,9 +253,7 @@ public class TaskHistoryScreen extends Form {
                 editedTimeSpan.setStartTime(startDateTime);
                 editedTimeSpan.setEndTime(endDateTime);
 
-
                 PopupDialog.dispose();
-                ui.refreshScreen();
                 ui.refreshScreen();
             }
         });
@@ -315,6 +264,14 @@ public class TaskHistoryScreen extends Form {
         PopupDialog.add(d);
 
         PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
+    }
+
+    private LocalDateTime getTimeFromPickers(Picker datePicker,
+                                             Picker timePicker) {
+        return datePicker.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate().atStartOfDay()
+                .plusMinutes(timePicker.getTime());
     }
 
     private void createHeader() {
