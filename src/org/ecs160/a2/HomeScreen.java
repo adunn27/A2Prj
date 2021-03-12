@@ -4,7 +4,6 @@ import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
-import static com.codename1.ui.CN.log;
 import static org.ecs160.a2.UITheme.*;
 import static org.ecs160.a2.UIComponents.*;
 
@@ -109,6 +108,4 @@ public class HomeScreen extends Form{
         d.addComponent(BorderLayout.center(new SpanLabel(warning)));
         d.showPopupDialog(button);
     }
-
-
 }
