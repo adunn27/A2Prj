@@ -3,6 +3,7 @@ package org.ecs160.a2;
 import static com.codename1.ui.CN.*;
 import static org.ecs160.a2.UITheme.*;
 
+import com.codename1.l10n.ParseException;
 import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Form;
 import com.codename1.ui.layouts.BorderLayout;
@@ -13,16 +14,17 @@ import com.codename1.ui.spinner.Picker;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Date;
 
 
 class HistoryTaskObject1 extends Container {
-    private Label startDateLabel;
-    private Label stopDateLabel;
     public HistoryTaskObject1(String startTime, String stopTime,
-                              String startDate, String stopDate){
+                              String startDate, String stopDate, Duration totalDuration){
         setLayout(new BorderLayout());
+
+        String durationHours = String.format("%02d",totalDuration.toHours());
+        String durationMinutes = String.format("%02d",totalDuration.toMinutes()%60);
+        String durationSeconds = String.format("%02d",totalDuration.toSeconds()%60);
 
         Container LeftContainer = new Container();
         LeftContainer.setLayout(BoxLayout.y());
@@ -30,11 +32,15 @@ class HistoryTaskObject1 extends Container {
         Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
         getAllStyles().setBorder(simpleBorder);
 
-        startDateLabel = new Label ("Start: " + startDate + " " + startTime);
-        stopDateLabel = new Label("Stop: " + stopDate + " " + stopTime);
+        Label startDateLabel = new Label("Start: " + startDate + " " + startTime);
+        Label stopDateLabel = new Label("Stop: " + stopDate + " " + stopTime);
+        Label durationLabel = new Label("Duration: " + durationHours + ":"
+                + durationMinutes + ":"
+                + durationSeconds);
 
         LeftContainer.add(startDateLabel);
         LeftContainer.add(stopDateLabel);
+        LeftContainer.add(durationLabel);
 
         add(WEST, LeftContainer);
     }
@@ -43,34 +49,12 @@ class HistoryTaskObject1 extends Container {
 public class TaskHistoryScreen extends Form {
     private Container TaskList;
 
-    private String name;
-    private String size;
-    private java.util.List<String> tags = new ArrayList<>();
-    private java.util.List<String> times = new ArrayList<>();
-    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    private SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mm:ss a");
-    private SimpleDateFormat dateTimeFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a");
-
     private final DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("hh:mm:ss a");
     private final DateTimeFormatter dateFormatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
-    private final DateTimeFormatter dateTimeFormatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss a");
-    private Task taskData;
-    private UINavigator ui;
-
-    private void initData(Task taskData) throws Error{
-        if (taskData == null) {
-            name = "[Task Name]";
-            size = "S";
-            throw new Error("Task is not null");
-        } else {
-            name = taskData.getName();
-            size = taskData.getTaskSizeString();
-//            times = task.getTotalTime(); // TODO: needs total time
-        }
-    }
+            DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private final Task taskData;
+    private final UINavigator ui;
 
     public TaskHistoryScreen(Task task, UINavigator ui){
         taskData = task;
@@ -112,11 +96,12 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        System.out.println(taskData.getAllTimeSpans().size());
-
-        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
-
-            TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
+        for (TimeSpan thisTimeSpan: taskData.getAllTimeSpans()){
+            if (thisTimeSpan.isActive()) {
+                TaskList.add(new Label("New run started: " +
+                        thisTimeSpan.getStartTimeAsString()));
+                continue;
+            }
 
             LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
             String startTimeString = startTime.format(timeFormatter);
@@ -124,25 +109,23 @@ public class TaskHistoryScreen extends Form {
             String endTimeString = endTime.format(timeFormatter);
 
             HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString,
-                    startTime.format(dateFormatter), endTime.format(dateFormatter));
+                    startTime.format(dateFormatter), endTime.format(dateFormatter),
+                    thisTimeSpan.getTimeSpanDuration());
 
             UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
             editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
             editButton.setMyColor(UITheme.LIGHT_GREY);
-            editButton.addActionListener(e -> {
-                EditTask(thisTimeSpan, newHTO);
-            });
+            editButton.addActionListener(e -> EditTask(thisTimeSpan, newHTO));
 
             UIComponents.ButtonObject calendarButton = new UIComponents.ButtonObject();
             calendarButton.setMyIcon(FontImage.MATERIAL_PERM_CONTACT_CALENDAR);
             calendarButton.setMyColor(UITheme.LIGHT_GREY);
 
-            calendarButton.addActionListener(e -> {
-                EditTask(thisTimeSpan, newHTO);
-            });
+            calendarButton.addActionListener(e -> EditTask(thisTimeSpan, newHTO));
 
             UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
+          
             deleteButton.setMyColor(RED);
             deleteButton.addActionListener(e -> {
                 DeleteTimeSpan(thisTimeSpan, newHTO);
@@ -157,7 +140,6 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void DeleteTimeSpan(TimeSpan deletedTimeSpan, Component deletedComponent) {
-        System.out.println("DELETING UI Component");
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Are you sure you want to delete?");
@@ -186,64 +168,115 @@ public class TaskHistoryScreen extends Form {
     }
 
     private void EditTask(TimeSpan editedTimeSpan, Component editedComponent) {
-        System.out.println("editUI Component");
-        Dialog d = new Dialog();
-        d.setLayout(BoxLayout.y());
-        d.add("Edit Task History Dialog");
+        Dialog PopupDialog = new Dialog();
+        PopupDialog.setLayout(BoxLayout.y());
+
+        int h = Display.getInstance().getDisplayHeight();
+        int w = Display.getInstance().getDisplayWidth();
+
+        Container d = BoxLayout.encloseYCenter();
+        PopupDialog.setTitle("Edit Task History");
 
         LocalDateTime initStartDate = editedTimeSpan.getStartTimeAsDate();
         LocalDateTime initEndDate = editedTimeSpan.getEndTimeAsDate();
-
-        d.add("Select Start Time");
-        Picker startTimePicker = new Picker();
-        startTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        startTimePicker.setFormatter(dateTimeFormat);
         Date StartDate = Date.from(initStartDate.atZone(ZoneId.systemDefault()).toInstant());
-        startTimePicker.setDate(StartDate);
-        d.add(startTimePicker);
-
-        d.add("Select End Time");
-        Picker endTimePicker = new Picker();
-        endTimePicker.setType(Display.PICKER_TYPE_DATE_AND_TIME);
-        endTimePicker.setFormatter(dateTimeFormat);
         Date EndDate = Date.from(initEndDate.atZone(ZoneId.systemDefault()).toInstant());
-        endTimePicker.setDate(EndDate);
-        d.add(endTimePicker);
+
+        Container startContainer = BoxLayout.encloseXCenter();
+        Container endContainer = BoxLayout.encloseXCenter();
+
+        Container startLabel = BoxLayout.encloseXCenter();
+        startLabel.add("Select Start Time");
+        d.add(startLabel);
+
+        Picker startDatePicker = new Picker();
+        startDatePicker.setType(Display.PICKER_TYPE_CALENDAR);
+        startDatePicker.setDate(StartDate);
+        startContainer.add(startDatePicker);
+
+        Picker startTimePicker = new Picker();
+        startTimePicker.setMinuteStep(1);
+        startTimePicker.setType(Display.PICKER_TYPE_TIME);
+        startTimePicker.setTime(StartDate.getHours(), StartDate.getMinutes());
+        startTimePicker.setShowMeridiem(true);
+        startTimePicker.setMinuteStep(1);
+        startContainer.add(startTimePicker);
+        d.add(startContainer);
+
+        Container endLabel = BoxLayout.encloseXCenter();
+        endLabel.add("Select End Time");
+        d.add(endLabel);
+        Picker endDatePicker = new Picker();
+        endDatePicker.setType(Display.PICKER_TYPE_CALENDAR);
+        endDatePicker.setDate(EndDate);
+        endContainer.add(endDatePicker);
+
+        Picker endTimePicker = new Picker();
+        endTimePicker.setMinuteStep(1);
+        endTimePicker.setType(Display.PICKER_TYPE_TIME);
+        endTimePicker.setTime(EndDate.getHours(), EndDate.getMinutes());
+        endTimePicker.setShowMeridiem(true);
+        endTimePicker.setMinuteStep(1);
+        endContainer.add(endTimePicker);
+        d.add(endContainer);
 
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Cancel");
-        cancelButton.setMyColor(RED);
+        cancelButton.setMyColor(UITheme.LIGHT_GREY);
         cancelButton.addActionListener(e -> {
-            d.dispose();
+            PopupDialog.dispose();
         });
 
         UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
         submitButton.setMyText("Submit");
-        submitButton.setMyColor(UITheme.LIGHT_GREY);
+        submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
-            //TODO add changes here
-            Date endDate = endTimePicker.getDate();
-            Date startDate = startTimePicker.getDate();
+            LocalDateTime startDateTime = getTimeFromPickers(startDatePicker,
+                                                             startTimePicker);
 
-            LocalDateTime startDateTime = startDate.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime endDateTime = endDate.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
+            LocalDateTime endDateTime = getTimeFromPickers(endDatePicker,
+                                                           endTimePicker);
 
-            editedTimeSpan.setStartTime(startDateTime);
-            editedTimeSpan.setEndTime(endDateTime);
-            editedTimeSpan.setStartTime(startDateTime);
+            if (startDateTime.isAfter(endDateTime)){
+                System.out.println("You can't have a negative duration!");
+                Dialog newDialog = new Dialog();
 
-            d.dispose();
-            ui.refreshScreen();
-            ui.refreshScreen();
+                Container warningDialog = new Container();
+
+                warningDialog.setLayout(BoxLayout.y());
+                warningDialog.add("You can't have a negative duration!");
+                UIComponents.ButtonObject button = new UIComponents.ButtonObject();
+                button.setMyText("OK");
+                button.setMyColor(UITheme.LIGHT_YELLOW);
+                button.addActionListener(event -> {
+                    newDialog.dispose();
+                });
+                warningDialog.add(button);
+                newDialog.add(warningDialog);
+                newDialog.show();
+            } else {
+                editedTimeSpan.setStartTime(startDateTime);
+                editedTimeSpan.setEndTime(endDateTime);
+
+                PopupDialog.dispose();
+                ui.refreshScreen();
+            }
         });
-
 
         d.add(submitButton);
         d.add(cancelButton);
 
-        d.show();
+        PopupDialog.add(d);
+
+        PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
+    }
+
+    private LocalDateTime getTimeFromPickers(Picker datePicker,
+                                             Picker timePicker) {
+        return datePicker.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate().atStartOfDay()
+                .plusMinutes(timePicker.getTime());
     }
     private void createToolbar() {
         getToolbar().addMaterialCommandToLeftBar("",

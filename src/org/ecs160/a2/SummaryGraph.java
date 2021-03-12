@@ -13,27 +13,18 @@ import java.util.*;
 
 public class SummaryGraph{
 
-    private TaskContainer allTaskData;
-    private final UINavigator ui;
-
-    //private SummaryMode mode;
     private TimeSpan summaryPeriod;
-    public SummaryGraph(UINavigator ui){
-        this.ui = ui;
-        allTaskData = ui.backend.getUnarchivedTasks();
-      //  mode = SummaryMode.DAY; //default
+    private TaskContainer taskSet;
+    public SummaryGraph(TaskContainer tasks, TimeSpan timeSpan){
+        this.taskSet = tasks;
+        this.summaryPeriod = timeSpan;
     }
-    /*public void setSummaryMode(SummaryMode m){
-        mode = m;
-    }
-*/
     private DefaultRenderer buildCategoryRenderer(int[] colors) {
         DefaultRenderer renderer = new DefaultRenderer();
         renderer.setLabelsTextSize(50);
         renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setMargins(new int[]{0, 0, 0, 0});
-
-
+        renderer.setScale(0.90F);
         for (int color : colors) {
             SimpleSeriesRenderer r = new SimpleSeriesRenderer();
             r.setColor(color);
@@ -41,7 +32,6 @@ public class SummaryGraph{
         }
         return renderer;
     }
-
 
     protected CategorySeries buildCategoryDataset(String title, double[] times, TaskContainer taskSet) {
         CategorySeries series = new CategorySeries(title);
@@ -54,25 +44,19 @@ public class SummaryGraph{
         }
         return series;
     }
+
     public ChartComponent createPieChart() {
-        // Generate the values
-        TaskContainer taskSet = getTaskSet(); //TODO change for modes
         double[] setTimes = getSetTimes(taskSet);
         int [] colors = getColorArray(setTimes.length);
-        // Set up the renderer
+
         DefaultRenderer renderer = buildCategoryRenderer(colors);
-
         renderer.setShowLabels(true);
-
         renderer.setShowLegend(false);
         SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
         PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
-
         ChartComponent c = new ChartComponent(chart);
-
         return c;
-
     }
 
     private int[] getColorArray(int numTasks) {
@@ -86,7 +70,6 @@ public class SummaryGraph{
             allColors[i] = ColorUtil.argb(0,r, g, b);
         }
         return allColors;
-
     }
     private int[] doubleColorArray(int[] allColors){
         ArrayList<Integer> result = new ArrayList<Integer>(allColors.length);
@@ -118,38 +101,5 @@ public class SummaryGraph{
         Duration d = t.getTimeBetween(summaryPeriod.getStartTime(), summaryPeriod.getEndTime());
         total = (double)(d.toMillis() / 1000);
         return total;
-    }
-
-    private TaskContainer getTaskSet(){
-
-        LocalDateTime present = LocalDateTime.now();
-
-        TimeSpan dummyTimeSpan = new TimeSpan(present);
-
-        LocalDateTime start;
-        LocalDateTime stop;
-        /*
-        Commenting out SummaryMode for now until it is implemented
-        if(this.mode == SummaryMode.DAY) {
-            start = dummyTimeSpan.getStartOfDay(present);
-            stop = dummyTimeSpan.getEndOfDay(present);
-        }
-        else if(this.mode == SummaryMode.WEEK) {
-            start = dummyTimeSpan.getStartOfDay(present);
-            stop = dummyTimeSpan.getEndOfDay(present);
-        }
-        else{
-
-        }
- */
-        start = LocalDateTime.MIN; //TODO change
-        stop = present;
-        summaryPeriod = new TimeSpan(start);
-        summaryPeriod.setEndTime(stop);
-
-        //TODO filter for tags
-
-        return allTaskData.getTasksThatOccurred(start.toLocalDate(),
-                stop.toLocalDate());
     }
 }

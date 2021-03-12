@@ -1,6 +1,7 @@
 package org.ecs160.a2;
 
 import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Date;
 
@@ -8,6 +9,11 @@ public final class Utility {
     private Utility() throws Exception {
         throw new Exception("Should not instantiate Util class.");
     }
+
+    public static final DateTimeFormatter timeFormatter12hr =
+            DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
+    public static final DateTimeFormatter timeFormatter24hr =
+            DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
 
     // Decided that since this tool will be mainly for work related purposes
     // a week should start with the work week on Monday rather than the calendar
@@ -44,7 +50,11 @@ public final class Utility {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
-
+    public static LocalDateTime convertToLocalDateTime(Date date) { //TODO: Consider cleaning up
+        return date.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
+    }
     public static String durationToFormattedString(Duration duration) {
         String hms = String.format("%d:%02d:%02d",
                 duration.toHours(),
