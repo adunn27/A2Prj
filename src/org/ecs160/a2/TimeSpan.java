@@ -1,4 +1,6 @@
 package org.ecs160.a2;
+import jdk.jshell.execution.Util;
+
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
@@ -7,8 +9,6 @@ import java.util.Date;
 public class TimeSpan {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private final DateTimeFormatter timeFormat =
-            DateTimeFormatter.ofPattern("MM-dd-yyyy HH:mm:ss");
 
     public TimeSpan(LocalDateTime startTime){
         this.startTime = startTime;
@@ -32,25 +32,14 @@ public class TimeSpan {
     public LocalDateTime getEndTime(){
         return endTime;
     }
-    public String getFormattedTimeAsString(LocalDateTime time){
-        return time.format(timeFormat);
-    }
 
     public String getStartTimeAsString(){
-        return startTime.format(timeFormat);
+        return startTime.format(Utility.timeFormatter12hr);
     }
 
     public String getEndTimeAsString(){
-        if (endTime == null){
-            return LocalDateTime.now().format(timeFormat);
-        }
-        return endTime.format(timeFormat);
-    }
-
-    public String getStartEndTimeAsString(){
-        String startTime = this.getStartTimeAsString();
-        String endTime = this.getEndTimeAsString();
-        return "Start:" + startTime + " - " + "End:" + endTime;
+        assert (endTime != null): "Time Span is still active!";
+        return endTime.format(Utility.timeFormatter12hr);
     }
 
     public Duration getTimeSpanDuration(){
