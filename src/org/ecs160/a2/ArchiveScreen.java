@@ -24,13 +24,13 @@ public class ArchiveScreen extends Form {
     @Override
     public void show() {
         createArchiveScreen();
-        super.show();
+        super.showBack();
     }
 
     @Override
     public void showBack() {
         createArchiveScreen();
-        super.showBack();
+        super.show();
     }
 
     public void createArchiveScreen() {
@@ -53,8 +53,8 @@ public class ArchiveScreen extends Form {
     }
 
     private void createToolbar() {
-        getToolbar().addMaterialCommandToLeftBar("",
-                UITheme.ICON_BACK, UITheme.PAD_6MM,
-                e->ui.goBack());
+        getToolbar().addMaterialCommandToRightBar("",
+                UITheme.ICON_FORWARD, UITheme.PAD_6MM,
+                e->ui.goForward());
     }
 }
