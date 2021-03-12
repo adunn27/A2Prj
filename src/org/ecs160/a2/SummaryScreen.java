@@ -87,7 +87,7 @@ public class SummaryScreen extends Form {
         createTaskList();
         createGraphRow();
 
-        if (allTaskData.isEmpty()) {
+        if (filteredTaskData.isEmpty()) {
             addAll(FilterHeader,TaskList);
         } else {
             addAll(FilterHeader,StatsList,graphRow,TaskList);
@@ -202,7 +202,7 @@ public class SummaryScreen extends Form {
             TaskList.add(noTasks);
         } else {
             TaskList.add(taskTitle);
-            for (Task taskObj : allTaskData) {
+            for (Task taskObj : filteredTaskData) {
                 TaskList.add(new SummaryTaskObject(taskObj, startTime, endTime, ui));
             }
         }
