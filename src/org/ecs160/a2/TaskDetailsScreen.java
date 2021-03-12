@@ -209,7 +209,7 @@ public class TaskDetailsScreen extends Form {
                 ICON_CHART, UITheme.PAD_3MM);
 
         dateButton.addActionListener(e->{
-            createFilterDialog();
+            createChartDialog();
             FilterDialog.show();
         });
 
@@ -228,12 +228,10 @@ public class TaskDetailsScreen extends Form {
         return dailyTimes.stream().mapToDouble(Duration::toMillis).toArray();
     }
 
-    private void createFilterDialog() {
+    private void createChartDialog() {
         FilterDialog = new Dialog();
         FilterDialog.setLayout(BoxLayout.y());
-//        FilterDialog.setTitle("Select Time Window");
 
-        // DATE PICKERS
         startDatePicker = new UIComponents.DatePickerObject(startDateFilter);
         endDatePicker = new UIComponents.DatePickerObject(endDateFilter);
         UIComponents.StartEndPickers startEndPickers = new UIComponents.
@@ -244,7 +242,7 @@ public class TaskDetailsScreen extends Form {
         resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
         resetButton.addActionListener(e -> {
             resetStartEndDate();
-            refreshFilterDialog();
+            refreshChartDialog();
         });
 
         // REFRESH BUTTON
@@ -253,11 +251,11 @@ public class TaskDetailsScreen extends Form {
         refreshButton.addActionListener(e -> {
             startDateFilter = startDatePicker.getDate();
             endDateFilter = endDatePicker.getDate();
-            if (startDateFilter.compareTo(endDateFilter) > 0) {
+            if (startDateFilter.compareTo(endDateFilter) > 0)
                 new UIComponents.showWarningDialog("Please select a start date before or on end date");
-            } else {
-                refreshFilterDialog();
-            }
+            else
+                refreshChartDialog();
+
         });
 
         // DONE BUTTON
@@ -275,10 +273,10 @@ public class TaskDetailsScreen extends Form {
         FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
     }
 
-    private void refreshFilterDialog() { // TODO: DRY violation (also in summaryscreen)
+    private void refreshChartDialog() { // TODO: DRY violation (also in summaryscreen)
         FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
         FilterDialog.dispose();
-        createFilterDialog();
+        createChartDialog();
         FilterDialog.setTransitionInAnimator(CommonTransitions.createEmpty());
         FilterDialog.show();
     }
