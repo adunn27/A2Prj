@@ -52,7 +52,7 @@ public class TaskHistoryScreen extends Form {
     private final DateTimeFormatter timeFormatter =
             DateTimeFormatter.ofPattern("hh:mm:ss a");
     private final DateTimeFormatter dateFormatter =
-            DateTimeFormatter.ofPattern("dd/MM/yyyy");
+            DateTimeFormatter.ofPattern("MM/dd/yyyy");
     private final Task taskData;
     private final UINavigator ui;
 
