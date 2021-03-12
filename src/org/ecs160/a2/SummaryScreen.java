@@ -98,7 +98,7 @@ public class SummaryScreen extends Form {
 
         FilterHeader = new Container(BoxLayout.y());
         TextObject startEndDates = new TextObject(
-                dateHeader, SIZE_LARGE, 0, SIZE_LARGE);
+                dateHeader, BLACK, 0, SIZE_LARGE);
 
         FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
 
@@ -147,8 +147,7 @@ public class SummaryScreen extends Form {
 
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
-        TitleObject statTitle = new TitleObject("Stats");
-        statTitle.setSize(SIZE_LARGE);
+        TextObject statTitle = new TextObject("Stats", GREY, PAD_3MM, SIZE_LARGE);
         StatsList.add(statTitle);
         LocalDateTime startTime = Utility.getStartOfDay(
                 Utility.convertToLocalDate(startDateFilter));
@@ -189,9 +188,7 @@ public class SummaryScreen extends Form {
     }
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
-
-        TitleObject taskTitle = new TitleObject("Tasks");
-        taskTitle.setSize(SIZE_LARGE);
+        TextObject taskTitle = new TextObject("Tasks", GREY, PAD_3MM,SIZE_LARGE);
 
         LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
                 Utility.convertToLocalDate(startDateFilter));

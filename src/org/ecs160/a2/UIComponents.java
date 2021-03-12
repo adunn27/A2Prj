@@ -1,4 +1,5 @@
 package org.ecs160.a2;
+import static org.ecs160.a2.UITheme.*;
 
 import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
@@ -12,14 +13,12 @@ import com.codename1.ui.plaf.Style;
 import javafx.scene.paint.Material;
 
 import java.time.LocalDateTime;
-
 import static com.codename1.ui.CN.*;
-import static org.ecs160.a2.UITheme.*;
 
 public class UIComponents {
     static class ButtonObject extends Button {
         public ButtonObject () {
-            getAllStyles().setFgColor(BLACK);
+            getAllStyles().setFgColor(UITheme.BLACK);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMargin(PAD_1MM, PAD_1MM, PAD_1MM, PAD_1MM);
             getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
@@ -80,9 +79,6 @@ public class UIComponents {
         }
     }
 
-    // args: size
-    // used in: StandardTaskObject, SummaryTaskObject
-    // TODO: REMOVE?
     static class SizeLabelObject extends Label {
         public SizeLabelObject(String size) {
             setText(size);
@@ -118,8 +114,6 @@ public class UIComponents {
             }
         }
     }
-
-    // TODO: REMOVE?
     static class SizeButtonObject extends Container {
         ButtonObject b = new ButtonObject();
 
@@ -145,31 +139,6 @@ public class UIComponents {
             } else {
                 return COL_SIZE_S;
             }
-        }
-    }
-
-    // TODO: REMOVE?
-    static class TitleObject extends Label {
-        public TitleObject(String title)  {
-            setText(title);
-            getAllStyles().setFgColor(GREY);
-            getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            getAllStyles().setMargin(Component.LEFT, PAD_3MM);
-            getAllStyles().setFont((
-                    Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, SIZE_MEDIUM))
-            );
-        }
-
-        public void setSize(int size) {
-            getAllStyles().setFont((Font.createSystemFont(FACE_SYSTEM, STYLE_PLAIN, size)));
-        }
-
-        public void setMyColor(int color) {
-            getAllStyles().setFgColor(color);
-        }
-
-        public void removePadding() {
-            getAllStyles().setMargin(Component.LEFT, 0);
         }
     }
 
@@ -218,7 +187,7 @@ public class UIComponents {
 
             String tags = "";
             for (String t : taskData.getTags()) {
-                tags += t + '\t';
+                tags += t + "   ";
             }
             if (!tags.isEmpty())
                 taskContainer.setTextLine3(tags);

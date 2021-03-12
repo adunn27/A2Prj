@@ -147,9 +147,8 @@ public class EditTaskScreen extends Form {
             tagField.add(tagButton);
         }
 
-        TagRow.add(BoxLayout.encloseX(
-                new TitleObject("Tags"), addButton)
-        );
+        TagRow.add(BoxLayout.encloseX(new TextObject(
+                "Tags", BLACK, PAD_3MM, SIZE_MEDIUM), addButton));
         TagRow.add(tagField);
     }
     private void saveSelectedTag(String tagName) {
