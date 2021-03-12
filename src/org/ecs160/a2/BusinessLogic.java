@@ -70,6 +70,7 @@ public class BusinessLogic {
     }
 
     public void removeTag(Task task, String tag) {
+        if (!task.hasTag(tag)) return;
         task.removeTag(tag);
         logfile.delete_tag(task, tag);
     }
