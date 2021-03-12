@@ -223,21 +223,13 @@ public class TaskHistoryScreen extends Form {
         submitButton.setMyText("Submit");
         submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
-            Instant start_1 = startDatePicker.getDate().toInstant();
-            Instant end_1 = endDatePicker.getDate().toInstant();
+            LocalDateTime startDateTime = getTimeFromPickers(startDatePicker,
+                                                             startTimePicker);
 
-            LocalDateTime startDateTime = start_1
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .atStartOfDay()
-                    .plusMinutes(startTimePicker.getTime());
-            LocalDateTime endDateTime = end_1
-                    .atZone(ZoneId.systemDefault())
-                    .toLocalDate()
-                    .atStartOfDay()
-                    .plusMinutes(endTimePicker.getTime());
+            LocalDateTime endDateTime = getTimeFromPickers(endDatePicker,
+                                                           endTimePicker);
 
-            if (false && startDateTime.isAfter(endDateTime)){
+            if (startDateTime.isAfter(endDateTime)){
                 System.out.println("You can't have a negative duration!");
                 Dialog newDialog = new Dialog();
 
@@ -258,7 +250,6 @@ public class TaskHistoryScreen extends Form {
                 editedTimeSpan.setStartTime(startDateTime);
                 editedTimeSpan.setEndTime(endDateTime);
 
-
                 PopupDialog.dispose();
                 ui.refreshScreen();
             }
@@ -270,6 +261,14 @@ public class TaskHistoryScreen extends Form {
         PopupDialog.add(d);
 
         PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
+    }
+
+    private LocalDateTime getTimeFromPickers(Picker datePicker,
+                                             Picker timePicker) {
+        return datePicker.getDate().toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate().atStartOfDay()
+                .plusMinutes(timePicker.getTime());
     }
 
     private void createHeader() {
