@@ -121,7 +121,8 @@ public class TaskDetailsScreen extends Form {
         createTimeRow();
         Body.addAll(titleRow, timeRow);
 
-        if (taskData.occurredBetween(LocalDateTime.MIN, LocalDateTime.MAX)) {
+        if (!taskData.getTimeBetween(LocalDateTime.MIN,
+                LocalDateTime.MAX).isZero()) {
             createGraphRow();
             Body.add(graphRow);
         }
