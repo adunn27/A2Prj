@@ -182,7 +182,6 @@ public class EditTaskScreen extends Form {
                     saveSelectedTag(tag);
                     d.dispose();
                 });
-
             }
         }
 
