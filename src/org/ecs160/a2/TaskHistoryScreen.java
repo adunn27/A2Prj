@@ -96,9 +96,12 @@ public class TaskHistoryScreen extends Form {
         EastContainer.add("DELETE");
         EastContainer.add("EDIT");
 
-        for (int i = 0; i < taskData.getAllTimeSpans().size(); i++){
-
-            TimeSpan thisTimeSpan = taskData.getAllTimeSpans().get(i);
+        for (TimeSpan thisTimeSpan: taskData.getAllTimeSpans()){
+            if (thisTimeSpan.isActive()) {
+                TaskList.add(new Label("Current run started: " +
+                        thisTimeSpan.getStartTimeAsString()));
+                continue;
+            }
 
             LocalDateTime startTime = thisTimeSpan.getStartTimeAsDate();
             String startTimeString = startTime.format(timeFormatter);
