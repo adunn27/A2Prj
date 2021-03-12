@@ -209,12 +209,11 @@ public class LogFile {
         writeToLog(createLogEntry(task, "delete_tag", tag));
     }
 
-    public void delete_time (Task task, LocalDateTime time){
-
-        String formatTime = time.format(formatter);
+    public void delete_time (Task task, int timeSpanIndex){
 
         System.out.println("log delete_time");
-        writeToLog(createLogEntry(task,"delete_time", formatTime));
+        writeToLog(createLogEntry(task,"delete_time",
+                Integer.toString(timeSpanIndex)));
     }
 
     public void edit_time (Task task, int timeSpanIndex, LocalDateTime newStartTime,LocalDateTime newEndTime){

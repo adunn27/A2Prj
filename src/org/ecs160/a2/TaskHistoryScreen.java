@@ -150,8 +150,9 @@ public class TaskHistoryScreen extends Form {
         cancelButton.addActionListener(e -> {
             //TODO add delete code right here
             LocalDateTime time;
-            time = taskData.removeTimeSpanComponent(deletedTimeSpan);
-            ui.backend.logfile.delete_time(taskData,time);
+            ui.backend.logfile.delete_time(taskData,
+                    taskData.getIndexOfTimeSpan(deletedTimeSpan));
+            taskData.removeTimeSpanComponent(deletedTimeSpan);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
 
