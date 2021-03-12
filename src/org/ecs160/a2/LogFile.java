@@ -19,6 +19,7 @@ import com.codename1.io.Storage;
 public class LogFile {
     private static final String TAG_DELIMITER = ",";
     private static final String ESCAPE_CHAR = "\\";
+    public static final String LOG_DELIMITER = "|";
     public TaskContainer retrieveTask;
     public int TaskId;
     private File myObj;
@@ -177,10 +178,16 @@ public class LogFile {
         }
     }
     public void addTask (Task task){
+        addOrEditATask(task, "add");
+    }
+    public void editTask (Task task){
+        addOrEditATask(task, "edit");
+    }
 
+    private void addOrEditATask(Task task, String commandName) {
         try {
             // convert epoch to date and time format
-            System.out.println("log add");
+            System.out.println("log " + commandName);
             long time_in_long = System.currentTimeMillis();
 
             SimpleDateFormat sdf =
@@ -188,49 +195,18 @@ public class LogFile {
 
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
-            String tags= new String("");
+            String tags = "";
             for(String tag : task.getTags()){
                 tags= tags + tag + TAG_DELIMITER;
             }
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|add|"+
-                    task.getName().replaceAll("\\|", ":") + "|" + task.getDescription().replaceAll("\\|", ":") +
-                    "|" + task.getTaskSize().toString().replaceAll("\\|", ":") + "|" + tags.replaceAll("\\|", ":") + "|"+ task.getId() +"\n");
-            TaskId++;
-            writer.close();
-
-
-
-        } catch (IOException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-    }
-    public void editTask (Task task){
-
-        try {
-            // convert epoch to date and time format
-            System.out.println("log edit");
-            long time_in_long = System.currentTimeMillis();
-
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("yyyy.MM.dd'-'HH:mm:ss ");
-
-            BufferedWriter writer = new BufferedWriter(
-                    new FileWriter("log", true));
-            String tags= new String("");
-            for(String tag : task.getTags()){
-                tags= tags.replaceAll("\\|", ":") + tag.replaceAll("\\|", ":") + TAG_DELIMITER;
-
-            }
-
             writer.write(sdf.format(new Date(time_in_long)) +
-                    "|" + "edit" +
-                    "|" + task.getName() +
-                    "|" + task.getDescription() +
-                    "|" + task.getTaskSize() +
-                    "|" + tags +
-                    "|" + task.getId() + "\n");
+                    LOG_DELIMITER + commandName +
+                    LOG_DELIMITER + task.getName() +
+                    LOG_DELIMITER + task.getDescription() +
+                    LOG_DELIMITER + task.getTaskSize() +
+                    LOG_DELIMITER + tags +
+                    LOG_DELIMITER + task.getId() + "\n");
             writer.close();
 
 
@@ -240,7 +216,6 @@ public class LogFile {
             e.printStackTrace();
         }
     }
-
 
 
     public void startTask(Task task,LocalDateTime time){
@@ -262,7 +237,7 @@ public class LogFile {
             //  String placeholder = "" + task.
 
             writer.write(sdf.format(new Date(time_in_long)) + "|start|"+
-                    task.getName()+  "|" +  formatTime +"\n");
+                    task.getName()+ LOG_DELIMITER +  formatTime +"\n");
             writer.close();
 
 
@@ -293,7 +268,7 @@ public class LogFile {
 
 
             writer.write(sdf.format(new Date(time_in_long)) + "|stop|"+
-                    task.getName()+  "|" +  formatTime +"\n");
+                    task.getName()+ LOG_DELIMITER +  formatTime +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -390,7 +365,7 @@ public class LogFile {
                     new FileWriter("log", true));
 
             writer.write(sdf.format(new Date(time_in_long)) + "|delete_tag|"+
-                    task.getName() + "|" + tag +"\n");
+                    task.getName() + LOG_DELIMITER + tag +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -416,7 +391,7 @@ public class LogFile {
                     new FileWriter("log", true));
 
             writer.write(sdf.format(new Date(time_in_long)) + "|delete_time|"+
-                    task.getName() + "|" + formatTime +"\n");
+                    task.getName() + LOG_DELIMITER + formatTime +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -447,8 +422,8 @@ public class LogFile {
                     new FileWriter("log", true));
 
             writer.write(sdf.format(new Date(time_in_long)) + "|edit_time|"+
-                    task.getName() + "|" + formatStartTime+ "|" + formatNewStartTime+
-                    "|" + formatEndTime+"|" + formatNewEndTime + "\n");
+                    task.getName() + LOG_DELIMITER + formatStartTime+ LOG_DELIMITER + formatNewStartTime+
+                    LOG_DELIMITER + formatEndTime+ LOG_DELIMITER + formatNewEndTime + "\n");
             writer.close();
 
         } catch (IOException e) {
