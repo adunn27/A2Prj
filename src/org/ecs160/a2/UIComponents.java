@@ -4,10 +4,13 @@ import static org.ecs160.a2.UITheme.*;
 import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
+import com.codename1.ui.animations.CommonTransitions;
+import com.codename1.ui.animations.Transition;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.layouts.GridLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
@@ -215,22 +218,37 @@ public class UIComponents {
                 archive.setAllStyles("", COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
 
             archive.addActionListener(e->{
-                if (taskData.isArchived()){
+                if (taskData.isArchived()) {
                     ui.backend.getTaskByName(taskData.getName()).unarchive();
                     ui.backend.logfile.unarchiveTask(taskData);
+                    ui.refreshScreen();
+
+                } else if (taskData.isActive()) {
+                    Dialog areYouSure = new Dialog(BoxLayout.y());
+                    areYouSure.add("Archive this currently running task?");
+                    ButtonObject yesB = new ButtonObject();
+                    yesB.setAllStyles("Yes", COL_UNSELECTED,  ' ',PAD_3MM);
+                    yesB.addActionListener(yes -> {
+                        LocalDateTime time = taskData.stop();
+                        ui.backend.logfile.stopTask(taskData, time);
+                        archiveTaskObject();
+                        areYouSure.setTransitionOutAnimator(CommonTransitions.createEmpty());
+                        areYouSure.dispose();
+                        ui.refreshScreen();
+
+                    });
+
+                    ButtonObject noB = new ButtonObject();
+                    noB.setAllStyles("Cancel", COL_SELECTED,  ' ',PAD_3MM);
+                    noB.addActionListener(cancel -> areYouSure.dispose());
+
+
+                    areYouSure.add(GridLayout.encloseIn(2,noB, yesB));
+                    areYouSure.showPopupDialog(archive);
+                } else {
+                    archiveTaskObject();
+                    ui.refreshScreen();
                 }
-                else if (taskData.isActive()){
-                    LocalDateTime time= taskData.stop();
-                    ui.backend.logfile.stopTask(taskData, time);
-                    ui.backend.logfile.archiveTask(taskData);
-                    ui.backend.getTaskByName(taskData.getName()).archive();
-                }
-                else{
-                    ui.backend.getTaskByName(taskData.getName()).archive();
-                    ui.backend.logfile.archiveTask(taskData);
-                }
-//                currPage.animate();
-                ui.refreshScreen();
                 log("archived/unarchived task");
             });
             Container options = new Container(BoxLayout.x());
@@ -241,6 +259,11 @@ public class UIComponents {
             add(taskPanel);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMargin(PAD_1MM,PAD_1MM,PAD_1MM,PAD_1MM);
+        }
+
+        private void archiveTaskObject()  {
+            ui.backend.getTaskByName(taskData.getName()).archive();
+            ui.backend.logfile.archiveTask(taskData);
         }
 
         private void longPressEvent() {
