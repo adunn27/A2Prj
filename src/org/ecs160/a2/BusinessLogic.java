@@ -22,35 +22,6 @@ public class BusinessLogic {
         return everyTask.getAllTags();
     }
 
-    public Task newTask(String name,
-                        String size,
-                        String description,
-                        Boolean isArchive,
-                        Boolean isActive,
-                        int taskid,
-                        List<TimeSpan> alltimes,
-                        List<String> tags) {
-        assert (everyTask.getTaskByName(name) == null): "Task already exists!";
-
-        Task aNewTask = new Task(name, TaskSize.parse(size));
-        aNewTask.setAllTimeSpans(alltimes);
-        aNewTask.setDescription(description);
-        if (isArchive){
-
-            aNewTask.archive();
-
-        }
-        if(isActive){
-            aNewTask.setActive();
-        }
-        for(String aTag: tags) {
-            aNewTask.addTag(aTag);
-        }
-        aNewTask.setId(taskid);
-        everyTask.addTask(aNewTask);
-        return aNewTask;
-    }
-
     public void saveTask(Task newTask) {
         everyTask.addTask(newTask);
         newTask.setId(TaskId);

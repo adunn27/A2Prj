@@ -1,7 +1,5 @@
 package org.ecs160.a2;
 
-import jdk.jshell.execution.Util;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +16,8 @@ public class Task {
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
-    private List<TimeSpan> allTimes; //TODO better name
-    private Set<String> tags; //TODO does order matter? Do tags need color also?
+    private List<TimeSpan> allTimes;
+    private Set<String> tags;
 
 
 
@@ -33,13 +31,13 @@ public class Task {
 
     public Boolean isArchive(){ return isArchived; }
 
-    public void setActive (){ isActive = true;}
+    public void setId(int taskid){
+        TaskId = taskid;
+    }
 
-    public void setInActive(){isActive= false;}
-
-    public void setId(int taskid){TaskId = taskid;}
-
-    public int getId(){return TaskId;}
+    public int getId(){
+        return TaskId;
+    }
 
     public Task(String newTaskName, TaskSize newTaskSize) {
         construct(newTaskName, newTaskSize);
@@ -87,8 +85,9 @@ public class Task {
 
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
-        if (isActive)
-            stop();
+        assert (isActive == false): "Cannot archive an active task";
+        //if (isActive)
+        //    stop();
         isArchived = true;
     }
 

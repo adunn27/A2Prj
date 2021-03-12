@@ -23,9 +23,11 @@ public class LogFile {
     public static final String LOG_FILE_NAME = "log";
     public static final DateTimeFormatter formatter =
             DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final int NAME_INDEX = 3;
+    public static final int TASK_ID_INDEX = 2;
+    public static final int TIME_INDEX = 0;
     public TaskContainer retrieveTask;
     public int TaskId;
-    private File myObj;
     private OutputStream os;
 
     public LogFile() {
@@ -44,7 +46,7 @@ public class LogFile {
 
         try {
             // initialize writing to the file
-            myObj = new File("log");
+            File myObj = new File(LOG_FILE_NAME);
             if (myObj.createNewFile()) {
                 System.out.println("log file created");
             } else {
@@ -75,20 +77,20 @@ public class LogFile {
 
     private void executeLogLine(String[] split) {
         TimeSpan time;
-        String taskName;
-        Task task = retrieveTask.getTaskById(Integer.parseInt(split[2]));;
+        Task task = retrieveTask.getTaskById(
+                Integer.parseInt(split[TASK_ID_INDEX]));
         switch (split[COMMAND_INDEX]) {
         case "add":
-            task = new Task(split[3]);
-            TaskId = Integer.parseInt(split[2]);
+            TaskId = Integer.parseInt(split[TASK_ID_INDEX]);
+            task = new Task(split[NAME_INDEX]);
             task.setId(TaskId);
             retrieveTask.addTask(task);
-            break;
 
+            break;
         case "edit":
-            task.setName(split[2]);
-            task.setDescription(split[3]); // third column is description
-            task.setTaskSize(split[4]);
+            task.setName(split[NAME_INDEX]);
+            task.setDescription(split[4]); // third column is description
+            task.setTaskSize(split[5]);
 
             List<String> tags_e= new ArrayList<>();
             for(int i = 6; i < split.length; i++){
@@ -98,25 +100,19 @@ public class LogFile {
 
             break;
         case "start":
-            taskName= split[2];
-            String stringTime_s = split[0];
+            String stringTime_s = split[TIME_INDEX];
             LocalDateTime taskTime_s= LocalDateTime.parse(stringTime_s,formatter);
-            task.getAllTimeSpans().add(new TimeSpan(taskTime_s));
-            task.setActive();
+            task.start(taskTime_s);
 
             break;
         case "stop":
-
-            taskName = split[2];
-            String stringTime_e = split[0];
+            String stringTime_e = split[TIME_INDEX];
             LocalDateTime taskTime_e= LocalDateTime.parse(stringTime_e,formatter);
-            task.getAllTimeSpans().get(task.getAllTimeSpans().size() - COMMAND_INDEX).setEndTime(taskTime_e);
-            task.setInActive();
+            task.stop(taskTime_e);
 
             break;
 
         case "archive":
-            taskName = split[2];
             task.archive();
             break;
 
@@ -127,16 +123,16 @@ public class LogFile {
             retrieveTask.removeTask(task);
             break;
         case "delete_tag":
-            task.removeTag(split[3]);
+            task.removeTag(split[NAME_INDEX]);
             break;
         case "delete_time":
-            String timeString = split[3];
+            String timeString = split[NAME_INDEX];
             LocalDateTime dateTime = LocalDateTime.parse(timeString, formatter);
             time = task.getTimeSpanByTime(dateTime);
             task.removeTimeSpanComponent(time);
             break;
         case "edit_time":
-            String oldStartTimeString = split[3];
+            String oldStartTimeString = split[NAME_INDEX];
             String newStartTimeString = split[4];
             String oldEndTimeString = split[5];
             String newEndTimeString = split[6];
@@ -181,7 +177,7 @@ public class LogFile {
 
     public void startTask(Task task, LocalDateTime time){
         System.out.println("log start");
-        writeToLog(createLogEntry(time, task, "start");
+        writeToLog(createLogEntry(time, task, "start"));
     }
 
     public void stopTask(Task task, LocalDateTime time){
@@ -191,17 +187,17 @@ public class LogFile {
 
     public void unarchiveTask (Task task){
         System.out.println("log unarchive");
-        writeToLog(createLogEntry(task, "unarchive");
+        writeToLog(createLogEntry(task, "unarchive"));
     }
 
     public void archiveTask (Task task){
         System.out.println("log archive");
-        writeToLog(createLogEntry(task, "archive");
+        writeToLog(createLogEntry(task, "archive"));
     }
 
     public void delete_task (Task task){
         System.out.println("log delete_task");
-        writeToLog(createLogEntry(task,"delete_task");
+        writeToLog(createLogEntry(task,"delete_task"));
     }
 
     public void delete_tag (Task task, String tag){
