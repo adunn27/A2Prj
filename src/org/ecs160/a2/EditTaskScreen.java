@@ -193,6 +193,25 @@ public class EditTaskScreen extends Form {
             ui.goBack();
             return;
         }
+
+        Task lookupTask = ui.backend.getTaskByName(nameData);
+        if (lookupTask != null){
+            System.out.println("Task already exists");
+            Dialog taskExistsDialog = new Dialog();
+            taskExistsDialog.setLayout(BoxLayout.y());
+            taskExistsDialog.setTitle("This task already exists");
+
+            UIComponents.ButtonObject continueButton = new UIComponents.ButtonObject();
+            continueButton.setMyText("Continue");
+            continueButton.setMyColor(UITheme.LIGHT_YELLOW);
+            continueButton.addActionListener(e -> {
+                taskExistsDialog.dispose();
+            });
+            
+            taskExistsDialog.add(continueButton);
+            taskExistsDialog.show();
+            return;
+        }
         task.setId(task.getId());
         task.setName(nameData);
         task.setTaskSize(sizeData);
