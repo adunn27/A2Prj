@@ -36,8 +36,8 @@ public class LogFile {
         //Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
         lastTaskId = 0;
         retrievedTasks = new TaskContainer();
-        readInLog();
         os = setUpOutputStream();
+        readInLog();
     }
 
     private void readInLog() throws IOException {
