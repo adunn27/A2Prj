@@ -254,7 +254,7 @@ public class EditTaskScreen extends Form {
             System.out.println("REMOVING TAG");
             tagsData.remove(name);
             tagField.removeComponent(deletedComponent);
-            ui.backend.removeTag(task, deletedComponent.getName());
+            ui.backend.removeTag(task, name);
             d.dispose();
         });
 
