@@ -66,7 +66,8 @@ public class LogFile {
             System.out.println("Storage has created");
             os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
         } else {
-            InputStream tempIn = Storage.getInstance().createInputStream(LOG_FILE_NAME);
+            InputStream tempIn =
+                    Storage.getInstance().createInputStream(LOG_FILE_NAME);
             String readBack = Util.readToString(tempIn, "UTF-8");
             tempIn.close();
             os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
@@ -209,7 +210,7 @@ public class LogFile {
     }
 
     public void edit_time (Task task, int timeSpanIndex,
-                           LocalDateTime newStartTime,LocalDateTime newEndTime){
+                       LocalDateTime newStartTime,LocalDateTime newEndTime){
         String formatNewStartTime =
                 newStartTime.format(Utility.timeFormatter24hr);
         String formatNewEndTime =
