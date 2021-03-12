@@ -44,12 +44,7 @@ public class TaskContainer implements Iterable<Task>{
     }
 
     public Task getTaskById(int taskid) {
-        for (Task task : taskSet){
-            if(task.getId()==taskid){
-                return task;
-            }
-        }
-        return null;
+        return find(aTask -> aTask.getId() == taskid);
     }
 
     public Task getActiveTask() {
