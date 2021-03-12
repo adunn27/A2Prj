@@ -251,6 +251,12 @@ public class UIComponents {
                     ui.backend.getTaskByName(taskData.getName()).unarchive();
                     ui.backend.logfile.unarchiveTask(taskData);
                 }
+                else if (taskData.isActive()){
+                    LocalDateTime time= taskData.stop();
+                    ui.backend.logfile.stopTask(taskData, time);
+                    ui.backend.logfile.archiveTask(taskData);
+                    ui.backend.getTaskByName(taskData.getName()).archive();
+                }
                 else{
                     ui.backend.getTaskByName(taskData.getName()).archive();
                     ui.backend.logfile.archiveTask(taskData);
@@ -272,6 +278,7 @@ public class UIComponents {
         private void longPressEvent() {
             if (taskData.isArchived()) {
                 taskData.unarchive();
+                ui.backend.logfile.unarchiveTask(this.taskData);
                 ui.refreshScreen();
             } else {
                 ui.goDetails(taskData.getName());

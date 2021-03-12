@@ -200,7 +200,7 @@ public class EditTaskScreen extends Form {
             Dialog taskExistsDialog = new Dialog();
             taskExistsDialog.setLayout(BoxLayout.y());
             taskExistsDialog.setTitle("This task already exists");
-            
+
             UIComponents.ButtonObject continueButton = new UIComponents.ButtonObject();
             continueButton.setMyText("Continue");
             continueButton.setMyColor(UITheme.LIGHT_YELLOW);
