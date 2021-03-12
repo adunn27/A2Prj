@@ -191,12 +191,11 @@ public class LogFile {
             String tags= new String("");
             for(String tag : task.getTags()){
                 tags= tags + tag + TAG_DELIMITER;
-
             }
 
             writer.write(sdf.format(new Date(time_in_long)) + "|add|"+
-                    task.getName() + "|" + task.getDescription() +
-                    "|" + task.getTaskSize() + "|" + tags+ "|"+ task.getId() +"\n");
+                    task.getName().replaceAll("\\|", ":") + "|" + task.getDescription().replaceAll("\\|", ":") +
+                    "|" + task.getTaskSize().toString().replaceAll("\\|", ":") + "|" + tags.replaceAll("\\|", ":") + "|"+ task.getId() +"\n");
             TaskId++;
             writer.close();
 
@@ -221,7 +220,7 @@ public class LogFile {
                     new FileWriter("log", true));
             String tags= new String("");
             for(String tag : task.getTags()){
-                tags= tags + tag + TAG_DELIMITER;
+                tags= tags.replaceAll("\\|", ":") + tag.replaceAll("\\|", ":") + TAG_DELIMITER;
 
             }
 
