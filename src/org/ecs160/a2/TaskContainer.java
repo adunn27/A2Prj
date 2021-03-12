@@ -83,9 +83,9 @@ public class TaskContainer implements Iterable<Task>{
 
     public TaskContainer getTasksThatOccurred(LocalDate start,
                                               LocalDate stop) {
-        return filter(task -> task.occurredBetween(
+        return filter(task -> !task.getTimeBetween(
                 Utility.getStartOfDay(start),
-                Utility.getEndOfDay(stop)));
+                Utility.getEndOfDay(stop)).isZero());
     }
 
     private TaskContainer filter(Predicate<Task> selector) {

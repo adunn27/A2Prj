@@ -126,7 +126,7 @@ public class EditTaskScreen extends Form {
         }
         task.setId(task.getId());
         task.setName(nameData);
-        task.setTaskSize(sizeData);
+        task.setTaskSizeWithString(sizeData);
         task.addAllTags(tagsData);
         task.setDescription(descriptionData);
 

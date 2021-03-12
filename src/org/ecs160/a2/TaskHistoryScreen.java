@@ -3,8 +3,6 @@ package org.ecs160.a2;
 import static com.codename1.ui.CN.*;
 import static org.ecs160.a2.UITheme.*;
 
-import com.codename1.l10n.ParseException;
-import com.codename1.l10n.SimpleDateFormat;
 import com.codename1.ui.Form;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.*;
@@ -152,7 +150,7 @@ public class TaskHistoryScreen extends Form {
             LocalDateTime time;
             ui.backend.logfile.delete_time(taskData,
                     taskData.getIndexOfTimeSpan(deletedTimeSpan));
-            taskData.removeTimeSpanComponent(deletedTimeSpan);
+            taskData.removeTimeSpan(deletedTimeSpan);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
 

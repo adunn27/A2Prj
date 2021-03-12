@@ -49,7 +49,7 @@ public class Task {
         return size.toString();
     }
 
-    public void setTaskSize(String newTaskSizeString) {
+    public void setTaskSizeWithString(String newTaskSizeString) {
         size = TaskSize.parse(newTaskSizeString);
     }
 
@@ -98,16 +98,16 @@ public class Task {
         return tags.contains(tag);
     }
 
-    public void addAllTags(List<String> tags) {
-        for (String t : tags) {
-            if (!hasTag(t)) addTag(t);
-        }
-    }
-
     public void addTag(String tag) {
         if (tag.isEmpty())
             return;
         tags.add(tag);
+    }
+
+    public void addAllTags(List<String> tags) {
+        for (String t : tags) {
+            if (!hasTag(t)) addTag(t);
+        }
     }
 
     public void removeTag(String tag) {
@@ -126,11 +126,6 @@ public class Task {
             );
         }
         return totalTime;
-    }
-
-    public String getTotalTimeString() {
-        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
-        return Utility.durationToFormattedString(duration);
     }
 
     private Duration getTotalTimeOfDay(LocalDate day) {
@@ -159,15 +154,16 @@ public class Task {
         return Utility.durationToFormattedString(duration);
     }
 
-    public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
-        return !getTimeBetween(start, stop).isZero();
+    public String getTotalTimeString() {
+        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        return Utility.durationToFormattedString(duration);
     }
 
     public List<TimeSpan> getAllTimeSpans() {
         return allTimes;
     }
 
-    public void removeTimeSpanComponent(TimeSpan deletedTimeSpan){
+    public void removeTimeSpan(TimeSpan deletedTimeSpan){
         allTimes.remove(deletedTimeSpan);
     }
 

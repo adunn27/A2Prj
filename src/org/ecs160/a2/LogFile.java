@@ -126,7 +126,7 @@ public class LogFile {
     private void executeEditFromLog(String[] split, Task task) {
         task.setName(split[NAME_INDEX]);
         task.setDescription(split[DESCRIPTION_INDEX]);
-        task.setTaskSize(split[TASK_SIZE_INDEX]);
+        task.setTaskSizeWithString(split[TASK_SIZE_INDEX]);
 
         List<String> tags_e = new ArrayList<>(
                 Arrays.asList(split).subList(6, split.length)
@@ -152,7 +152,7 @@ public class LogFile {
         TimeSpan time;
         time = task.getTimeSpanByIndex(
                 Integer.parseInt(split[TIMESPAN_INDEX_INDEX]));
-        task.removeTimeSpanComponent(time);
+        task.removeTimeSpan(time);
     }
 
     public void addTask (Task task){
@@ -163,7 +163,7 @@ public class LogFile {
         System.out.println("log edit");
         List<String> args = new ArrayList<>();
         args.add(task.getDescription());
-        args.add(task.getTaskSize().toString());
+        args.add(task.getTaskSizeString());
         args.addAll(task.getTags());
 
         writeToLog(createLogEntry(task, "edit",
