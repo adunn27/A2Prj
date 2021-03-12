@@ -35,6 +35,12 @@ public class ArchiveScreen extends Form {
 
     public void createArchiveScreen() {
         tasks = ui.backend.getArchivedTasks();
+
+        // EXIT if no archived tasks
+        if (tasks.isEmpty()) {
+            ui.goForward();
+        }
+
         setLayout(new BorderLayout());
         setTitle("Archive");
         createTaskList();
