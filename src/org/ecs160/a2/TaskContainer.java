@@ -54,7 +54,7 @@ public class TaskContainer implements Iterable<Task>{
         return find(Task::isActive);
     }
 
-    public Task find(Predicate<Task> selector) {
+    private Task find(Predicate<Task> selector) {
         return taskSet.stream()
                 .filter(selector)
                 .findFirst()
@@ -88,7 +88,7 @@ public class TaskContainer implements Iterable<Task>{
                 Utility.getEndOfDay(stop)));
     }
 
-    public TaskContainer filter(Predicate<Task> selector) {
+    private TaskContainer filter(Predicate<Task> selector) {
         Set<Task> filteredSet = taskSet.stream()
                 .filter(selector)
                 .collect(Collectors.toSet());
