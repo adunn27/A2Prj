@@ -12,25 +12,22 @@ import java.util.regex.Pattern;
 
 
 public class LogFile {
-    public static final int COMMAND_INDEX = 1;
-    public static final String LOG_DELIMITER = "|";
-    public static final String LOG_DELIMITER_REPLACE = ":";
-    // Could not figure out escape characters
-    //private static final Character ESCAPE_CHAR = '\\';
-    //public static final String DELIMITER_REGEX = String.format("%c(?!%c)",
-    //                                            LOG_DELIMITER, ESCAPE_CHAR);
-    public static final String LOG_FILE_NAME = "log";
+    private static final String LOG_FILE_NAME = "log";
+    private static final String LOG_DELIMITER = "|";
+    // Backup since we could not get escape characters to work
+    private static final String LOG_DELIMITER_REPLACE = ":";
 
-    public static final int NAME_INDEX = 3;
-    public static final int TASK_ID_INDEX = 2;
-    public static final int TIME_INDEX = 0;
-    public static final int DELETE_TASK_INDEX = 4;
-    public static final int DESCRIPTION_INDEX = 4;
-    public static final int TASK_SIZE_INDEX = 5;
-    public static final int TIMESPAN_INDEX_INDEX = 4;
+    private static final int COMMAND_INDEX = 1;
+    private static final int NAME_INDEX = 3;
+    private static final int TASK_ID_INDEX = 2;
+    private static final int TIME_INDEX = 0;
+    private static final int DELETE_TASK_INDEX = 4;
+    private static final int DESCRIPTION_INDEX = 4;
+    private static final int TASK_SIZE_INDEX = 5;
+    private static final int TIMESPAN_INDEX_INDEX = 4;
 
-    public TaskContainer retrieveTask;
-    public int TaskId;
+    private final TaskContainer retrievedTasks;
+    private int lastTaskId;
     private OutputStream os;
 
     public LogFile() {
@@ -45,9 +42,9 @@ public class LogFile {
         } catch(IOException err) {
             Log.e(err);
         }*/
-        TaskId = 0;
+        lastTaskId = 0;
         File myObj;
-        retrieveTask = new TaskContainer();
+        retrievedTasks = new TaskContainer();
 
         try {
             // initialize writing to the file
@@ -78,8 +75,16 @@ public class LogFile {
         }
     }
 
+    public int getLastTaskId() {
+        return lastTaskId;
+    }
+
+    public TaskContainer getRetrievedTasks() {
+        return retrievedTasks;
+    }
+
     private void executeLogLine(String[] split) {
-        Task task = retrieveTask.getTaskById(
+        Task task = retrievedTasks.getTaskById(
                 Integer.parseInt(split[TASK_ID_INDEX]));
 
         switch (split[COMMAND_INDEX]) {
@@ -89,7 +94,7 @@ public class LogFile {
         case "stop":    executeStopFromLog(split[TIME_INDEX], task); break;
         case "archive":     task.archive(); break;
         case "unarchive":   task.unarchive(); break;
-        case "delete_task": retrieveTask.removeTask(task); break;
+        case "delete_task": retrievedTasks.removeTask(task); break;
         case "delete_tag":  task.removeTag(split[DELETE_TASK_INDEX]); break;
         case "delete_time": executeDeleteTimeFromLog(split, task); break;
         case "edit_time":   executeEditTimeFromLog(split, task); break;
@@ -112,10 +117,10 @@ public class LogFile {
 
     private void executeAddFromLog(String[] split) {
         Task task;
-        TaskId = Integer.parseInt(split[TASK_ID_INDEX]);
+        lastTaskId = Integer.parseInt(split[TASK_ID_INDEX]);
         task = new Task(split[NAME_INDEX]);
-        task.setId(TaskId);
-        retrieveTask.addTask(task);
+        task.setId(lastTaskId);
+        retrievedTasks.addTask(task);
     }
 
     private void executeEditFromLog(String[] split, Task task) {
