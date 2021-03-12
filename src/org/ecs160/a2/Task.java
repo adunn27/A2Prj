@@ -19,8 +19,7 @@ public class Task {
     private final List<TimeSpan> allTimes;
     private final Set<String> tags;
 
-    public Task(String newTaskName) {
-        this.name = newTaskName;
+    public Task() {
         this.tags = new HashSet<>();
         this.allTimes = new Vector<>();
     }

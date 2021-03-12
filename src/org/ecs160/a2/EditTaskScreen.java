@@ -43,7 +43,7 @@ public class EditTaskScreen extends Form {
     private void initData(Task passedTask) {
         this.task = passedTask;
         if (task == null) {
-            this.task = new Task("");
+            this.task = new Task();
             isNewTask = true;
         }
        // taskid = task.getId();
@@ -124,13 +124,13 @@ public class EditTaskScreen extends Form {
             return;
         }
 
-        ui.backend.editTask(task, nameData, sizeData,
-                descriptionData, tagsData);
-
         if (isNewTask) {
-            ui.backend.saveTask(task);
+            ui.backend.saveNewTask(task);
             isNewTask = false;
         }
+
+        ui.backend.editTask(task, nameData, sizeData,
+                descriptionData, tagsData);
 
         ui.goBack();
     }

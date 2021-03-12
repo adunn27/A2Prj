@@ -1,24 +1,30 @@
 package org.ecs160.a2;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 public class BusinessLogic {
-    private final TaskContainer everyTask;
-    private final LogFile logfile;
+    private TaskContainer everyTask;
+    private LogFile logfile;
     private int nextTaskId;
 
     public BusinessLogic() {
-        logfile = new LogFile();
-        everyTask = logfile.getRetrievedTasks();
-        nextTaskId = logfile.getLastTaskId() + 1;
+        try {
+            logfile = new LogFile();
+            everyTask = logfile.getRetrievedTasks();
+            nextTaskId = logfile.getLastTaskId() + 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     public List<String> getAllTags() {
         return everyTask.getAllTags();
     }
 
-    public void saveTask(Task newTask) {
+    public void saveNewTask(Task newTask) {
         newTask.setId(nextTaskId);
         everyTask.addTask(newTask);
         logfile.addTask(newTask);
@@ -54,7 +60,7 @@ public class BusinessLogic {
             stopTask(getActiveTask());
         LocalDateTime time = LocalDateTime.now();
         task.start(time);
-        logfile.stopTask(task, time);
+        logfile.startTask(task, time);
     }
 
     public void stopTask(Task activeTask) {

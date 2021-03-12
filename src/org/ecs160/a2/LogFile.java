@@ -1,5 +1,8 @@
 package org.ecs160.a2;
 
+import com.codename1.io.Storage;
+import com.codename1.io.Util;
+
 import java.io.*;
 import java.time.LocalDateTime;
 import java.io.File; // Import the File class
@@ -12,7 +15,7 @@ import java.util.regex.Pattern;
 
 
 public class LogFile {
-    private static final String LOG_FILE_NAME = "log";
+    private static final String LOG_FILE_NAME = "task.log";
     private static final String LOG_DELIMITER = "|";
     // Backup since we could not get escape characters to work
     private static final String LOG_DELIMITER_REPLACE = ":";
@@ -28,24 +31,75 @@ public class LogFile {
 
     private final TaskContainer retrievedTasks;
     private int lastTaskId;
+
     private OutputStream os;
+    //private InputStream readStorage;
+    //private String[] alllogs;
 
-    public LogFile() {
+    public LogFile() throws IOException {
 
-        /*
-        //db = Display.getInstance().openOrCreate("MyDB.db");
 
-        try{
-           // os.write(body.getText().getBytes("UTF-8"));
-            os = Storage.getInstance().createOutputStream("text");
+        // BELOW IS A CLEAR BUTTON !!! THIS IS EQUIVALENT TO DELETE LOG FILE
+        //Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
 
-        } catch(IOException err) {
-            Log.e(err);
+        if(!Storage.getInstance().exists(LOG_FILE_NAME)) {
+            System.out.println("Storage has created");
+            os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
+        }
+        os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
+        /*else{
+
+            String readback = " ";
+            try {
+                readstorage = Storage.getInstance().createInputStream(LOG_FILE_NAME);
+                readback = Util.readToString(readstorage, "UTF-8");
+
+            }catch (IOException err) {
+                System.out.println(err);
+            }
+
+            try {
+                os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
+                os.write(readback.getBytes("UTF-8"));
+
+            } catch (IOException err) {
+                System.out.println(err);
+            }
+
+
         }*/
+        InputStream readStorage = Storage.getInstance().createInputStream(LOG_FILE_NAME);;
+       /*try {
+            readStorage = Storage.getInstance().createInputStream(LOG_FILE_NAME);
+           /* String allLogString = Util.readToString(readStorage, "UTF-8");
+            if(!allLogString.isEmpty()){
+                alllogs = allLogString.split("\\\n");
+            }
+        //} catch(IOException err) {
+        //    System.out.println(err);
+
+        //}*/
+
         lastTaskId = 0;
-        File myObj;
         retrievedTasks = new TaskContainer();
 
+        BufferedReader myReader = new BufferedReader(new InputStreamReader(readStorage));
+        int line = 0;
+        try {
+            while (myReader.ready()) {
+                line++;
+                String data = myReader.readLine();
+                System.out.println(data);
+                String[] split = data.split(Pattern.quote(LOG_DELIMITER));
+                executeLogLine(split);
+            }
+        } catch (IOException e) {
+            System.out.println("An error occurred in log on line " + line);
+            throw e;
+        }
+
+        /*
+        File myObj;
         try {
             // initialize writing to the file
             myObj = new File(LOG_FILE_NAME);
@@ -72,7 +126,7 @@ public class LogFile {
         } catch (FileNotFoundException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
-        }
+        }*/
     }
 
     public int getLastTaskId() {
@@ -87,6 +141,7 @@ public class LogFile {
         Task task = retrievedTasks.getTaskById(
                 Integer.parseInt(split[TASK_ID_INDEX]));
 
+        if (split.length < 2) return; //TODO
         switch (split[COMMAND_INDEX]) {
         case "add":     executeAddFromLog(split); break;
         case "edit":    executeEditFromLog(split, task); break;
@@ -116,9 +171,10 @@ public class LogFile {
     }
 
     private void executeAddFromLog(String[] split) {
+        System.out.println(split);
         Task task;
         lastTaskId = Integer.parseInt(split[TASK_ID_INDEX]);
-        task = new Task(split[NAME_INDEX]);
+        task = new Task();
         task.setId(lastTaskId);
         retrievedTasks.addTask(task);
     }
@@ -251,11 +307,12 @@ public class LogFile {
 
     private void writeToLog(String output) {
         try {
-            BufferedWriter writer = new BufferedWriter(
+            /*BufferedWriter writer = new BufferedWriter(
                 new FileWriter(LOG_FILE_NAME, true));
 
             writer.write(output);
-            writer.close();
+            writer.close();*/
+            os.write(output.getBytes("UTF-8"));
         } catch (IOException e) {
             e.printStackTrace();
         }
