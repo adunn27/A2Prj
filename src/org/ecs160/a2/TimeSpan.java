@@ -53,7 +53,7 @@ public class TimeSpan {
                 findConstrictingLowerBoundOfWindow(startOfTimeWindow);
 
         LocalDateTime trueEndTime =
-                findConstrictingUperBoundOfWindow(endOfTimeWindow);
+                findConstrictingUpperBoundOfWindow(endOfTimeWindow);
 
         Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
         // Need to check if the timeframe was outside
@@ -69,7 +69,7 @@ public class TimeSpan {
         return trueStartTime;
     }
 
-    private LocalDateTime findConstrictingUperBoundOfWindow(
+    private LocalDateTime findConstrictingUpperBoundOfWindow(
                                             LocalDateTime endOfTimeWindow) {
         LocalDateTime trueEndTime = endOfTimeWindow;
         LocalDateTime tempEndTime = getEndTimeElseNow();
