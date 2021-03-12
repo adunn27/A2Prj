@@ -1,17 +1,12 @@
 package org.ecs160.a2;
 
-import static com.codename1.ui.CN.*;
-
 import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
-import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.*;
 
 import com.codename1.ui.layouts.BoxLayout;
 
 public class ArchiveScreen extends Form {
     Container TaskList;
-    Container Footer;
 
     private TaskContainer tasks;
     private final UINavigator ui;
