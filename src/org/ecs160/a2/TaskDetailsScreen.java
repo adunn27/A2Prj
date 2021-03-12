@@ -315,10 +315,7 @@ public class TaskDetailsScreen extends Form {
 
         // action listeners
         historyButton.addActionListener(e-> {
-            if (taskData.isActive())
-                new showWarningDialog("This task is currently running");
-            else
-                ui.goHistory(taskData.getName());
+            ui.goHistory(taskData.getName());
         });
 
         archiveButton.addActionListener(e-> {
@@ -326,9 +323,8 @@ public class TaskDetailsScreen extends Form {
                 ui.backend.getTaskByName(taskData.getName()).unarchive();
                 ui.backend.logfile.unarchiveTask(taskData);
             } else if (taskData.isActive()) {
-                LocalDateTime time = taskData.stop();
+                ui.backend.stopTask(taskData);
                 ui.backend.getTaskByName(taskData.getName()).archive();
-                ui.backend.logfile.stopTask(taskData, time);
                 ui.backend.logfile.archiveTask(taskData);
             } else {
                 ui.backend.getTaskByName(taskData.getName()).archive();

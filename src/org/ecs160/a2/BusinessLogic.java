@@ -1,5 +1,6 @@
 package org.ecs160.a2;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,40 +15,11 @@ public class BusinessLogic {
 
         everyTask = logfile.retrieveTask;
 
-        TaskId= logfile.TaskId + 1;
+        TaskId = logfile.TaskId + 1;
     }
 
     public List<String> getAllTags() {
         return everyTask.getAllTags();
-    }
-
-    public Task newTask(String name,
-                        String size,
-                        String description,
-                        Boolean isArchive,
-                        Boolean isActive,
-                        int taskid,
-                        List<TimeSpan> alltimes,
-                        List<String> tags) {
-        assert (everyTask.getTaskByName(name) == null): "Task already exists!";
-
-        Task aNewTask = new Task(name, TaskSize.parse(size));
-        aNewTask.setAllTimeSpans(alltimes);
-        aNewTask.setDescription(description);
-        if (isArchive){
-
-            aNewTask.archive();
-
-        }
-        if(isActive){
-            aNewTask.setActive();
-        }
-        for(String aTag: tags) {
-            aNewTask.addTag(aTag);
-        }
-        aNewTask.setId(taskid);
-        everyTask.addTask(aNewTask);
-        return aNewTask;
     }
 
     public void saveTask(Task newTask) {
@@ -80,35 +52,9 @@ public class BusinessLogic {
         logfile.delete_task(task);
     }
 
-    /*
-    newTask(name, size, description, tags)
-
-    getTaskName
-    setTaskName
-
-    getTaskSize
-    setTaskSize(size)
-
-    getTags(taskName)
-    addTag(tagName)
-    removeTag(tagName)
-
-    getTaskDescription
-    updateTaskDescription(desc)
-    setTaskDescription(desc)
-
-    getTaskHistory
-    updateTaskHistory(?)
-
-    getTotalTime
-    getTodayTime
-    getWeekTime
-
-    getTasks
-    getArchiveTasks
-    getTasksWithSize(size)
-    getTasksWithTag(tagName)
-
-    deleteTask
-     */
+    public void stopTask(Task activeTask) {
+        LocalDateTime time = LocalDateTime.now();
+        activeTask.stop(time);
+        logfile.stopTask(activeTask,time);
+    }
 }

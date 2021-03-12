@@ -1,7 +1,5 @@
 package org.ecs160.a2;
 
-import jdk.jshell.execution.Util;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -18,8 +16,8 @@ public class Task {
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
-    private List<TimeSpan> allTimes; //TODO better name
-    private Set<String> tags; //TODO does order matter? Do tags need color also?
+    private List<TimeSpan> allTimes;
+    private Set<String> tags;
 
 
 
@@ -33,13 +31,13 @@ public class Task {
 
     public Boolean isArchive(){ return isArchived; }
 
-    public void setActive (){ isActive = true;}
+    public void setId(int taskid){
+        TaskId = taskid;
+    }
 
-    public void setInActive(){isActive= false;}
-
-    public void setId(int taskid){TaskId = taskid;}
-
-    public int getId(){return TaskId;}
+    public int getId(){
+        return TaskId;
+    }
 
     public Task(String newTaskName, TaskSize newTaskSize) {
         construct(newTaskName, newTaskSize);
@@ -87,8 +85,9 @@ public class Task {
 
     public void archive() {
         assert (isArchived == false): "Cannot archive an already archived task";
-        if (isActive)
-            stop();
+        assert (isActive == false): "Cannot archive an active task";
+        //if (isActive)
+        //    stop();
         isArchived = true;
     }
 
@@ -98,23 +97,17 @@ public class Task {
         isArchived = false;
     }
 
-
-    public LocalDateTime start() {
+    public void start(LocalDateTime time) {
         assert (isActive == false): "Cannot start an already active task";
         assert (isArchived == false): "Cannot start an archived task";
-        LocalDateTime time= LocalDateTime.now();
-        allTimes.add(new TimeSpan(time)); //TODO make all now have same time
+        allTimes.add(new TimeSpan(time));
         isActive = true;
-        return time;
     }
 
-    public LocalDateTime stop() {
+    public void stop(LocalDateTime time) {
         assert (isActive == true) : "Cannot stop an inactive task";
-        LocalDateTime time = LocalDateTime.now();
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
-        return time;
-
     }
 
     public Boolean hasTag(String tag) {
@@ -156,8 +149,6 @@ public class Task {
         return Utility.durationToFormattedString(duration);
     }
 
-    
-
     private Duration getTotalTimeOfDay(LocalDate day) {
         return getTimeBetween(day.atStartOfDay(),
                 day.atTime(LocalTime.MAX));
@@ -194,20 +185,21 @@ public class Task {
     }
 
     public LocalDateTime removeTimeSpanComponent(TimeSpan deletedTimeSpan){
-        LocalDateTime time= deletedTimeSpan.getStartTime();
+        LocalDateTime time = deletedTimeSpan.getStartTime();
         allTimes.remove(deletedTimeSpan);
         return time;
     }
 
-    public TimeSpan getTimeSpanByTime(LocalDateTime time){
+    public TimeSpan getTimeSpanByIndex(int index){
+        return allTimes.get(index);
+    }
 
-        for(TimeSpan ts : allTimes){
-
-            if (ts.getStartTime().isEqual(time)){
-                return ts;
-            }
+    public int getIndexOfTimeSpan(TimeSpan timeSpan){
+        for (int i = 0; i < allTimes.size(); i++) {
+            if (allTimes.get(i) == timeSpan)
+                return i;
         }
-        return null;
+        return -1;
     }
 
     public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}
