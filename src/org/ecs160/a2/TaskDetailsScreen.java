@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 import java.util.Date;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
 
 public class TaskDetailsScreen extends Form {
     private Container titleRow;
@@ -197,25 +198,24 @@ public class TaskDetailsScreen extends Form {
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
 
-        TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
-        ChartComponent c = graph.createLineChart();
-        //Transform chart component
-       // c.setTransform(Transform.makeScale(0.75f, 0.75f));
+//        TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
+//        ChartComponent c = graph.createLineChart();
 
+        //Transform chart component
+//        c.setTransform(Transform.makeScale(1f, 0.33f));
 
         UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();
-        String dateFormatted = Utility.dateToFormattedString(startDateFilter) + " - " +
-                      Utility.dateToFormattedString(endDateFilter);
-        dateButton.setAllStyles(dateFormatted, UITheme.LIGHT_GREY,
-                ' ', UITheme.PAD_3MM);
+        dateButton.setAllStyles("View activity chart", COL_SELECTED,
+                ICON_CHART, UITheme.PAD_3MM);
 
         dateButton.addActionListener(e->{
             createFilterDialog();
             FilterDialog.show();
         });
 
+//        graphRow.addAll(c, dateButton);
         graphRow.add(dateButton);
-        graphRow.add(c);
+
     }
 
     private double[] getGraphData() {
@@ -231,7 +231,7 @@ public class TaskDetailsScreen extends Form {
     private void createFilterDialog() {
         FilterDialog = new Dialog();
         FilterDialog.setLayout(BoxLayout.y());
-        FilterDialog.setTitle("Select Time Window");
+//        FilterDialog.setTitle("Select Time Window");
 
         // DATE PICKERS
         startDatePicker = new UIComponents.DatePickerObject(startDateFilter);
@@ -247,24 +247,31 @@ public class TaskDetailsScreen extends Form {
             refreshFilterDialog();
         });
 
-        // DONE BUTTON
-        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
-        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
-        doneButton.addActionListener(e -> {
+        // REFRESH BUTTON
+        UIComponents.ButtonObject refreshButton = new UIComponents.ButtonObject();
+        refreshButton.setAllStyles("Update chart",UITheme.COL_SELECTED,ICON_REFRESH,PAD_3MM);
+        refreshButton.addActionListener(e -> {
             startDateFilter = startDatePicker.getDate();
             endDateFilter = endDatePicker.getDate();
-
             if (startDateFilter.compareTo(endDateFilter) > 0) {
-                new UIComponents.showWarningDialog(
-                        "Please set start date on or before end date"
-                );
+                new UIComponents.showWarningDialog("Please select a start date before or on end date");
             } else {
-                show();
+                refreshFilterDialog();
             }
         });
 
+        // DONE BUTTON
+        UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
+        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        doneButton.addActionListener(e -> FilterDialog.dispose());
+
         // ADD TO FILTER
+        TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
+        ChartComponent c = graph.createLineChart();
+        FilterDialog.add(c);
+
         FilterDialog.add(startEndPickers);
+        FilterDialog.add(refreshButton);
         FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
     }
 

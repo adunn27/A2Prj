@@ -53,7 +53,7 @@ public class TaskDetailsGraph {
        // renderer.setMargins(new int[]{10,  10, 10, 10});
         renderer.setAxisTitleTextSize(50);
         renderer.setLabelsTextSize(40);
-        renderer.setAxesColor(ColorUtil.BLACK);
+        renderer.setAxesColor(UITheme.BLACK);
         renderer.setLabelsColor(ColorUtil.BLACK);
         renderer.setShowLegend(false);
 
@@ -61,7 +61,7 @@ public class TaskDetailsGraph {
 
         renderer.setXLabels(0);
         //renderer.setYLabels(10);
-        renderer.setYLabelsColor(0, ColorUtil.BLACK);
+        renderer.setYLabelsColor(0, UITheme.BLACK);
 
         renderer.setShowGrid(true);
         renderer.setXLabelsAlign(Component.RIGHT);
@@ -73,7 +73,7 @@ public class TaskDetailsGraph {
         renderer.setPanEnabled(false);
 
         XYSeriesRenderer r = new XYSeriesRenderer();
-        r.setColor(ColorUtil.BLUE);
+        r.setColor(UITheme.GREEN);
         r.setPointStyle(PointStyle.CIRCLE);
         r.setFillPoints(true);
         r.setLineWidth(5);

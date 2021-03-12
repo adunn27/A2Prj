@@ -1,5 +1,7 @@
 package org.ecs160.a2;
 
+import com.codename1.ui.FontImage;
+
 public class UITheme {
     // colors
 
@@ -31,4 +33,7 @@ public class UITheme {
     public static final int PAD_9MM = 9;
     public static final int PAD_3MM = 3;
     public static final int PAD_1MM = 1;
+
+    public static final char ICON_REFRESH = FontImage.MATERIAL_REFRESH;
+    public static final char ICON_CHART = FontImage.MATERIAL_INSIGHTS;
 }
