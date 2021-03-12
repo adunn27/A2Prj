@@ -146,6 +146,14 @@ public class TaskDetailsScreen extends Form {
         // add components
         titleRow.add(nameLabel);
         titleRow.add(sizeLabel);
+
+        // taskActive
+        if (taskData.isActive()) {
+            UIComponents.ButtonObject active = new UIComponents.ButtonObject();
+            active.setAllStyles("Active", -1, ICON_ACTIVE, PAD_3MM);
+            titleRow.add(active);
+        }
+
     }
     private void createTagRow() {
         if (taskData.getTags().size() == 0) {
