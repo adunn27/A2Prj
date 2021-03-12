@@ -11,7 +11,6 @@ import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.plaf.Border;
 import com.codename1.ui.spinner.Picker;
 
-import javax.swing.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -84,40 +83,6 @@ public class TaskHistoryScreen extends Form {
 
         add(NORTH, Header);
         add(CENTER, TaskList);
-    }
-
-    public String timeFormatter(int totalMinutes){
-        String formattedTime;
-        int hour;
-        int minute = totalMinutes % 60;
-
-        if (totalMinutes < 720){
-            if (totalMinutes < 60){
-                hour = 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            } else {
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            }
-
-        } else {
-            if (totalMinutes < 780){
-                hour = (totalMinutes / 60);
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " AM";
-            } else {
-                hour = (totalMinutes / 60) - 12;
-                String formattedMinute = String.format("%02d", minute);
-                String formattedHour = String.format("%02d", hour);
-                formattedTime = formattedHour + ":" + formattedMinute + ":00" + " PM";
-            }
-        }
-        return formattedTime;
     }
 
     private void createTaskList(){
@@ -258,30 +223,21 @@ public class TaskHistoryScreen extends Form {
         submitButton.setMyText("Submit");
         submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
-            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Instant start_1 = startDatePicker.getDate().toInstant();
+            Instant end_1 = endDatePicker.getDate().toInstant();
 
-            String endDate = formatter.format(endDatePicker.getDate());
-            String startDate = formatter.format(startDatePicker.getDate());
-            String startTime = timeFormatter(startTimePicker.getTime());
-            String endTime = timeFormatter(endTimePicker.getTime());
-            String start = startDate + " " + startTime;
-            String end = endDate + " " + endTime;
+            LocalDateTime startDateTime = start_1
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .atStartOfDay()
+                    .plusMinutes(startTimePicker.getTime());
+            LocalDateTime endDateTime = end_1
+                    .atZone(ZoneId.systemDefault())
+                    .toLocalDate()
+                    .atStartOfDay()
+                    .plusMinutes(endTimePicker.getTime());
 
-            Date start_1 = new Date();
-            Date end_1 = new Date();
-            try {
-                start_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(start);
-                end_1 = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss a").parse(end);
-            } catch (ParseException parseException) {
-                parseException.printStackTrace();
-            }
-
-            LocalDateTime startDateTime = start_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
-            LocalDateTime endDateTime = end_1.toInstant().
-                    atZone(ZoneId.systemDefault()).toLocalDateTime();
-
-            if (startDateTime.isAfter(endDateTime)){
+            if (false && startDateTime.isAfter(endDateTime)){
                 System.out.println("You can't have a negative duration!");
                 Dialog newDialog = new Dialog();
 
@@ -304,7 +260,6 @@ public class TaskHistoryScreen extends Form {
 
 
                 PopupDialog.dispose();
-                ui.refreshScreen();
                 ui.refreshScreen();
             }
         });
