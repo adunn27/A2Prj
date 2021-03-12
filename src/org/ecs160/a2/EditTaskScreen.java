@@ -77,6 +77,8 @@ public class EditTaskScreen extends Form {
         setLayout(new BorderLayout());
 
         Container body = new Container(BoxLayout.y());
+        body.getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
+        body.getAllStyles().setPadding(TOP, PAD_3MM);
 
         createTitleRow();
         createTagRow();
@@ -250,8 +252,8 @@ public class EditTaskScreen extends Form {
             getToolbar().addMaterialCommandToLeftBar("",
                     ICON_BACK, PAD_6MM, e->ui.goBack());
 
-        getToolbar().addMaterialCommandToRightBar("Save",
-                ' ', PAD_6MM, e->saveChanges());
+        getToolbar().addMaterialCommandToRightBar("",
+                ICON_SAVE, PAD_6MM, e->saveChanges());
     }
 
     private void createFooter() {
