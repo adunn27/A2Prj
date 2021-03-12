@@ -46,7 +46,6 @@ public class LogFile {
             while (myReader.ready()) {
                 line++;
                 String data = myReader.readLine();
-                System.out.println(data);
                 String[] split = data.split(Pattern.quote(LOG_DELIMITER));
                 executeLogLine(split);
             }
@@ -157,7 +156,7 @@ public class LogFile {
     }
 
     public void addTask (Task task){
-        System.out.println("log edit");
+        System.out.println("log add");
         writeToLog(createLogEntry(task, "add"));
     }
     public void editTask (Task task){
