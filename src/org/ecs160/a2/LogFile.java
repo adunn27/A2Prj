@@ -1,6 +1,5 @@
 package org.ecs160.a2;
 
-import com.codename1.ui.Dialog;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -11,13 +10,8 @@ import java.io.IOException; // Import the IOException class to handle errors
 import java.io.FileWriter; // Import the FileWriter class
 import java.util.Scanner; // Import the Scanner class to read text files
 import java.io.FileNotFoundException; // Import this class to handle errors
-import java.util.concurrent.TimeUnit; // Program to measure elapsed time in
-import java.util.Date;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import com.codename1.db.Database;
-import java.time.*;
-import java.time.temporal.TemporalAdjusters;
 import com.codename1.io.Storage;
 
 
