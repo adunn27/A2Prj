@@ -17,7 +17,7 @@ import com.codename1.io.Storage;
 
 
 public class LogFile {
-    private static final String TAG_DELIMITER = " ";
+    private static final String TAG_DELIMITER = ",";
     private static final String ESCAPE_CHAR = "\\";
     public TaskContainer retrieveTask;
     public int TaskId;
