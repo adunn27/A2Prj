@@ -188,10 +188,7 @@ public class TaskDetailsScreen extends Form {
 
         // action listeners
         historyButton.addActionListener(e-> {
-            if (taskData.isActive())
-                new showWarningDialog("This task is currently running");
-            else
-                ui.goHistory(taskData.getName());
+            ui.goHistory(taskData.getName());
         });
 
         archiveButton.addActionListener(e-> {
