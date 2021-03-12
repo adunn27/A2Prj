@@ -89,50 +89,6 @@ public class EditTaskScreen extends Form {
         if (!isNewTask)
             add(BorderLayout.SOUTH, Footer);
     }
-
-    private void createDescField() {
-        // description row
-        descField = new TextComponent();
-        descField.label("Description").multiline(true);
-        descField.onTopMode(true);
-        descField.text(descriptionData);
-    }
-
-    private void createTitleRow() {
-        // title row
-        TitleRow = new Container();
-        TitleRow.setLayout(new BorderLayout());
-
-        nameField = new TextField(nameData, "Name");
-        TitleRow.add(BorderLayout.CENTER,nameField);
-
-        sizeButton = new SizeMultiButton(sizeData);
-        TitleRow.add(BorderLayout.EAST, sizeButton);
-    }
-
-    private void createTagRow() {
-        // tag row
-        TagRow = new Container();
-        TagRow.setLayout(BoxLayout.y());
-
-        tagField = new Container();
-        ButtonObject addButton = new ButtonObject();
-        addButton.setAllStyles("", GREEN, ICON_NEW, PAD_3MM);
-        addButton.addActionListener(e->newTagPrompt());
-
-        for (String tag : tagsData) {
-            ButtonObject tagButton = new ButtonObject();
-            tagButton.setAllStyles(tag, COL_SELECTED, ICON_CLOSE, PAD_3MM);
-            tagButton.addActionListener(e-> deleteTagPrompt(tagButton, tag));
-            tagField.add(tagButton);
-        }
-
-        TagRow.add(BoxLayout.encloseX(
-                new TitleObject("Tags"), addButton)
-        );
-        TagRow.add(tagField);
-    }
-
     private void saveChanges() {
         nameData = nameField.getText();
         sizeData = sizeButton.getText();
@@ -157,44 +113,45 @@ public class EditTaskScreen extends Form {
         ui.goBack();
     }
 
-    private void createToolbar() {
-        if (isNewTask)
-            getToolbar().addMaterialCommandToLeftBar("",
-                    ICON_BACK, PAD_6MM, e->ui.goBack());
-
-        getToolbar().addMaterialCommandToRightBar("Save",
-                ' ', PAD_6MM, e->saveChanges());
+    private void createDescField() {
+        descField = new TextComponent();
+        descField.label("Description").multiline(true);
+        descField.onTopMode(true);
+        descField.text(descriptionData);
     }
 
-    private void createFooter() {
-        Footer = new Container();
-        Footer.setLayout(new BorderLayout());
-        ButtonObject deleteButton = new ButtonObject();
-        deleteButton.setAllStyles("Delete", RED, ICON_DELETE, PAD_3MM);
-        deleteButton.addActionListener(e -> deletePrompt(deleteButton));
-        Footer.add(BorderLayout.EAST, deleteButton);
-    }
-    private void deletePrompt(ButtonObject b) {
-        Dialog d = new Dialog();
-        d.setLayout(BoxLayout.y());
+    private void createTitleRow() {
+        TitleRow = new Container();
+        TitleRow.setLayout(new BorderLayout());
 
-        // DELETE
-        ButtonObject confirm = new ButtonObject();
-        confirm.setAllStyles("Confirm", UITheme.RED, ' ', UITheme.PAD_3MM);
-        confirm.addActionListener(e -> ui.goDelete(task));
+        nameField = new TextField(nameData, "Name");
+        TitleRow.add(BorderLayout.CENTER,nameField);
 
-        // CANCEL
-        ButtonObject cancel = new ButtonObject();
-        cancel.setAllStyles("Cancel", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
-        cancel.addActionListener(y -> { d.dispose(); });
-
-        d.addComponent(FlowLayout.encloseCenterMiddle(
-                new SpanLabel("Permanently delete this task?")));
-        d.addComponent(confirm);
-        d.addComponent(cancel);
-        d.showPopupDialog(b);
+        sizeButton = new SizeMultiButton(sizeData);
+        TitleRow.add(BorderLayout.EAST, sizeButton);
     }
 
+    private void createTagRow() {
+        TagRow = new Container();
+        TagRow.setLayout(BoxLayout.y());
+
+        tagField = new Container();
+        ButtonObject addButton = new ButtonObject();
+        addButton.setAllStyles("", GREEN, ICON_NEW, PAD_3MM);
+        addButton.addActionListener(e->newTagPrompt());
+
+        for (String tag : tagsData) {
+            ButtonObject tagButton = new ButtonObject();
+            tagButton.setAllStyles(tag, COL_SELECTED, ICON_CLOSE, PAD_3MM);
+            tagButton.addActionListener(e-> deleteTagPrompt(tagButton, tag));
+            tagField.add(tagButton);
+        }
+
+        TagRow.add(BoxLayout.encloseX(
+                new TitleObject("Tags"), addButton)
+        );
+        TagRow.add(tagField);
+    }
     private void saveSelectedTag(String tagName) {
         ButtonObject tagButton = new ButtonObject();
         tagButton.setAllStyles(tagName, COL_SELECTED,
@@ -288,7 +245,45 @@ public class EditTaskScreen extends Form {
         });
 
         d.add(GridLayout.encloseIn(2,cancelButton, confirmButton));
-        d.show();
+        d.showPopupDialog(deletedComponent);
+    }
+
+    private void createToolbar() {
+        if (isNewTask)
+            getToolbar().addMaterialCommandToLeftBar("",
+                    ICON_BACK, PAD_6MM, e->ui.goBack());
+
+        getToolbar().addMaterialCommandToRightBar("Save",
+                ' ', PAD_6MM, e->saveChanges());
+    }
+
+    private void createFooter() {
+        Footer = new Container();
+        Footer.setLayout(new BorderLayout());
+        ButtonObject deleteButton = new ButtonObject();
+        deleteButton.setAllStyles("Delete", RED, ICON_DELETE, PAD_3MM);
+        deleteButton.addActionListener(e -> deletePrompt(deleteButton));
+        Footer.add(BorderLayout.EAST, deleteButton);
+    }
+    private void deletePrompt(ButtonObject b) {
+        Dialog d = new Dialog();
+        d.setLayout(BoxLayout.y());
+
+        // DELETE
+        ButtonObject confirm = new ButtonObject();
+        confirm.setAllStyles("Confirm", UITheme.RED, ' ', UITheme.PAD_3MM);
+        confirm.addActionListener(e -> ui.goDelete(task));
+
+        // CANCEL
+        ButtonObject cancel = new ButtonObject();
+        cancel.setAllStyles("Cancel", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        cancel.addActionListener(y -> { d.dispose(); });
+
+        d.addComponent(FlowLayout.encloseCenterMiddle(
+                new SpanLabel("Permanently delete this task?")));
+        d.addComponent(confirm);
+        d.addComponent(cancel);
+        d.showPopupDialog(b);
     }
 }
 
@@ -300,13 +295,11 @@ class SizeMultiButton extends MultiButton {
         getUnselectedStyle().setMargin(UITheme.PAD_1MM, UITheme.PAD_1MM,
                 UITheme.PAD_1MM, UITheme.PAD_1MM);
 
-        getAllStyles().setBorder(
-                RoundBorder.create()
+        getAllStyles().setBorder(RoundBorder.create()
                         .rectangle(true)
-                        .color(UITheme.LIGHT_GREY)
-        );
+                        .color(UITheme.LIGHT_GREY));
 
-        this.addActionListener(e -> {
+        addActionListener(e -> {
             Dialog d = new Dialog();
             d.setLayout(BoxLayout.y());
             d.getContentPane().setScrollableY(false);
@@ -314,10 +307,10 @@ class SizeMultiButton extends MultiButton {
                 MultiButton mb = new MultiButton(sizeOptions[iter]);
                 d.add(mb);
                 mb.addActionListener(ee -> {
-                    this.setTextLine1(mb.getTextLine1());
-                    this.setTextLine2(mb.getTextLine2());
+                    setTextLine1(mb.getTextLine1());
+                    setTextLine2(mb.getTextLine2());
                     d.dispose();
-                    this.revalidate();
+                    revalidate();
                 });
             }
             d.showPopupDialog(this);

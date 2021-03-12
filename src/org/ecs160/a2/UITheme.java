@@ -8,7 +8,7 @@ public class UITheme {
     public static final int RED = 0xbe0000;
 
     public static final int COL_SELECTED = 0xfab73d; // TODO: CHANGE COLOR, currently yellow
-    public static final int COL_UNSELECTED = 0x3c3c3c; // TODO: CHANGE COLOR, currently dark grey
+    public static final int COL_UNSELECTED = 0xc4c4c4; // TODO: CHANGE COLOR, currently dark grey
 
     // https://colorpalettes.net/color-palette-4291/
 
