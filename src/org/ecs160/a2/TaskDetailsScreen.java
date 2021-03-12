@@ -281,13 +281,16 @@ public class TaskDetailsScreen extends Form {
         doneButton.addActionListener(e -> FilterDialog.dispose());
 
         // ADD TO FILTER
+        FilterDialog.add(new Label(" "));
         TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
         ChartComponent c = graph.createLineChart();
         FilterDialog.add(c);
 
-        FilterDialog.add(startEndPickers);
-        FilterDialog.add(refreshButton);
-        FilterDialog.add(GridLayout.encloseIn(2, resetButton, doneButton));
+        Container controls = new Container(new GridLayout(3,1));
+        controls.add(startEndPickers);
+        controls.add(refreshButton);
+        controls.add(GridLayout.encloseIn(2, resetButton, doneButton));
+        FilterDialog.add(controls);
     }
 
     private void refreshChartDialog() { // TODO: DRY violation (also in summaryscreen)
