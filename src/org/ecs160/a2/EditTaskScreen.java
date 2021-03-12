@@ -3,24 +3,20 @@ package org.ecs160.a2;
 import com.codename1.components.MultiButton;
 import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
-import com.codename1.ui.Button;
 import com.codename1.ui.Container;
 import com.codename1.ui.Dialog;
-import com.codename1.ui.Label;
 import com.codename1.ui.TextComponent;
 import com.codename1.ui.TextField;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 
-import java.util.ArrayList;
-import java.util.Vector;
-
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
 
 public class EditTaskScreen extends Form {
     private Container Footer;
@@ -76,7 +72,8 @@ public class EditTaskScreen extends Form {
 
     private void createEditTaskScreen() {
         removeAll();
-        setTitle("Edit Task");
+        String title = isNewTask ? "New Task" : "Edit Task";
+        setTitle(title);
         setLayout(new BorderLayout());
 
         Container body = new Container(BoxLayout.y());
@@ -119,21 +116,19 @@ public class EditTaskScreen extends Form {
         TagRow.setLayout(BoxLayout.y());
 
         tagField = new Container();
-        UIComponents.ButtonObject addButton = new UIComponents.ButtonObject();
-        addButton.setAllStyles("", UITheme.GREEN,
-                FontImage.MATERIAL_ADD, UITheme.PAD_3MM);
+        ButtonObject addButton = new ButtonObject();
+        addButton.setAllStyles("", GREEN, ICON_NEW, PAD_3MM);
         addButton.addActionListener(e->newTagPrompt());
 
         for (String tag : tagsData) {
-            UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setAllStyles(tag, UITheme.YELLOW,
-                    FontImage.MATERIAL_CLOSE, UITheme.PAD_3MM);
-            tagButton.addActionListener(e-> RemoveTag(tagButton, tag));
+            ButtonObject tagButton = new ButtonObject();
+            tagButton.setAllStyles(tag, COL_SELECTED, ICON_CLOSE, PAD_3MM);
+            tagButton.addActionListener(e-> deleteTagPrompt(tagButton, tag));
             tagField.add(tagButton);
         }
 
         TagRow.add(BoxLayout.encloseX(
-                new UIComponents.TitleObject("Tags"), addButton)
+                new TitleObject("Tags"), addButton)
         );
         TagRow.add(tagField);
     }
@@ -144,9 +139,9 @@ public class EditTaskScreen extends Form {
         descriptionData = descField.getText();
         log("tags: " + tagsData);
 
-        if (nameData.isEmpty()) { //TODO check if name already taken
-            new UIComponents.showWarningDialog("Missing task name.\nReturning to the HomeScreen");
-            ui.goBack();
+        //TODO check if name already taken
+        if (nameData.isEmpty()) {
+            new showWarningDialog("Please enter a task name");
             return;
         }
 
@@ -154,8 +149,6 @@ public class EditTaskScreen extends Form {
             ui.backend.saveTask(task);
             isNewTask = false;
         }
-
-        log("new task data" + tagsData);
 
         task.setName(nameData);
         task.setTaskSize(sizeData);
@@ -167,105 +160,119 @@ public class EditTaskScreen extends Form {
     private void createToolbar() {
         if (isNewTask)
             getToolbar().addMaterialCommandToLeftBar("",
-                    UITheme.ICON_BACK, UITheme.PAD_6MM, e->ui.goBack());
+                    ICON_BACK, PAD_6MM, e->ui.goBack());
 
         getToolbar().addMaterialCommandToRightBar("Save",
-                ' ', UITheme.PAD_6MM, e->saveChanges());
+                ' ', PAD_6MM, e->saveChanges());
     }
 
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new BorderLayout());
-        UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
-        deleteButton.setMyColor(UITheme.RED);
-        deleteButton.setMyText("Delete");
-        deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
-        deleteButton.setMyPadding(UITheme.PAD_3MM);
-
-        Footer.add(BorderLayout.EAST, deleteButton);
-
-        // listener
+        ButtonObject deleteButton = new ButtonObject();
+        deleteButton.setAllStyles("Delete", RED, ICON_DELETE, PAD_3MM);
         deleteButton.addActionListener(e -> deletePrompt(deleteButton));
+        Footer.add(BorderLayout.EAST, deleteButton);
     }
-    private void deletePrompt(UIComponents.ButtonObject b) {
+    private void deletePrompt(ButtonObject b) {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
 
         // DELETE
-        UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
+        ButtonObject confirm = new ButtonObject();
         confirm.setAllStyles("Confirm", UITheme.RED, ' ', UITheme.PAD_3MM);
         confirm.addActionListener(e -> ui.goDelete(task));
 
         // CANCEL
-        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
+        ButtonObject cancel = new ButtonObject();
         cancel.setAllStyles("Cancel", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
         cancel.addActionListener(y -> { d.dispose(); });
 
-        d.addComponent(new SpanLabel("Permanently delete this task?"));
+        d.addComponent(FlowLayout.encloseCenterMiddle(
+                new SpanLabel("Permanently delete this task?")));
         d.addComponent(confirm);
         d.addComponent(cancel);
         d.showPopupDialog(b);
     }
 
+    private void saveSelectedTag(String tagName) {
+        ButtonObject tagButton = new ButtonObject();
+        tagButton.setAllStyles(tagName, COL_SELECTED,
+                FontImage.MATERIAL_CLOSE, PAD_3MM);
+        tagButton.addActionListener(event -> deleteTagPrompt(tagButton, tagName));
+
+        tagField.add(tagButton);
+        tagsData.add(tagName);
+        task.addTag(tagName);
+    }
     private void newTagPrompt() {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
-        TextField tagNameField = new TextField("", "Name");
+        d.addComponent(FlowLayout.encloseCenterMiddle(
+                new SpanLabel("Enter a new tag name")));
+        TextField tagNameField = new TextField("", "New name");
         tagNameField.setWidth(12);
         d.add(tagNameField);
 
-        // CONFIRM (ADD TAG)
-        UIComponents.ButtonObject confirm = new UIComponents.ButtonObject();
-        confirm.setAllStyles("Confirm", UITheme.YELLOW, ' ', UITheme.PAD_3MM);
+        Container availableTags = FlowLayout.encloseCenterMiddle();
+        java.util.List<String> allTags = ui.backend.getAllTags();
+        for (String tag : allTags) {
+            if (!tagsData.contains(tag)) {
+                ButtonObject tagSelect = new ButtonObject();
+                tagSelect.setAllStyles(tag, LIGHT_GREEN, ' ', PAD_3MM);
+                availableTags.addComponent(tagSelect);
+
+                tagSelect.addActionListener(e -> {
+                    saveSelectedTag(tag);
+                    d.dispose();
+                });
+
+            }
+        }
+
+        if (!availableTags.getChildrenAsList(false).isEmpty()) {
+            d.addComponent(FlowLayout.encloseCenterMiddle(
+                    new SpanLabel("Available tags")));
+            d.addComponent(availableTags);
+        }
+
+        ButtonObject confirm = new ButtonObject();
+        confirm.setAllStyles("Confirm", COL_SELECTED, ' ', PAD_3MM);
         confirm.addActionListener(e -> {
             String newTagName = tagNameField.getText();
 
-            UIComponents.ButtonObject tagButton = new UIComponents.ButtonObject();
-            tagButton.setAllStyles(newTagName, UITheme.YELLOW,
-                    FontImage.MATERIAL_CLOSE, UITheme.PAD_3MM);
-            tagButton.addActionListener(event -> RemoveTag(tagButton, newTagName));
+            if (newTagName.isEmpty()) {
+                new showWarningDialog(
+                        "Please enter a tag name or pick an existing tag");
 
-            if (tagNameField.getText().isEmpty()) {
-                new UIComponents.showWarningDialog(
-                        "Please enter a tag name"
-                );
-
-            } else if (task.hasTag(tagNameField.getText())) {
-                new UIComponents.showWarningDialog(
-                        "There is already a tag with this name"
-                );
+            } else if (task.hasTag(newTagName)) {
+                new showWarningDialog("Task already has this tag");
 
             } else {
-                tagField.add(tagButton);
-                tagsData.add(tagNameField.getText());
-                task.addTag(tagNameField.getText()); //TODO added this
+                saveSelectedTag(newTagName);
                 d.dispose();
             }
         });
 
-        // CANCEL
-        UIComponents.ButtonObject cancel = new UIComponents.ButtonObject();
-        cancel.setAllStyles("Cancel", UITheme.LIGHT_GREY,
-                ' ',UITheme.PAD_3MM);
+        ButtonObject cancel = new ButtonObject();
+        cancel.setAllStyles("Cancel", LIGHT_GREY,
+                ' ',PAD_3MM);
         cancel.addActionListener(y -> { d.dispose(); });
-
         d.add(GridLayout.encloseIn(2, cancel, confirm));
         d.show();
 
     }
-
-    private void RemoveTag(Component deletedComponent, String name) {
+    private void deleteTagPrompt(Component deletedComponent, String name) {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
-        d.addComponent(new SpanLabel("Remove \'" + name + "\'?"));
+        d.addComponent(FlowLayout.encloseCenterMiddle(
+                new SpanLabel("Remove \'" + name + "\'?")));
 
-        UIComponents.ButtonObject confirmButton = new UIComponents.ButtonObject();
-        confirmButton.setAllStyles("Confirm", UITheme.RED,
-                ' ', UITheme.PAD_3MM);
+        ButtonObject confirmButton = new ButtonObject();
+        confirmButton.setAllStyles("Confirm", RED, ' ', PAD_3MM);
 
-        UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
-        cancelButton.setAllStyles("Cancel", UITheme.LIGHT_GREY,
-                ' ', UITheme.PAD_3MM);
+        ButtonObject cancelButton = new ButtonObject();
+        cancelButton.setAllStyles("Cancel", COL_UNSELECTED, ' ', PAD_3MM);
 
         confirmButton.addActionListener(e -> {
             System.out.println("REMOVING TAG");

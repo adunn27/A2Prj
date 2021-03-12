@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
+
 
 public class SummaryScreen extends Form {
     Container Header;
@@ -94,14 +96,12 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDisplay() {
-        FilterHeader = new Container(BoxLayout.y());
+        String dateHeader = dateToString(startDateFilter) + " - " +
+                            dateToString(endDateFilter);
 
-        UIComponents.TitleObject startEndDates = new UIComponents.TitleObject(
-                dateToString(startDateFilter) + " - " +
-                        dateToString(endDateFilter));
-        startEndDates.setSize(SIZE_LARGE);
-        startEndDates.setMyColor(UITheme.BLACK);
-        startEndDates.removePadding();
+        FilterHeader = new Container(BoxLayout.y());
+        UIComponents.TextObject startEndDates = new UIComponents.TextObject(
+                dateHeader, SIZE_LARGE, 0, SIZE_LARGE);
 
         FilterHeader.add(FlowLayout.encloseCenterMiddle(startEndDates));
 

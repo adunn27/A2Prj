@@ -42,4 +42,6 @@ public class UITheme {
     public static final char ICON_FILTER = FontImage.MATERIAL_FILTER_LIST;
     public static final char ICON_DELETE = FontImage.MATERIAL_DELETE;
     public static final char ICON_EDIT = FontImage.MATERIAL_EDIT;
+    public static final char ICON_NEW = FontImage.MATERIAL_ADD;
+    public static final char ICON_CLOSE = FontImage.MATERIAL_CLOSE;
 }

@@ -16,7 +16,6 @@ import java.time.LocalDateTime;
 import static com.codename1.ui.CN.*;
 import static org.ecs160.a2.UITheme.*;
 
-// Contains Buttons and Components frequently used in UI
 public class UIComponents {
     static class ButtonObject extends Button {
         public ButtonObject () {
@@ -80,8 +79,6 @@ public class UIComponents {
             this.getAllStyles().setPadding(pad,pad,pad,pad);
         }
     }
-
-
 
     // args: size
     // used in: StandardTaskObject, SummaryTaskObject
