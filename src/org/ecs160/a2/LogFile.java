@@ -76,7 +76,6 @@ public class LogFile {
     }
 
     private void executeLogLine(String[] split) {
-        TimeSpan time;
         Task task = retrieveTask.getTaskById(
                 Integer.parseInt(split[TASK_ID_INDEX]));
 
@@ -97,14 +96,12 @@ public class LogFile {
     }
 
     private void executeEditTime(String[] split, Task task) {
-        TimeSpan time;
-        time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
+        TimeSpan time = task.getTimeSpanByIndex(Integer.parseInt(split[4]));
 
-        String newStartTimeString = split[5];
-        String newEndTimeString = split[6];
-
-        LocalDateTime newStartDateTime = LocalDateTime.parse(newStartTimeString, formatter);
-        LocalDateTime newEndDateTime = LocalDateTime.parse(newEndTimeString, formatter);
+        LocalDateTime newStartDateTime =
+                LocalDateTime.parse(split[5], formatter);
+        LocalDateTime newEndDateTime =
+                LocalDateTime.parse(split[6], formatter);
 
         time.setStartTime(newStartDateTime);
         time.setEndTime(newEndDateTime);
@@ -117,26 +114,24 @@ public class LogFile {
     }
 
     private void executeStop(String time, Task task) {
-        String stringTime_e = time;
-        LocalDateTime taskTime_e= LocalDateTime.parse(stringTime_e,formatter);
+        LocalDateTime taskTime_e= LocalDateTime.parse(time, formatter);
         task.stop(taskTime_e);
     }
 
     private void executeStart(String time, Task task) {
-        String stringTime_s = time;
-        LocalDateTime taskTime_s = LocalDateTime.parse(stringTime_s, formatter);
+        LocalDateTime taskTime_s = LocalDateTime.parse(time, formatter);
         task.start(taskTime_s);
     }
 
     private void executeEdit(String[] split, Task task) {
         task.setName(split[NAME_INDEX]);
-        task.setDescription(split[4]); // third column is description
+        task.setDescription(split[4]);
         task.setTaskSize(split[5]);
 
-        List<String> tags_e= new ArrayList<>();
-        for(int i = 6; i < split.length; i++){
-            tags_e.add(split[i]);
-        }
+        List<String> tags_e = new ArrayList<>(
+                Arrays.asList(split).subList(6, split.length)
+        );
+
         task.addAllTags(tags_e);
     }
 
