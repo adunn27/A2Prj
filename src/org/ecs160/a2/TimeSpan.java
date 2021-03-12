@@ -1,10 +1,7 @@
 package org.ecs160.a2;
-import jdk.jshell.execution.Util;
 
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Date;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class TimeSpan {
     private LocalDateTime startTime;
