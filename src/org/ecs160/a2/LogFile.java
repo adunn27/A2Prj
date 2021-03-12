@@ -234,14 +234,11 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            //  String placeholder = "" + task.
-
-            writer.write(sdf.format(new Date(time_in_long)) + "|start|"+
-                    task.getName()+ LOG_DELIMITER +  formatTime +"\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "start"
+                    + LOG_DELIMITER + task.getName()
+                    + LOG_DELIMITER +  formatTime + "\n");
             writer.close();
-
-
-
         } catch (IOException e) {
             System.out.println("An error occurred.");
             e.printStackTrace();
@@ -267,8 +264,10 @@ public class LogFile {
                     new FileWriter("log", true));
 
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|stop|"+
-                    task.getName()+ LOG_DELIMITER +  formatTime +"\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "stop"
+                    + LOG_DELIMITER + task.getName()
+                    + LOG_DELIMITER + formatTime +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -291,8 +290,9 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|unarchive|"+
-                    task.getName() + "\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "unarchive"
+                    + LOG_DELIMITER + task.getName() + "\n");
             writer.close();
 
 
@@ -316,8 +316,9 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|archive|"+
-                    task.getName() + "\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "archive"
+                    + LOG_DELIMITER + task.getName() + "\n");
             writer.close();
 
 
@@ -341,8 +342,9 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|delete_task|"+
-                    task.getName() + "\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "delete_task"
+                    + LOG_DELIMITER + task.getName() + "\n");
             writer.close();
 
         } catch (IOException e) {
@@ -364,8 +366,10 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|delete_tag|"+
-                    task.getName() + LOG_DELIMITER + tag +"\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "delete_tag"
+                    + LOG_DELIMITER + task.getName()
+                    + LOG_DELIMITER + tag +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -390,8 +394,10 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|delete_time|"+
-                    task.getName() + LOG_DELIMITER + formatTime +"\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "delete_time"
+                    + LOG_DELIMITER + task.getName()
+                    + LOG_DELIMITER + formatTime +"\n");
             writer.close();
 
         } catch (IOException e) {
@@ -409,7 +415,6 @@ public class LogFile {
         String formatNewStartTime = newStartTime.format(formatter);
         String formatNewEndTime = newEndTime.format(formatter);
 
-
         try {
             // convert epoch to date and time format
             System.out.println("log edit_time");
@@ -421,9 +426,13 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            writer.write(sdf.format(new Date(time_in_long)) + "|edit_time|"+
-                    task.getName() + LOG_DELIMITER + formatStartTime+ LOG_DELIMITER + formatNewStartTime+
-                    LOG_DELIMITER + formatEndTime+ LOG_DELIMITER + formatNewEndTime + "\n");
+            writer.write(sdf.format(new Date(time_in_long))
+                    + LOG_DELIMITER + "edit_time"
+                    + LOG_DELIMITER + task.getName()
+                    + LOG_DELIMITER + formatStartTime
+                    + LOG_DELIMITER + formatNewStartTime
+                    + LOG_DELIMITER + formatEndTime
+                    + LOG_DELIMITER + formatNewEndTime + "\n");
             writer.close();
 
         } catch (IOException e) {
@@ -431,10 +440,4 @@ public class LogFile {
             e.printStackTrace();
         }
     }
-
-
-
-
-
-
 }
