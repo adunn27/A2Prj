@@ -71,4 +71,8 @@ public class UINavigator {
         previousForm.push(Display.getInstance().getCurrent());
         (new SummaryScreen(this)).show();
     }
+
+    public void goForward() {
+        previousForm.pop().show();
+    }
 }

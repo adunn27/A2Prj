@@ -45,6 +45,7 @@ public class UITheme {
     public static final char ICON_ACTIVE = FontImage.MATERIAL_ALARM_ON;
     public static final char ICON_SUMMARY = FontImage.MATERIAL_LEADERBOARD;
     public static final char ICON_BACK = FontImage.MATERIAL_ARROW_BACK;
+    public static final char ICON_FORWARD = FontImage.MATERIAL_ARROW_FORWARD;
     public static final char ICON_HISTORY = FontImage.MATERIAL_HISTORY;
     public static final char ICON_ARCHIVE = FontImage.MATERIAL_INBOX;
     public static final char ICON_UNARCHIVE = FontImage.MATERIAL_FAVORITE;
