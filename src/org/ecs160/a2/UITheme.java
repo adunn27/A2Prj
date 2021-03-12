@@ -19,11 +19,11 @@ public class UITheme {
 
     public static final int LIGHT_GREY = 0xc4c4c4;
     public static final int GREY = 0x565656;
-
+    public static final int LIGHT_YELLOW = 0xfddca5;
 //    public static final int GREEN = 0x546747;
 //    public static final int DARK_GREY = 0x3c3c3c;
 //    public static final int DARK_GREEN = 0x2b331f;
-//    public static final int LIGHT_YELLOW = 0xfddca5;
+
 //    public static final int YELLOW = 0xfab73d;
 
     // padding
