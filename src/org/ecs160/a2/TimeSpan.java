@@ -14,6 +14,10 @@ public class TimeSpan {
         this.startTime = startTime;
     }
 
+    public Boolean isActive() {
+        return endTime == null;
+    }
+
     public void setStartTime(LocalDateTime startTime){
         this.startTime = startTime;
     }
@@ -50,10 +54,8 @@ public class TimeSpan {
     }
 
     public Duration getTimeSpanDuration(){
-        if (endTime == null){
-            LocalDateTime nowTime = LocalDateTime.now();
-            return Duration.between(startTime, nowTime);
-        }
+        if (endTime == null)
+            return Duration.between(startTime, LocalDateTime.now());
         return Duration.between(startTime, endTime);
     }
 
@@ -65,8 +67,8 @@ public class TimeSpan {
         return endTime;
     }
 
-    public Duration getTimeSpanDurationBetween
-            (LocalDateTime startOfTimeWindow, LocalDateTime endOfTimeWindow){
+    public Duration getTimeSpanDurationBetween(LocalDateTime startOfTimeWindow,
+                                               LocalDateTime endOfTimeWindow){
 
         LocalDateTime trueStartTime = startOfTimeWindow;
         if (startTime.isAfter(startOfTimeWindow))
@@ -94,6 +96,5 @@ public class TimeSpan {
         LocalDateTime start = LocalDateTime.now().minusSeconds(5);
         LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
         TimeSpan span = new TimeSpan(start);
-
     }
 }
