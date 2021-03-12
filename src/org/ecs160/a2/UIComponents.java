@@ -192,35 +192,6 @@ public class UIComponents {
         }
     }
 
-    // args: tagName
-    // used in: taskDetails, homeScreen, archivePage
-    static class TagObject extends Container {
-        Button tagLabel;
-        String name;
-
-        public String getName() {
-            return name;
-        }
-
-        public TagObject (String tagName) {
-            name = tagName;
-            setLayout(new BorderLayout());
-            tagLabel = new Button(tagName);
-            tagLabel.getAllStyles().setFgColor(BLACK);
-
-            Font smallFont = Font.createSystemFont(FACE_MONOSPACE, STYLE_PLAIN, SIZE_SMALL);
-            tagLabel.getAllStyles().setFont(smallFont);
-
-            tagLabel.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
-            tagLabel.getAllStyles().setMargin(Component.LEFT, PAD_3MM);
-            tagLabel.getAllStyles().setMargin(Component.BOTTOM, PAD_1MM);
-            tagLabel.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(YELLOW)
-            );
-            add(BorderLayout.CENTER, tagLabel);
-        }
-    }
-
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;

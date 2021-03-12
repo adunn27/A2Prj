@@ -10,13 +10,13 @@ import com.codename1.ui.*;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
-import com.codename1.ui.plaf.Style;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static com.codename1.ui.CN.*;
+import static org.ecs160.a2.UITheme.*;
+import static org.ecs160.a2.UIComponents.*;
 
 public class TaskDetailsScreen extends Form {
     private Container titleRow;
@@ -34,14 +34,6 @@ public class TaskDetailsScreen extends Form {
     private Task taskData;
     private UINavigator ui;
 
-    TaskDetailsScreen(Task task, UINavigator ui) {
-        registerAnimated(this); // TODO: animate task details screen IF task is active
-        taskData =  task;
-        this.ui = ui;
-        createToolbar();
-        createDetailsScreen();
-    }
-
     @Override
     public void show() {
         createDetailsScreen();
@@ -52,6 +44,23 @@ public class TaskDetailsScreen extends Form {
     public void showBack() {
         createDetailsScreen();
         super.showBack();
+    }
+
+    TaskDetailsScreen(Task task, UINavigator ui) {
+        // TODO: animate task details screen IF task is active
+        registerAnimated(this);
+        taskData =  task;
+        this.ui = ui;
+        createToolbar();
+        createDetailsScreen();
+    }
+
+    private void createToolbar() {
+        getToolbar().addMaterialCommandToLeftBar("", ICON_BACK, PAD_6MM,
+                e->ui.goBack());
+
+        getToolbar().addMaterialCommandToRightBar("", ICON_EDIT, PAD_6MM,
+                e-> ui.goEdit(taskData.getName()));
     }
 
     private void createDetailsScreen() {
@@ -90,22 +99,17 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.add(descRow);
         }
-//        getComponentForm().registerAnimated(Body);
     }
 
-    // create rows
     private void createDescRow() {
         descRow = new Container();
         descRow.setLayout(BoxLayout.y());
 
-        UIComponents.TextObject descTitle = new UIComponents.TextObject(
-                "Description", UITheme.GREY, UITheme.PAD_3MM, SIZE_SMALL
-        );
+        TextObject descTitle = new TextObject(
+                "Description", GREY, PAD_3MM, SIZE_SMALL);
 
-        UIComponents.TextObject descData = new UIComponents.TextObject(
-                taskData.getDescription(),
-                UITheme.BLACK, UITheme.PAD_3MM, SIZE_SMALL
-        );
+        TextObject descData = new TextObject(
+                taskData.getDescription(), BLACK, PAD_3MM, SIZE_SMALL);
 
         descRow.add(descTitle);
         descRow.add(descData);
@@ -115,18 +119,16 @@ public class TaskDetailsScreen extends Form {
         titleRow.setLayout(BoxLayout.x());
 
         // task name
-        UIComponents.TextObject nameLabel = new UIComponents.TextObject(
-                taskData.getName(), UITheme.BLACK, UITheme.PAD_3MM, SIZE_LARGE
-        );
-        nameLabel.setBold();
+        TextObject name = new TextObject(
+                taskData.getName(), BLACK, PAD_3MM, SIZE_LARGE);
+        name.setBold();
 
         // task size
-        UIComponents.SizeLabelObject sizeLabel = new
-                UIComponents.SizeLabelObject(taskData.getTaskSizeString());
+        SizeLabelObject size = new SizeLabelObject(taskData.getTaskSizeString());
 
         // add components
-        titleRow.add(nameLabel);
-        titleRow.add(sizeLabel);
+        titleRow.add(name);
+        titleRow.add(size);
     }
     private void createTagRow() {
         if (taskData.getTags().size() == 0) {
@@ -136,26 +138,24 @@ public class TaskDetailsScreen extends Form {
         tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 
-        UIComponents.TitleObject tagTitle = new UIComponents.TitleObject("Tags");
-        tagTitle.setSize(SIZE_SMALL);
-
-        // add tags
-        Container tagObject = new Container();
+        TextObject title = new TextObject("Tags", GREY, PAD_3MM, SIZE_SMALL);
+        Container objects = new Container();
         for (String tag : taskData.getTags()) {
-            tagObject.add(new UIComponents.TagObject(tag));
+            ButtonObject tagObj = new ButtonObject();
+            tagObj.setAllStyles(tag, LIGHT_GREEN,' ', PAD_3MM);
+            objects.add(tagObj);
         }
 
-        tagRow.add(tagTitle);
-        tagRow.add(tagObject);
+        tagRow.add(title);
+        tagRow.add(objects);
     }
     private void createTimeRow() {
         timeRow = new Container();
         timeRow.setLayout(BoxLayout.y());
 
         // time title
-        UIComponents.TextObject timeTitle = new UIComponents.TextObject(
-                "Time Elapsed", UITheme.GREY, UITheme.PAD_3MM, SIZE_SMALL
-        );
+        TextObject timeTitle = new TextObject(
+                "Time Elapsed", GREY, PAD_3MM, SIZE_SMALL);
 
         // times
         allTime = taskData.getTotalTimeString();
@@ -163,11 +163,10 @@ public class TaskDetailsScreen extends Form {
         dayTime = taskData.getTotalTimeTodayString();
 
         String timeText = "All Time:\t" + allTime + "\n"+
-                "This Week:\t" + weekTime + "\n" +
-                "Today:\t" + dayTime;
-        UIComponents.TextObject timeData = new UIComponents.TextObject(
-                timeText, UITheme.BLACK, UITheme.PAD_3MM, SIZE_SMALL
-        );
+                          "This Week:\t" + weekTime + "\n" +
+                          "Today:\t" + dayTime;
+        TextObject timeData = new TextObject(
+                timeText, BLACK, PAD_3MM, SIZE_SMALL);
 
         timeRow.add(timeTitle);
         timeRow.add(timeData);
@@ -180,36 +179,26 @@ public class TaskDetailsScreen extends Form {
         graphRow.add(CENTER, graphPlaceHolder);
     }
 
-    private void createToolbar() {
-        getToolbar().addMaterialCommandToLeftBar("",
-                UITheme.ICON_BACK, UITheme.PAD_6MM, e->ui.goBack());
-
-        getToolbar().addMaterialCommandToRightBar("",
-                FontImage.MATERIAL_MODE_EDIT, UITheme.PAD_6MM,
-                e-> ui.goEdit(taskData.getName())
-        );
-    }
-
     private void createFooter() {
         Footer = new Container();
         Footer.setLayout(new GridLayout(1,2));
         Footer.setScrollableY(false);
 
         // history
-        UIComponents.ButtonObject historyButton = new UIComponents.ButtonObject();
-        historyButton.setAllStyles("History", UITheme.LIGHT_GREY,
-                FontImage.MATERIAL_HISTORY, UITheme.PAD_3MM);
+        ButtonObject historyButton = new ButtonObject();
+        historyButton.setAllStyles("History", LIGHT_GREY,
+                ICON_HISTORY, PAD_3MM);
 
         // archive
-        UIComponents.ButtonObject archiveButton = new UIComponents.ButtonObject();
+        ButtonObject archiveButton = new ButtonObject();
         String archiveText = (taskData.isArchived()) ? "Unarchive" : "Archive";
-        archiveButton.setAllStyles(archiveText, UITheme.LIGHT_GREY,
-                FontImage.MATERIAL_SAVE, UITheme.PAD_3MM);
+        archiveButton.setAllStyles(archiveText, COL_UNSELECTED,
+                ICON_ARCHIVE, PAD_3MM);
 
         // action listeners
         historyButton.addActionListener(e-> {
             if (taskData.isActive())
-                new UIComponents.showWarningDialog("This task is currently running");
+                new showWarningDialog("This task is currently running");
             else
                 ui.goHistory(taskData.getName());
         });
