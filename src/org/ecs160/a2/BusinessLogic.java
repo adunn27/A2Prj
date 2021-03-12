@@ -97,7 +97,12 @@ public class BusinessLogic {
         timeSpan.setEndTime(endDateTime);
     }
 
-    public void editTask(Task task, String nameData, String sizeData, String descriptionData, List<String> tagsData) {
-
+    public void editTask(Task task, String nameData, String sizeData,
+                         String descriptionData, List<String> tagsData) {
+        task.setName(nameData);
+        task.setTaskSizeWithString(sizeData);
+        task.setDescription(descriptionData);
+        task.addAllTags(tagsData);
+        logfile.editTask(task);
     }
 }
