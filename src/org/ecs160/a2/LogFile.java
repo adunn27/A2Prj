@@ -192,12 +192,12 @@ public class LogFile {
         }
 
         System.out.println("log " + commandName);
-        writeToLog( commandName +
-                LOG_DELIMITER + task.getName() +
-                LOG_DELIMITER + task.getDescription() +
-                LOG_DELIMITER + task.getTaskSize() +
-                LOG_DELIMITER + tags +
-                LOG_DELIMITER + task.getId() + "\n");
+        writeToLog(createLogEntry(commandName,
+                task.getName(),
+                task.getDescription(),
+                task.getTaskSize().toString(),
+                tags,
+                Integer.toString(task.getId())));
     }
 
 
@@ -207,9 +207,7 @@ public class LogFile {
         String formatTime = time.format(formatter);
 
         System.out.println("log start");
-        writeToLog("start"
-                + LOG_DELIMITER + task.getName()
-                + LOG_DELIMITER + formatTime + "\n");
+        writeToLog(createLogEntry("start",task.getName(),formatTime));
     }
 
     public void stopTask(Task task, LocalDateTime time){
@@ -217,35 +215,28 @@ public class LogFile {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         String formatTime = time.format(formatter);
         System.out.println("log stop");
-        writeToLog( "stop"
-                + LOG_DELIMITER + task.getName()
-                + LOG_DELIMITER + formatTime +"\n");
+        writeToLog(createLogEntry("stop",task.getName(),formatTime));
     }
 
 
     public void unarchiveTask (Task task){
         System.out.println("log unarchive");
-        writeToLog( "unarchive"
-                + LOG_DELIMITER + task.getName() + "\n");
+        writeToLog(createLogEntry("unarchive",task.getName()));
     }
 
     public void archiveTask (Task task){
         System.out.println("log archive");
-        writeToLog("archive"
-                + LOG_DELIMITER + task.getName() + "\n");
+        writeToLog(createLogEntry("archive",task.getName()));
     }
 
     public void delete_task (Task task){
         System.out.println("log delete_task");
-        writeToLog("delete_task"
-                + LOG_DELIMITER + task.getName() + "\n");
+        writeToLog(createLogEntry("delete_task",task.getName()));
     }
 
     public void delete_tag (Task task, String tag){
         System.out.println("log delete_tag");
-        writeToLog( "delete_tag"
-                + LOG_DELIMITER + task.getName()
-                + LOG_DELIMITER + tag +"\n");
+        writeToLog(createLogEntry("delete_tag",task.getName(),tag));
     }
 
     public void delete_time (Task task, LocalDateTime time){
@@ -254,9 +245,7 @@ public class LogFile {
         String formatTime = time.format(formatter);
 
         System.out.println("log delete_time");
-        writeToLog( "delete_time"
-                + LOG_DELIMITER + task.getName()
-                + LOG_DELIMITER + formatTime +"\n");
+        writeToLog(createLogEntry("delete_time",task.getName(),formatTime));
     }
 
     public void edit_time (Task task, LocalDateTime startTime,LocalDateTime newStartTime,
@@ -269,12 +258,22 @@ public class LogFile {
         String formatNewEndTime = newEndTime.format(formatter);
 
         System.out.println("log edit_time");
-        writeToLog( "edit_time"
-                + LOG_DELIMITER + task.getName()
-                + LOG_DELIMITER + formatStartTime
-                + LOG_DELIMITER + formatNewStartTime
-                + LOG_DELIMITER + formatEndTime
-                + LOG_DELIMITER + formatNewEndTime + "\n");
+        writeToLog( createLogEntry("edit_time",
+                task.getName(),
+                formatStartTime,
+                formatNewStartTime,
+                formatEndTime,
+                formatNewEndTime));
+    }
+
+    private String createLogEntry(String ... arguments) {
+        long time_in_long = System.currentTimeMillis();
+        String line = sdf.format(new Date(time_in_long));
+        for (String anArg: arguments) {
+            line += LOG_DELIMITER + anArg;
+        }
+        line += "\n";
+        return line;
     }
 
     private void writeToLog(String output) {
@@ -282,9 +281,7 @@ public class LogFile {
             BufferedWriter writer = new BufferedWriter(
                     new FileWriter("log", true));
 
-            long time_in_long = System.currentTimeMillis();
-            writer.write(sdf.format(new Date(time_in_long))
-                    + LOG_DELIMITER + output);
+            writer.write(output);
             writer.close();
         } catch (IOException e) {
             System.out.println("An error occurred.");
