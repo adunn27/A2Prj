@@ -98,7 +98,7 @@ public class TaskHistoryScreen extends Form {
 
         for (TimeSpan thisTimeSpan: taskData.getAllTimeSpans()){
             if (thisTimeSpan.isActive()) {
-                TaskList.add(new Label("Current run started: " +
+                TaskList.add(new Label("New run started: " +
                         thisTimeSpan.getStartTimeAsString()));
                 continue;
             }
