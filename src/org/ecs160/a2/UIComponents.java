@@ -217,8 +217,7 @@ public class UIComponents {
 
             archive.addActionListener(e->{
                 if (taskData.isArchived()) {
-                    ui.backend.getTaskByName(taskData.getName()).unarchive();
-                    ui.backend.logfile.unarchiveTask(taskData);
+                    ui.backend.unarchiveTask(taskData);
                     ui.refreshScreen();
 
                 } else if (taskData.isActive()) {
@@ -227,13 +226,10 @@ public class UIComponents {
                     ButtonObject yesB = new ButtonObject();
                     yesB.setAllStyles("Yes", COL_UNSELECTED,  ' ',PAD_3MM);
                     yesB.addActionListener(yes -> {
-                        LocalDateTime time = taskData.stop();
-                        ui.backend.logfile.stopTask(taskData, time);
-                        archiveTaskObject();
+                        ui.backend.archiveTask(taskData);
                         areYouSure.setTransitionOutAnimator(CommonTransitions.createEmpty());
                         areYouSure.dispose();
                         ui.refreshScreen();
-
                     });
 
                     ButtonObject noB = new ButtonObject();
@@ -244,7 +240,7 @@ public class UIComponents {
                     areYouSure.add(GridLayout.encloseIn(2,noB, yesB));
                     areYouSure.showPopupDialog(archive);
                 } else {
-                    archiveTaskObject();
+                    ui.backend.archiveTask(taskData);
                     ui.refreshScreen();
                 }
                 log("archived/unarchived task");
@@ -259,15 +255,9 @@ public class UIComponents {
             getAllStyles().setMargin(PAD_1MM,PAD_1MM,PAD_1MM,PAD_1MM);
         }
 
-        private void archiveTaskObject()  {
-            ui.backend.getTaskByName(taskData.getName()).archive();
-            ui.backend.logfile.archiveTask(taskData);
-        }
-
         private void longPressEvent() {
             if (taskData.isArchived()) {
-                taskData.unarchive();
-                ui.backend.logfile.unarchiveTask(this.taskData);
+                ui.backend.unarchiveTask(taskData);
                 ui.refreshScreen();
             } else {
                 ui.goDetails(taskData.getName());
@@ -278,17 +268,9 @@ public class UIComponents {
                 ui.goDetails(taskData.getName());
                 return;
             } else if (taskData.isActive()) {
-                LocalDateTime time = taskData.stop();
-                ui.backend.logfile.stopTask(taskData,time);
-
+                ui.backend.stopTask(taskData);
             } else {
-                Task activeTask = ui.backend.getActiveTask();
-                if (activeTask != null) {
-                    LocalDateTime time= activeTask.stop();
-                    ui.backend.logfile.stopTask(activeTask,time);
-                }
-                LocalDateTime time= taskData.start();
-                ui.backend.logfile.startTask(taskData,time);
+                ui.backend.startTask(taskData);
             }
             ui.refreshScreen();
         }

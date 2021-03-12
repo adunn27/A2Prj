@@ -14,7 +14,7 @@ public final class Utility {
     public static final DateTimeFormatter timeFormatter12hr =
             DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm:ss a");
     public static final DateTimeFormatter timeFormatter24hr =
-            DateTimeFormatter.ofPattern("MM/dd/yyyy HH:mm:ss");
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     // Decided that since this tool will be mainly for work related purposes
     // a week should start with the work week on Monday rather than the calendar
@@ -29,7 +29,7 @@ public final class Utility {
     }
 
     public static LocalDateTime getEndOfWeek(LocalDateTime present) {
-        return present.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY))
+        return present.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY))
                 .with(LocalTime.MAX);
     }
 
@@ -52,17 +52,16 @@ public final class Utility {
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
     }
-    public static LocalDateTime convertToLocalDateTime(Date date) { //TODO: Consider cleaning up
+    public static LocalDateTime convertToLocalDateTime(Date date) {
         return date.toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDateTime();
     }
     public static String durationToFormattedString(Duration duration) {
-        String hms = String.format("%d:%02d:%02d",
+        return String.format("%d:%02d:%02d",
                 duration.toHours(),
                 duration.toMinutesPart(),
                 duration.toSecondsPart());
-        return hms;
     }
 
     public static String dateToFormattedString(Date date) {

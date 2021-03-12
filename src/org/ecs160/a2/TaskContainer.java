@@ -3,15 +3,23 @@ package org.ecs160.a2;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Iterator;
+import java.util.LongSummaryStatistics;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class TaskContainer implements Iterable<Task>{
-    private Set<Task> taskSet;
+    private final Set<Task> taskSet;
 
     public TaskContainer() {
         taskSet = new HashSet<>();
+    }
+
+    public Iterator<Task> iterator() {
+        return taskSet.iterator();
     }
 
     public int getNumberOfTasks() {
@@ -22,16 +30,11 @@ public class TaskContainer implements Iterable<Task>{
         taskSet = newTaskSet;
     }
 
-    public Iterator<Task> iterator() {
-        return taskSet.iterator(); //TODO check
-    }
-
     public Boolean isEmpty() {
         return taskSet.isEmpty();
     }
 
     public void addTask(Task newTask) {
-        assert(!newTask.getName().isEmpty()): "Need a task name";
         taskSet.add(newTask);
     }
 
@@ -43,20 +46,15 @@ public class TaskContainer implements Iterable<Task>{
         return find(aTask -> taskName.equals(aTask.getName()));
     }
 
-    public Task getTaskById(int taskid) {
-        for (Task task : taskSet){
-            if(task.getId()==taskid){
-                return task;
-            }
-        }
-        return null;
+    public Task getTaskById(int taskId) {
+        return find(aTask -> aTask.getId() == taskId);
     }
 
     public Task getActiveTask() {
         return find(Task::isActive);
     }
 
-    public Task find(Predicate<Task> selector) {
+    private Task find(Predicate<Task> selector) {
         return taskSet.stream()
                 .filter(selector)
                 .findFirst()
@@ -85,14 +83,13 @@ public class TaskContainer implements Iterable<Task>{
 
     public TaskContainer getTasksThatOccurred(LocalDate start,
                                               LocalDate stop) {
-        return filter(task -> task.occurredBetween(
+        return filter(task -> !task.getTimeBetween(
                 Utility.getStartOfDay(start),
-                Utility.getEndOfDay(stop)));
+                Utility.getEndOfDay(stop)).isZero());
     }
 
-
-    public TaskContainer filter(Predicate<Task> selector) {
-        Set filteredSet = taskSet.stream()
+    private TaskContainer filter(Predicate<Task> selector) {
+        Set<Task> filteredSet = taskSet.stream()
                 .filter(selector)
                 .collect(Collectors.toSet());
 
@@ -106,27 +103,28 @@ public class TaskContainer implements Iterable<Task>{
                 .mapToLong(Duration::toMillis)
                 .summaryStatistics();
     }
-    public Long getTotalTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+
+    public Long getTotalTime(LocalDateTime start, LocalDateTime stop) {
 
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
 
         return stats.getSum();
     }
 
-    public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
+    public Long getMinimumTime(LocalDateTime start, LocalDateTime stop) {
+        if(getTotalTime(start, stop) == 0) return 0L;
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMin();
     }
 
-    public Long getAverageTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
+    public Long getAverageTime(LocalDateTime start, LocalDateTime stop) {
 
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return Math.round(stats.getAverage());
     }
 
-    public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) { //TODO pick return type
-        if(getTotalTime(start, stop) == 0) return Long.valueOf(0);
+    public Long getMaximumTime(LocalDateTime start, LocalDateTime stop) {
+        if(getTotalTime(start, stop) == 0) return 0L;
         LongSummaryStatistics stats = getTimeStatistics(start, stop);
         return stats.getMax();
     }
@@ -134,9 +132,7 @@ public class TaskContainer implements Iterable<Task>{
     public List<String> getAllTags() {
         Set<String> setOfAllTags = new HashSet<>();
         for (Task aTask: taskSet) {
-            for (String aTag: aTask.getTags()) {
-                setOfAllTags.add(aTag); //TODO do this in streams?
-            }
+            setOfAllTags.addAll(aTask.getTags());
         }
         return setOfAllTags.stream().sorted().collect(Collectors.toList());
     }

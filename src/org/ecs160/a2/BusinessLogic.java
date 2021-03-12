@@ -1,59 +1,34 @@
 package org.ecs160.a2;
 
-import java.util.ArrayList;
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BusinessLogic {
     private TaskContainer everyTask;
-    public LogFile logfile;
-    public TaskContainer logTask;
-    public int TaskId;
+    private LogFile logfile;
+    private int nextTaskId;
 
     public BusinessLogic() {
-        logfile = new LogFile();
-
-        everyTask = logfile.retrieveTask;
-
-        TaskId= logfile.TaskId + 1;
+        try {
+            logfile = new LogFile();
+            everyTask = logfile.getRetrievedTasks();
+            nextTaskId = logfile.getLastTaskId() + 1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
     }
 
     public List<String> getAllTags() {
         return everyTask.getAllTags();
     }
 
-    public Task newTask(String name,
-                        String size,
-                        String description,
-                        Boolean isArchive,
-                        Boolean isActive,
-                        int taskid,
-                        List<TimeSpan> alltimes,
-                        List<String> tags) {
-        assert (everyTask.getTaskByName(name) == null): "Task already exists!";
-
-        Task aNewTask = new Task(name, TaskSize.parse(size));
-        aNewTask.setAllTimeSpans(alltimes);
-        aNewTask.setDescription(description);
-        if (isArchive){
-
-            aNewTask.archive();
-
-        }
-        if(isActive){
-            aNewTask.setActive();
-        }
-        for(String aTag: tags) {
-            aNewTask.addTag(aTag);
-        }
-        aNewTask.setId(taskid);
-        everyTask.addTask(aNewTask);
-        return aNewTask;
-    }
-
-    public void saveTask(Task newTask) {
+    public void saveNewTask(Task newTask) {
+        newTask.setId(nextTaskId);
         everyTask.addTask(newTask);
-        newTask.setId(TaskId);
-        TaskId++;
+        logfile.addTask(newTask);
+        nextTaskId++;
     }
 
     public Task getActiveTask() {
@@ -80,35 +55,61 @@ public class BusinessLogic {
         logfile.delete_task(task);
     }
 
-    /*
-    newTask(name, size, description, tags)
+    public void startTask(Task task) {
+        if (getActiveTask() != null)
+            stopTask(getActiveTask());
+        LocalDateTime time = LocalDateTime.now();
+        task.start(time);
+        logfile.startTask(task, time);
+    }
 
-    getTaskName
-    setTaskName
+    public void stopTask(Task activeTask) {
+        LocalDateTime time = LocalDateTime.now();
+        activeTask.stop(time);
+        logfile.stopTask(activeTask, time);
+    }
 
-    getTaskSize
-    setTaskSize(size)
+    public void removeTag(Task task, String tag) {
+        if (!task.hasTag(tag)) return;
+        task.removeTag(tag);
+        logfile.delete_tag(task, tag);
+    }
 
-    getTags(taskName)
-    addTag(tagName)
-    removeTag(tagName)
+    public void archiveTask(Task task) {
+        if (task.isActive())
+            stopTask(task);
+        getTaskByName(task.getName()).archive();
+        logfile.archiveTask(task);
+    }
 
-    getTaskDescription
-    updateTaskDescription(desc)
-    setTaskDescription(desc)
+    public void unarchiveTask(Task task) {
+        getTaskByName(task.getName()).unarchive();
+        logfile.unarchiveTask(task);
+    }
 
-    getTaskHistory
-    updateTaskHistory(?)
+    public void removeTimeSpan(Task task, TimeSpan deletedTimeSpan) {
+        logfile.delete_time(task,
+                task.getIndexOfTimeSpan(deletedTimeSpan));
+        task.removeTimeSpan(deletedTimeSpan);
+    }
 
-    getTotalTime
-    getTodayTime
-    getWeekTime
+    public void editTimeSpan(Task task, TimeSpan timeSpan,
+                              LocalDateTime startDateTime,
+                              LocalDateTime endDateTime) {
+        logfile.edit_time(task,
+                task.getIndexOfTimeSpan(timeSpan),
+                startDateTime, endDateTime);
 
-    getTasks
-    getArchiveTasks
-    getTasksWithSize(size)
-    getTasksWithTag(tagName)
+        timeSpan.setStartTime(startDateTime);
+        timeSpan.setEndTime(endDateTime);
+    }
 
-    deleteTask
-     */
+    public void editTask(Task task, String nameData, String sizeData,
+                         String descriptionData, List<String> tagsData) {
+        task.setName(nameData);
+        task.setTaskSizeWithString(sizeData);
+        task.setDescription(descriptionData);
+        task.addAllTags(tagsData);
+        logfile.editTask(task);
+    }
 }

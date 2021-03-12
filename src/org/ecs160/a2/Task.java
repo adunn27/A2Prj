@@ -1,7 +1,5 @@
 package org.ecs160.a2;
 
-import jdk.jshell.execution.Util;
-
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -13,40 +11,25 @@ public class Task {
     private static final TaskSize DEFAULT_TASK_SIZE = TaskSize.S;
 
     private String name;
-    private int TaskId;
-    private TaskSize size;
+    private int taskId;
+    private TaskSize size = DEFAULT_TASK_SIZE;
     private String description = "";
     private Boolean isArchived = false;
     private Boolean isActive = false;
-    private List<TimeSpan> allTimes; //TODO better name
-    private Set<String> tags; //TODO does order matter? Do tags need color also?
+    private final List<TimeSpan> allTimes;
+    private final Set<String> tags;
 
-
-
-    private void construct(String newTaskName, TaskSize newTaskSize) {
-        this.name = newTaskName;
-        this.size = newTaskSize;
+    public Task() {
         this.tags = new HashSet<>();
-        this.allTimes = new Vector<TimeSpan>();
-
+        this.allTimes = new Vector<>();
     }
 
-    public Boolean isArchive(){ return isArchived; }
-
-    public void setActive (){ isActive = true;}
-
-    public void setInActive(){isActive= false;}
-
-    public void setId(int taskid){TaskId = taskid;}
-
-    public int getId(){return TaskId;}
-
-    public Task(String newTaskName, TaskSize newTaskSize) {
-        construct(newTaskName, newTaskSize);
+    public void setId(int taskId){
+        this.taskId = taskId;
     }
 
-    public Task(String newTaskName) {
-        construct(newTaskName, DEFAULT_TASK_SIZE);
+    public int getId(){
+        return taskId;
     }
 
     public String getName() {
@@ -65,7 +48,7 @@ public class Task {
         return size.toString();
     }
 
-    public void setTaskSize(String newTaskSizeString) {
+    public void setTaskSizeWithString(String newTaskSizeString) {
         size = TaskSize.parse(newTaskSizeString);
     }
 
@@ -86,51 +69,44 @@ public class Task {
     }
 
     public void archive() {
-        assert (isArchived == false): "Cannot archive an already archived task";
-        if (isActive)
-            stop();
+        assert (!isArchived): "Cannot archive an already archived task";
+        assert (!isActive): "Cannot archive an active task";
         isArchived = true;
     }
 
     public void unarchive() {
-        assert (isArchived == true): "Cannot unarchive a " +
+        assert (isArchived): "Cannot unarchive a " +
                                      "task that isn't archived";
         isArchived = false;
     }
 
-
-    public LocalDateTime start() {
-        assert (isActive == false): "Cannot start an already active task";
-        assert (isArchived == false): "Cannot start an archived task";
-        LocalDateTime time= LocalDateTime.now();
-        allTimes.add(new TimeSpan(time)); //TODO make all now have same time
+    public void start(LocalDateTime time) {
+        assert (!isActive): "Cannot start an already active task";
+        assert (!isArchived): "Cannot start an archived task";
+        allTimes.add(new TimeSpan(time));
         isActive = true;
-        return time;
     }
 
-    public LocalDateTime stop() {
-        assert (isActive == true) : "Cannot stop an inactive task";
-        LocalDateTime time = LocalDateTime.now();
+    public void stop(LocalDateTime time) {
+        assert (isActive) : "Cannot stop an inactive task";
         allTimes.get(allTimes.size() - 1).setEndTime(time);
         isActive = false;
-        return time;
-
     }
 
     public Boolean hasTag(String tag) {
         return tags.contains(tag);
     }
 
-    public void addAllTags(List<String> tags) {
-        for (String t : tags) {
-            if (!hasTag(t)) addTag(t);
-        }
-    }
-
     public void addTag(String tag) {
         if (tag.isEmpty())
             return;
         tags.add(tag);
+    }
+
+    public void addAllTags(List<String> tags) {
+        for (String t : tags) {
+            if (!hasTag(t)) addTag(t);
+        }
     }
 
     public void removeTag(String tag) {
@@ -141,7 +117,7 @@ public class Task {
         return tags.stream().sorted().collect(Collectors.toList());
     }
 
-    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) { //TODO return type?
+    public Duration getTimeBetween(LocalDateTime start, LocalDateTime stop) {
         Duration totalTime = Duration.ofMillis(0);
         for (TimeSpan timeSpan: allTimes) {
             totalTime = totalTime.plus(
@@ -150,13 +126,6 @@ public class Task {
         }
         return totalTime;
     }
-
-    public String getTotalTimeString() {
-        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
-        return Utility.durationToFormattedString(duration);
-    }
-
-    
 
     private Duration getTotalTimeOfDay(LocalDate day) {
         return getTimeBetween(day.atStartOfDay(),
@@ -176,7 +145,8 @@ public class Task {
     }
 
     public String getTotalTimeTodayString() {
-        return Utility.durationToFormattedString(getTotalTimeOfDay(LocalDate.now()));
+        return Utility.durationToFormattedString(
+                getTotalTimeOfDay(LocalDate.now()));
     }
 
     public String getTotalTimeThisWeekString() {
@@ -185,30 +155,28 @@ public class Task {
         return Utility.durationToFormattedString(duration);
     }
 
-    public Boolean occurredBetween(LocalDateTime start, LocalDateTime stop) {
-        return !getTimeBetween(start, stop).isZero();
+    public String getTotalTimeString() {
+        Duration duration = getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX);
+        return Utility.durationToFormattedString(duration);
     }
 
     public List<TimeSpan> getAllTimeSpans() {
         return allTimes;
     }
 
-    public LocalDateTime removeTimeSpanComponent(TimeSpan deletedTimeSpan){
-        LocalDateTime time= deletedTimeSpan.getStartTime();
+    public void removeTimeSpan(TimeSpan deletedTimeSpan){
         allTimes.remove(deletedTimeSpan);
-        return time;
     }
 
-    public TimeSpan getTimeSpanByTime(LocalDateTime time){
+    public TimeSpan getTimeSpanByIndex(int index){
+        return allTimes.get(index);
+    }
 
-        for(TimeSpan ts : allTimes){
-
-            if (ts.getStartTime().isEqual(time)){
-                return ts;
-            }
+    public int getIndexOfTimeSpan(TimeSpan timeSpan){
+        for (int i = 0; i < allTimes.size(); i++) {
+            if (allTimes.get(i) == timeSpan)
+                return i;
         }
-        return null;
+        return -1;
     }
-
-    public void setAllTimeSpans(List<TimeSpan> alltimes) {allTimes = alltimes;}
 }

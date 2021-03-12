@@ -34,15 +34,8 @@ public class TimeSpan {
         return startTime.format(Utility.timeFormatter12hr);
     }
 
-    public String getEndTimeAsString(){
-        assert (endTime != null): "Time Span is still active!";
-        return endTime.format(Utility.timeFormatter12hr);
-    }
-
     public Duration getTimeSpanDuration(){
-        if (endTime == null)
-            return Duration.between(startTime, LocalDateTime.now());
-        return Duration.between(startTime, endTime);
+        return getTimeSpanDurationBetween(LocalDateTime.MIN, LocalDateTime.MAX);
     }
 
     public LocalDateTime getStartTimeAsDate(){
@@ -56,33 +49,40 @@ public class TimeSpan {
     public Duration getTimeSpanDurationBetween(LocalDateTime startOfTimeWindow,
                                                LocalDateTime endOfTimeWindow){
 
+        LocalDateTime trueStartTime =
+                findConstrictingLowerBoundOfWindow(startOfTimeWindow);
+
+        LocalDateTime trueEndTime =
+                findConstrictingUpperBoundOfWindow(endOfTimeWindow);
+
+        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
+        // Necessary to check as if the timespan had no overlap with the
+        // given time window, then this will return a negative value
+        if (timeBetween.isNegative()) return Duration.ofMillis(0);
+        return timeBetween;
+    }
+
+    private LocalDateTime findConstrictingLowerBoundOfWindow(
+                                            LocalDateTime startOfTimeWindow) {
         LocalDateTime trueStartTime = startOfTimeWindow;
         if (startTime.isAfter(startOfTimeWindow))
             trueStartTime = startTime;
+        return trueStartTime;
+    }
 
-        LocalDateTime tempEndTime = getEndTimeElseNow();
+    private LocalDateTime findConstrictingUpperBoundOfWindow(
+                                            LocalDateTime endOfTimeWindow) {
         LocalDateTime trueEndTime = endOfTimeWindow;
+        LocalDateTime tempEndTime = getEndTimeElseNow();
         if (tempEndTime.isBefore(endOfTimeWindow))
             trueEndTime = tempEndTime;
-
-        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
-
-        // Necessary to check as if the timespan had no overlap with the
-        // give time window, then this will return a negative value
-        if (timeBetween.isNegative()) return Duration.ofMillis(0);
-        return timeBetween;
+        return trueEndTime;
     }
 
     private LocalDateTime getEndTimeElseNow() {
         if (endTime == null)
             return LocalDateTime.now();
         return endTime;
-    }
-
-    public static void main(String[] args){
-        LocalDateTime start = LocalDateTime.now().minusSeconds(5);
-        LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
-        TimeSpan span = new TimeSpan(start);
     }
 }
 
