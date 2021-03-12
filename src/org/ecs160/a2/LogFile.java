@@ -33,7 +33,7 @@ public class LogFile {
 
     public LogFile() throws IOException {
         // BELOW IS A CLEAR BUTTON !!! THIS IS EQUIVALENT TO DELETE LOG FILE
-        //Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
+        Storage.getInstance().deleteStorageFile(LOG_FILE_NAME);
         lastTaskId = 0;
         retrievedTasks = new TaskContainer();
         readInLog();
@@ -63,7 +63,7 @@ public class LogFile {
 
     private OutputStream setUpOutputStream() throws IOException {
         final OutputStream os;
-        if(!Storage.getInstance().exists("log")) {
+        if(!Storage.getInstance().exists(LOG_FILE_NAME)) {
             System.out.println("Storage has created");
             os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
         } else {
