@@ -67,9 +67,10 @@ public class TimeSpan {
 
         Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
 
-        // Need to check if the timeframe was outside
+        // Necessary to check as if the timespan had no overlap with the
+        // give time window, then this will return a negative value
         if (timeBetween.isNegative()) return Duration.ofMillis(0);
-        return Duration.between(trueStartTime, trueEndTime);
+        return timeBetween;
     }
 
     private LocalDateTime getEndTimeElseNow() {

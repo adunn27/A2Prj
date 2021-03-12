@@ -136,7 +136,6 @@ public class EditTaskScreen extends Form {
             ui.backend.logfile.editTask(task);
             isNewTask = false;
         }else {
-
             ui.backend.logfile.editTask(task);
         }
 
@@ -262,8 +261,8 @@ public class EditTaskScreen extends Form {
             System.out.println("REMOVING TAG");
             tagsData.remove(name);
             tagField.removeComponent(deletedComponent);
-            task.removeTag(deletedComponent.getName()); //TODO how?
-            ui.backend.logfile.delete_tag(task, deletedComponent.getName());
+            task.removeTag(name);
+            ui.backend.logfile.delete_tag(task, name);
             d.dispose();
         });
 

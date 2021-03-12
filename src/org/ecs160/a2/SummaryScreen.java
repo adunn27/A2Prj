@@ -95,8 +95,8 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDisplay() {
-        String dateHeader = dateToString(startDateFilter) + " - " +
-                            dateToString(endDateFilter);
+        String dateHeader = Utility.dateToFormattedString(startDateFilter) + " - " +
+                            Utility.dateToFormattedString(endDateFilter);
 
         FilterHeader = new Container(BoxLayout.y());
         TextObject startEndDates = new TextObject(
@@ -207,7 +207,7 @@ public class SummaryScreen extends Form {
             }
         }
     }
-    private void refreshFilterDialog() { // TODO: fix refresh speed
+    private void refreshFilterDialog() {
         FilterDialog.setTransitionOutAnimator(CommonTransitions.createEmpty());
         FilterDialog.dispose();
         createFilterDialog();
@@ -255,11 +255,20 @@ public class SummaryScreen extends Form {
         done.addActionListener(e -> {
             startDateFilter = startDate.getDate();
             endDateFilter = endDate.getDate();
-            show();
+            if (startDateFilter.compareTo(endDateFilter) > 0) {
+                new UIComponents.showWarningDialog(
+                        "Please set start date on or before end date"
+                );
+            } else {
+                show();
+            }
         });
 
-        TimePicker();
-        FilterDialog.add(timePicker);
+        startDate = new UIComponents.DatePickerObject(startDateFilter);
+        endDate = new UIComponents.DatePickerObject(endDateFilter);
+        UIComponents.StartEndPickers startEndPickers = new UIComponents.
+                StartEndPickers(startDate, endDate);
+        FilterDialog.add(startEndPickers);
         FilterDialog.add(sizeButtons);
 
         Container tagTitle = FlowLayout.encloseCenterMiddle();
@@ -278,11 +287,7 @@ public class SummaryScreen extends Form {
         startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
     }
-    private String dateToString(Date date) {
-        String pattern = "MM/dd/yy";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
-        return simpleDateFormat.format(date);
-    }
+
 
     // TODO: refactor
     private void updateSizeFilter(String size, boolean wasFilter) {
@@ -316,25 +321,5 @@ public class SummaryScreen extends Form {
 
             graphRow.add(c);
         }
-    }
-
-    private Picker createPicker(Date date) {
-        Picker datePicker = new Picker();
-        datePicker.setType(Display.PICKER_TYPE_CALENDAR);
-        datePicker.getStyle().setBorder(
-                RoundBorder.create().rectangle(true).color(COL_UNSELECTED));
-        datePicker.getStyle().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-        datePicker.getStyle().setPadding(PAD_3MM,PAD_3MM, PAD_3MM,PAD_3MM);
-        datePicker.setDate(date);
-        return datePicker;
-    }
-    private void TimePicker() {
-        timePicker = FlowLayout.encloseCenterMiddle();
-
-        startDate = createPicker(startDateFilter);
-        endDate = createPicker(endDateFilter);
-
-        timePicker.addAll(new Label("Start"), startDate,
-                          endDate, new Label("End"));
     }
 }
