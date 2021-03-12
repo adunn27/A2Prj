@@ -255,29 +255,6 @@ public class UIComponents {
         }
     }
 
-    // args: N/A
-    // used in: homeScreen, archivePage
-    static class SearchBoxObject extends Container {
-        public SearchBoxObject(){
-            setLayout(BoxLayout.xRight());
-            getAllStyles().setMarginLeft(100);
-            TextField searchBar = new TextField("", "search", 12, TextArea.ANY);
-            searchBar.getAllStyles().setBorder(
-                    RoundBorder.create().rectangle(true).color(COL_UNSELECTED)
-            );
-            searchBar.getAllStyles().setFgColor(BLACK);
-            add(searchBar);
-
-            Button filterButton = new Button("Filter");
-            filterButton.getAllStyles().setFgColor(BLACK);
-            filterButton.setIcon(FontImage.createMaterial(
-                    ICON_FILTER,
-                    filterButton.getUnselectedStyle()
-            ));
-            add(filterButton);
-        }
-    }
-
     // args: name, size, duration
     // used in: summaryScreen
     static class SummaryTaskObject extends Container {
