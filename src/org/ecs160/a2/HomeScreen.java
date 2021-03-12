@@ -81,9 +81,9 @@ public class HomeScreen extends Form{
         TaskMenu.setScrollableY(true);
 
         if (activeTask != null) {
-//            TextObject activeTitle = new TextObject(
-//                    "Now Playing", GREY, PAD_3MM, Font.SIZE_MEDIUM);
-//            TaskMenu.add(activeTitle);
+            TextObject activeTitle = new TextObject(
+                    "Now Playing", GREY, PAD_3MM, Font.SIZE_MEDIUM);
+            TaskMenu.add(activeTitle);
 
             TaskObject t = new TaskObject(activeTask, ui);
             TaskMenu.add(t);
@@ -91,9 +91,9 @@ public class HomeScreen extends Form{
         }
 
         if (!unarchivedTasks.isEmpty()) {
-//            TextObject inactiveTitle = new TextObject(
-//                    "My Tasks", GREY, PAD_3MM, Font.SIZE_MEDIUM);
-//            TaskMenu.add(inactiveTitle);
+            TextObject inactiveTitle = new TextObject(
+                    "My Tasks", GREY, PAD_3MM, Font.SIZE_MEDIUM);
+            TaskMenu.add(inactiveTitle);
         }
 
         for (Task taskObj: unarchivedTasks) {
