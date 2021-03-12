@@ -42,7 +42,6 @@ public class TaskDetailsScreen extends Form {
 
     long lastRenderedTime;
     private SpanLabel timeData;
-    boolean graphIsOpen;
 
     TaskDetailsScreen(Task task, UINavigator ui) {
         registerAnimated(this);
@@ -51,8 +50,6 @@ public class TaskDetailsScreen extends Form {
         this.ui = ui;
         lastRenderedTime = taskData.getTimeBetween(LocalDateTime.MIN,
                 LocalDateTime.MAX).toMillis();
-        graphIsOpen = false;
-
         resetStartEndDate();
         createDetailsScreen();
     }
@@ -76,14 +73,9 @@ public class TaskDetailsScreen extends Form {
         if (taskData.isActive() && oneSecondLater()) {
             lastRenderedTime = taskData.getTimeBetween(LocalDateTime.MIN,
                     LocalDateTime.MAX).toMillis();
-            if (graphIsOpen) {
-                log("graph is open");
-                refreshChartDialog();
-            } else
-                log("graph is not open");
-                timeData.setText(getStringTimeStats());
+            log("graph is not open");
+            timeData.setText(getStringTimeStats());
             return true;
-
         }
         return false;
     }
@@ -298,17 +290,12 @@ public class TaskDetailsScreen extends Form {
                 new UIComponents.showWarningDialog("Please select a start date before or on end date");
             else
                 refreshChartDialog();
-
         });
 
         // DONE BUTTON
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
         doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
-        doneButton.addActionListener(e -> {
-            log("closing graph");
-            graphIsOpen = false;
-            FilterDialog.dispose();
-        });
+        doneButton.addActionListener(e -> FilterDialog.dispose());
 
         // ADD TO FILTER
         TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
