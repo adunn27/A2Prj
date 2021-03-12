@@ -40,15 +40,26 @@ public class TaskDetailsScreen extends Form {
     private Task taskData;
     private UINavigator ui;
 
+    long lastRenderedTime;
+    private SpanLabel timeData;
+    boolean graphIsOpen;
+
     TaskDetailsScreen(Task task, UINavigator ui) {
+        registerAnimated(this);
+
         taskData =  task;
         this.ui = ui;
+        lastRenderedTime = taskData.getTimeBetween(LocalDateTime.MIN,
+                LocalDateTime.MAX).toMillis();
+        graphIsOpen = false;
+
         resetStartEndDate();
         createDetailsScreen();
     }
 
     @Override
     public void show() {
+        removeAll();
         createDetailsScreen();
         super.show();
     }
@@ -58,6 +69,30 @@ public class TaskDetailsScreen extends Form {
         createDetailsScreen();
         super.showBack();
     }
+
+
+    @Override
+    public boolean animate() {
+        if (taskData.isActive() && oneSecondLater()) {
+            lastRenderedTime = taskData.getTimeBetween(LocalDateTime.MIN,
+                    LocalDateTime.MAX).toMillis();
+            if (graphIsOpen) {
+                log("graph is open");
+                refreshChartDialog();
+            } else
+                log("graph is not open");
+                timeData.setText(getStringTimeStats());
+            return true;
+
+        }
+        return false;
+    }
+
+    private boolean oneSecondLater() {
+        return taskData.getTimeBetween(LocalDateTime.MIN, LocalDateTime.MAX)
+                .toMillis() / 1000 > lastRenderedTime / 1000;
+    }
+
 
     private void resetStartEndDate() {
         startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
@@ -94,9 +129,9 @@ public class TaskDetailsScreen extends Form {
             createDescRow();
             Body.add(titleRow);
             Body.add(timeRow);
+
             if (taskData.occurredBetween(LocalDateTime.MIN, LocalDateTime.MAX))
                 Body.add(graphRow);
-
 
             if (!taskData.getTags().isEmpty())
                 Body.add(tagRow);
@@ -175,6 +210,18 @@ public class TaskDetailsScreen extends Form {
         tagRow.add(tagTitle);
         tagRow.add(tagObject);
     }
+
+    private String getStringTimeStats() {
+        // times
+        allTime = taskData.getTotalTimeString();
+        weekTime = taskData.getTotalTimeThisWeekString();
+        dayTime = taskData.getTotalTimeTodayString();
+
+        return "All Time:\t" + allTime + "\n"+
+                "This Week:\t" + weekTime + "\n" +
+                "Today:\t" + dayTime;
+    }
+
     private void createTimeRow() {
         timeRow = new Container();
         timeRow.setLayout(BoxLayout.y());
@@ -183,45 +230,33 @@ public class TaskDetailsScreen extends Form {
         UIComponents.TitleObject timeTitle = new UIComponents.TitleObject("Time Elapsed");
         timeTitle.setSize(SIZE_SMALL);
 
-        // times
-        allTime = taskData.getTotalTimeString(); // end time?;
-        weekTime = taskData.getTotalTimeThisWeekString(); // end time?;
-        dayTime = taskData.getTotalTimeTodayString(); // end time?;
-
-        SpanLabel timeData = new SpanLabel(
-        "All Time:\t" + allTime + "\n"+
-            "This Week:\t" + weekTime + "\n" +
-            "Today:\t" + dayTime
-        );
-
+        timeData = new SpanLabel();
+        timeData.setText(getStringTimeStats());
         timeData.getTextAllStyles().setFgColor(UITheme.BLACK);
         timeData.getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
         timeData.getAllStyles().setMargin(Component.LEFT, UITheme.PAD_3MM);
 
         timeRow.add(timeTitle);
         timeRow.add(timeData);
+
+        getComponentForm().registerAnimated(timeRow);
+//        timeRow.animate();
     }
 
     // TODO: IMPLEMENT THIS
     private void createGraphRow() {
         graphRow = new Container(BoxLayout.y());
-
-//        TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
-//        ChartComponent c = graph.createLineChart();
-
-        //Transform chart component
-//        c.setTransform(Transform.makeScale(1f, 0.33f));
-
         UIComponents.ButtonObject dateButton = new UIComponents.ButtonObject();
         dateButton.setAllStyles("View activity chart", COL_SELECTED,
                 ICON_CHART, UITheme.PAD_3MM);
 
         dateButton.addActionListener(e->{
+            log("open graph");
+            graphIsOpen = true;
             createChartDialog();
             FilterDialog.show();
         });
 
-//        graphRow.addAll(c, dateButton);
         graphRow.add(dateButton);
 
     }
@@ -269,7 +304,11 @@ public class TaskDetailsScreen extends Form {
         // DONE BUTTON
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
         doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
-        doneButton.addActionListener(e -> FilterDialog.dispose());
+        doneButton.addActionListener(e -> {
+            log("closing graph");
+            graphIsOpen = false;
+            FilterDialog.dispose();
+        });
 
         // ADD TO FILTER
         TaskDetailsGraph graph = new TaskDetailsGraph(getGraphData());
