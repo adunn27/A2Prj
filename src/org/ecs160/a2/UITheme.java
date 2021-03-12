@@ -36,8 +36,6 @@ public class UITheme {
     public static final int PAD_6MM = 6;
     public static final int PAD_3MM = 3;
     public static final int PAD_1MM = 1;
-
-
     
     // icons
     public static final char ICON_REFRESH = FontImage.MATERIAL_REFRESH;
@@ -47,8 +45,9 @@ public class UITheme {
     public static final char ICON_BACK = FontImage.MATERIAL_ARROW_BACK;
     public static final char ICON_FORWARD = FontImage.MATERIAL_ARROW_FORWARD;
     public static final char ICON_HISTORY = FontImage.MATERIAL_HISTORY;
+    public static final char ICON_ARCHIVE_COLLECTION = FontImage.MATERIAL_INBOX;
     public static final char ICON_ARCHIVE = FontImage.MATERIAL_INBOX;
-    public static final char ICON_UNARCHIVE = FontImage.MATERIAL_FAVORITE;
+    public static final char ICON_UNARCHIVE = FontImage.MATERIAL_UNARCHIVE;
     public static final char ICON_SAVE = FontImage.MATERIAL_DONE;
     public static final char ICON_FILTER = FontImage.MATERIAL_FILTER_LIST;
     public static final char ICON_DELETE = FontImage.MATERIAL_DELETE;

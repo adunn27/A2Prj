@@ -59,7 +59,7 @@ public class UINavigator {
 
     public void goArchive() {
         previousForm.push(Display.getInstance().getCurrent());
-        (new ArchiveScreen(this)).show();
+        (new ArchiveScreen(this)).showBack();
     }
 
     public void goHistory(String taskName) {

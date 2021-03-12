@@ -24,13 +24,13 @@ public class ArchiveScreen extends Form {
     @Override
     public void show() {
         createArchiveScreen();
-        super.showBack();
+        super.show();
     }
 
     @Override
     public void showBack() {
         createArchiveScreen();
-        super.show();
+        super.showBack();
     }
 
     public void createArchiveScreen() {

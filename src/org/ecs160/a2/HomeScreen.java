@@ -59,7 +59,7 @@ public class HomeScreen extends Form{
         summary.addActionListener(e-> ui.goSummary());
 
         ButtonObject archived = new ButtonObject();
-        archived.setAllStyles("", COL_SELECTED, ICON_ARCHIVE, PAD_3MM);
+        archived.setAllStyles("", COL_SELECTED, ICON_ARCHIVE_COLLECTION, PAD_3MM);
         archived.addActionListener(e-> {
             if (ui.backend.getArchivedTasks().isEmpty())
                 showWarning(archived, "No tasks are archived");
