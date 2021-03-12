@@ -88,7 +88,6 @@ public class TaskContainer implements Iterable<Task>{
                 Utility.getEndOfDay(stop)));
     }
 
-
     public TaskContainer filter(Predicate<Task> selector) {
         Set<Task> filteredSet = taskSet.stream()
                 .filter(selector)
@@ -104,6 +103,7 @@ public class TaskContainer implements Iterable<Task>{
                 .mapToLong(Duration::toMillis)
                 .summaryStatistics();
     }
+
     public Long getTotalTime(LocalDateTime start, LocalDateTime stop) {
 
         LongSummaryStatistics stats = getTimeStatistics(start, stop);

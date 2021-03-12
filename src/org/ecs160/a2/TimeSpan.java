@@ -34,11 +34,6 @@ public class TimeSpan {
         return startTime.format(Utility.timeFormatter12hr);
     }
 
-    public String getEndTimeAsString(){
-        assert (endTime != null): "Time Span is still active!";
-        return endTime.format(Utility.timeFormatter12hr);
-    }
-
     public Duration getTimeSpanDuration(){
         if (endTime == null)
             return Duration.between(startTime, LocalDateTime.now());
@@ -56,32 +51,39 @@ public class TimeSpan {
     public Duration getTimeSpanDurationBetween(LocalDateTime startOfTimeWindow,
                                                LocalDateTime endOfTimeWindow){
 
+        LocalDateTime trueStartTime =
+                findConstrictingLowerBoundOfWindow(startOfTimeWindow);
+
+        LocalDateTime trueEndTime =
+                findConstrictingUperBoundOfWindow(endOfTimeWindow);
+
+        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
+        // Need to check if the timeframe was outside
+        if (timeBetween.isNegative()) return Duration.ofMillis(0);
+        return timeBetween;
+    }
+
+    private LocalDateTime findConstrictingLowerBoundOfWindow(
+            LocalDateTime startOfTimeWindow) {
         LocalDateTime trueStartTime = startOfTimeWindow;
         if (startTime.isAfter(startOfTimeWindow))
             trueStartTime = startTime;
+        return trueStartTime;
+    }
 
-        LocalDateTime tempEndTime = getEndTimeElseNow();
+    private LocalDateTime findConstrictingUperBoundOfWindow(
+            LocalDateTime endOfTimeWindow) {
         LocalDateTime trueEndTime = endOfTimeWindow;
+        LocalDateTime tempEndTime = getEndTimeElseNow();
         if (tempEndTime.isBefore(endOfTimeWindow))
             trueEndTime = tempEndTime;
-
-        Duration timeBetween = Duration.between(trueStartTime, trueEndTime);
-
-        // Need to check if the timeframe was outside
-        if (timeBetween.isNegative()) return Duration.ofMillis(0);
-        return Duration.between(trueStartTime, trueEndTime);
+        return trueEndTime;
     }
 
     private LocalDateTime getEndTimeElseNow() {
         if (endTime == null)
             return LocalDateTime.now();
         return endTime;
-    }
-
-    public static void main(String[] args){
-        LocalDateTime start = LocalDateTime.now().minusSeconds(5);
-        LocalDateTime end = LocalDateTime.of(2021,2,21,3,0);
-        TimeSpan span = new TimeSpan(start);
     }
 }
 
