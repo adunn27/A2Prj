@@ -6,8 +6,6 @@ import com.codename1.ui.Form;
 import java.util.ArrayDeque;
 import java.util.Deque;
 
-import static com.codename1.ui.CN.log;
-
 public class UINavigator {
     public BusinessLogic backend;
     private final Deque<Form> previousForm;
