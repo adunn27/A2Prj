@@ -47,9 +47,12 @@ public class LogFile {
                 line++;
                 String data = myReader.readLine();
                 String[] split = data.split(Pattern.quote(LOG_DELIMITER));
+                for (int i = 0; i < split.length; i++) {
+                    split[i]= decode(split[i]);
+                }
                 executeLogLine(split);
             }
-        } catch (IOException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
             System.out.println("An error occurred in log on line " + line);
             throw e;
         }
@@ -66,7 +69,8 @@ public class LogFile {
             System.out.println("Storage has created");
             os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
         } else {
-            InputStream tempIn = Storage.getInstance().createInputStream(LOG_FILE_NAME);
+            InputStream tempIn =
+                    Storage.getInstance().createInputStream(LOG_FILE_NAME);
             String readBack = Util.readToString(tempIn, "UTF-8");
             tempIn.close();
             os = Storage.getInstance().createOutputStream(LOG_FILE_NAME);
@@ -209,7 +213,7 @@ public class LogFile {
     }
 
     public void edit_time (Task task, int timeSpanIndex,
-                           LocalDateTime newStartTime,LocalDateTime newEndTime){
+                       LocalDateTime newStartTime,LocalDateTime newEndTime){
         String formatNewStartTime =
                 newStartTime.format(Utility.timeFormatter24hr);
         String formatNewEndTime =
@@ -246,7 +250,12 @@ public class LogFile {
     }
 
     private String encode(String str) {
-        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE);
+        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE)
+                .replace("\n", "\\n");
+    }
+
+    private String decode(String str) {
+        return str.replace("\\n", "\n");
     }
 
     private void writeToLog(String output) {

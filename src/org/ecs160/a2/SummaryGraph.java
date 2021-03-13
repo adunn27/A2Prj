@@ -8,13 +8,14 @@ import com.codename1.charts.util.ColorUtil;
 import com.codename1.charts.views.PieChart;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Random;
 
 public class SummaryGraph{
 
-    private TimeSpan summaryPeriod;
-    private TaskContainer taskSet;
+    private final TimeSpan summaryPeriod;
+    private final TaskContainer taskSet;
     public SummaryGraph(TaskContainer tasks, TimeSpan timeSpan){
         this.taskSet = tasks;
         this.summaryPeriod = timeSpan;
@@ -33,7 +34,8 @@ public class SummaryGraph{
         return renderer;
     }
 
-    protected CategorySeries buildCategoryDataset(String title, double[] times, TaskContainer taskSet) {
+    protected CategorySeries buildCategoryDataset(String title, double[] times,
+                                                  TaskContainer taskSet) {
         CategorySeries series = new CategorySeries(title);
         Iterator<Task> it = taskSet.iterator();
         for (double time : times) {
@@ -52,11 +54,10 @@ public class SummaryGraph{
         DefaultRenderer renderer = buildCategoryRenderer(colors);
         renderer.setShowLabels(true);
         renderer.setShowLegend(false);
-        SimpleSeriesRenderer r = renderer.getSeriesRendererAt(0);
 
-        PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown", setTimes, taskSet), renderer);
-        ChartComponent c = new ChartComponent(chart);
-        return c;
+        PieChart chart = new PieChart(buildCategoryDataset("Time Breakdown",
+                                                  setTimes, taskSet), renderer);
+        return new ChartComponent(chart);
     }
 
     private int[] getColorArray(int numTasks) {
@@ -71,35 +72,24 @@ public class SummaryGraph{
         }
         return allColors;
     }
-    private int[] doubleColorArray(int[] allColors){
-        ArrayList<Integer> result = new ArrayList<Integer>(allColors.length);
-        for(int i = 0; i <allColors.length; i++){
-            result.add(allColors[i]);
-        }
-        int[] result_array = new int[result.size()];
-        for(int i = 0; i < result.size(); i++){
-            result_array[i] = result.get(i).intValue();
-        }
-        return result_array;
-    }
+
     private double[] getSetTimes(TaskContainer taskSet) {
         Iterator<Task> it = taskSet.iterator();
-        ArrayList<Double> timeSet = new ArrayList<Double>();
+        ArrayList<Double> timeSet = new ArrayList<>();
         while(it.hasNext()){
             double totalTime = getTotalTimeInPeriod(it.next());
             timeSet.add(totalTime);
         }
         double[] result = new double[timeSet.size()];
         for(int i = 0; i < result.length; i++){
-            result[i] = timeSet.get(i).doubleValue();
+            result[i] = timeSet.get(i);
         }
         return result;
     }
 
     private double getTotalTimeInPeriod(Task t) {
-        double total = 0;
-        Duration d = t.getTimeBetween(summaryPeriod.getStartTime(), summaryPeriod.getEndTime());
-        total = (double)(d.toMillis() / 1000);
-        return total;
+        Duration d = t.getTimeBetween(summaryPeriod.getStartTime(),
+                                      summaryPeriod.getEndTime());
+        return (double)(d.toMillis() / 1000);
     }
 }

@@ -7,17 +7,16 @@ import com.codename1.charts.models.XYSeries;
 import com.codename1.charts.renderers.XYMultipleSeriesRenderer;
 import com.codename1.charts.renderers.XYSeriesRenderer;
 import com.codename1.charts.views.PointStyle;
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Component;
-import com.codename1.ui.Form;
-import com.codename1.ui.Transform;
+
 import java.util.ArrayList;
 import java.util.List;
-import com.codename1.charts.util.ColorUtil;
+
 public class TaskDetailsGraph {
-    private double[] dailyTimes;
-    private int numberOfDays;
+    private final double[] dailyTimes;
+    private final int numberOfDays;
     private double maxDailyTime;
-    private double minDailyTime;
 
     TaskDetailsGraph(double[] times) {
         dailyTimes = convertTimesToSeconds(times);
@@ -42,7 +41,6 @@ public class TaskDetailsGraph {
             if(time > max)
                 max = time;
         }
-        minDailyTime = min;
         maxDailyTime = max;
     }
 
@@ -83,14 +81,15 @@ public class TaskDetailsGraph {
     }
 
 
-    XYMultipleSeriesDataset buildDataset(String[] titles, List<double[]> xValues,
+    XYMultipleSeriesDataset buildDataset(String[] titles,
+                                         List<double[]> xValues,
                                          List<double[]> yValues) {
         XYMultipleSeriesDataset dataset = new XYMultipleSeriesDataset();
         addXYSeries(dataset, titles, xValues, yValues);
         return dataset;
     }
-    void addXYSeries(XYMultipleSeriesDataset dataset, String[] titles, List<double[]> xValues,
-                     List<double[]> yValues) {
+    void addXYSeries(XYMultipleSeriesDataset dataset, String[] titles,
+                     List<double[]> xValues, List<double[]> yValues) {
 
             XYSeries series = new XYSeries(titles[0], 0);
             double[] xV = xValues.get(0);
@@ -102,10 +101,10 @@ public class TaskDetailsGraph {
             dataset.addSeries(series);
     }
     private List<double[]> createXValues(){
-        List<double[]> xValues = new ArrayList<double[]>();
+        List<double[]> xValues = new ArrayList<>();
         double[] days = new double[numberOfDays];
-        for(int i = 0; i<numberOfDays; i++){
-            days[i] = (double)i;
+        for(int i = 0; i< numberOfDays; i++){
+            days[i] = i;
         }
         xValues.add(days);
         return xValues;
@@ -116,7 +115,7 @@ public class TaskDetailsGraph {
 
         //random double arrays to test
         List<double[]> x = createXValues();
-        List<double[]> y = new ArrayList<double[]>();
+        List<double[]> y = new ArrayList<>();
         y.add(dailyTimes);
 
         XYMultipleSeriesRenderer renderer = buildRenderer();
@@ -131,10 +130,7 @@ public class TaskDetailsGraph {
         XYMultipleSeriesDataset dataset = buildDataset(titles, x, y);
 
         LineChart chart = new LineChart(dataset, renderer);
-        //chart.
-        ChartComponent c = new ChartComponent(chart);
-
-        return c;
+        return new ChartComponent(chart);
 
     }
 

@@ -1,14 +1,11 @@
 package org.ecs160.a2;
 
 import com.codename1.charts.ChartComponent;
-import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.RoundBorder;
-import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
 import java.text.DateFormat;
@@ -24,15 +21,13 @@ import static org.ecs160.a2.UIComponents.*;
 
 
 public class SummaryScreen extends Form {
-    Container Header;
-    Container FilterHeader;
-    Container TaskList;
-    Container StatsList;
-    Container graphRow;
-    Container timePicker;
-    Picker startDate;
-    Picker endDate;
-    Dialog FilterDialog;
+    private Container FilterHeader;
+    private Container TaskList;
+    private Container StatsList;
+    private Container graphRow;
+    private Picker startDate;
+    private Picker endDate;
+    private Dialog FilterDialog;
 
     // FILTERS
     private java.util.List<String> sizeFilters;
@@ -54,11 +49,10 @@ public class SummaryScreen extends Form {
     }
 
     private void initializeDataAndFilters() {
-        sizeData = new ArrayList<>(); // TODO: fix sizeData initialization
-        sizeData.add("S");
-        sizeData.add("M");
-        sizeData.add("L");
-        sizeData.add("XL");
+        sizeData = new ArrayList<>();
+        for (TaskSize ts: TaskSize.values()) {
+            sizeData.add(ts.toString());
+        }
         tagData = ui.backend.getAllTags();
 
         resetFilters();
@@ -95,8 +89,8 @@ public class SummaryScreen extends Form {
     }
 
     private void createFilterDisplay() {
-        String dateHeader = Utility.dateToFormattedString(startDateFilter) + " - " +
-                            Utility.dateToFormattedString(endDateFilter);
+        String dateHeader = Utility.dateToFormattedString(startDateFilter)
+                 + " - " +  Utility.dateToFormattedString(endDateFilter);
 
         FilterHeader = new Container(BoxLayout.y());
         TextObject startEndDates = new TextObject(
@@ -124,7 +118,8 @@ public class SummaryScreen extends Form {
         filteredTaskData = ui.backend.getUnarchivedTasks();
 
         for (String size : sizeFilters) {
-            filteredTaskData = filteredTaskData.getTasksBySize(TaskSize.parse(size));
+            filteredTaskData = filteredTaskData.getTasksBySize(
+                                                        TaskSize.parse(size));
         }
 
         for (String tag : tagFilters) {
@@ -149,7 +144,8 @@ public class SummaryScreen extends Form {
 
     private void createStatsList() {
         StatsList = new Container(BoxLayout.y());
-        TextObject statTitle = new TextObject("Stats", GREY, PAD_3MM, SIZE_LARGE);
+        TextObject statTitle = new TextObject("Stats", GREY,
+                                               PAD_3MM, SIZE_LARGE);
         StatsList.add(statTitle);
         LocalDateTime startTime = Utility.getStartOfDay(
                 Utility.convertToLocalDate(startDateFilter));
@@ -181,16 +177,16 @@ public class SummaryScreen extends Form {
 
         StatsList.addAll(total,average,minimum,maximum);
     }
-    private String formatDuration(long dur) {
+    private String formatDuration(long dur) { //TODO Dry violation
         Date date = new Date(dur);
         DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
         formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
-        String dateFormatted = formatter.format(date);
-        return dateFormatted;
+        return formatter.format(date);
     }
     private void createTaskList() {
         TaskList = new Container(BoxLayout.y());
-        TextObject taskTitle = new TextObject("Tasks", GREY, PAD_3MM,SIZE_LARGE);
+        TextObject taskTitle = new TextObject("Tasks", GREY,
+                                              PAD_3MM, SIZE_LARGE);
 
         LocalDateTime startTime = Utility.getStartOfDay( //TODO Dry violation
                 Utility.convertToLocalDate(startDateFilter));
@@ -203,7 +199,8 @@ public class SummaryScreen extends Form {
         } else {
             TaskList.add(taskTitle);
             for (Task taskObj : filteredTaskData) {
-                TaskList.add(new SummaryTaskObject(taskObj, startTime, endTime, ui));
+                TaskList.add(new SummaryTaskObject(taskObj, startTime,
+                                                    endTime, ui));
             }
         }
     }
@@ -236,15 +233,14 @@ public class SummaryScreen extends Form {
             if (tagFilters.contains(tag))
                 tagButton.setSelectedColor();
 
-            tagButton.addActionListener(e->{
-                updateTagsFilter(tag, tagFilters.contains(tag));
-            });
+            tagButton.addActionListener(e-> updateTagsFilter(tag,
+                                                   tagFilters.contains(tag)));
 
             tagButtons.add(tagButton);
         }
 
         ButtonObject reset = new ButtonObject();
-        reset.setAllStyles("Reset",COL_UNSELECTED,' ',PAD_3MM);
+        reset.setAllStyles("Reset",COL_UNSELECTED,' ', PAD_3MM);
         reset.addActionListener(e -> {
             resetFilters();
             refreshFilterDialog();
@@ -284,7 +280,7 @@ public class SummaryScreen extends Form {
     private void resetFilters() {
         sizeFilters = new ArrayList<>();
         tagFilters = new ArrayList<>();
-        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
+        startDateFilter =Utility.convertToDate(Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
     }
 
@@ -313,10 +309,13 @@ public class SummaryScreen extends Form {
         graphRow = new Container(BoxLayout.y());
 
         if(filteredTaskData.getNumberOfTasks() > 0) {
-            TimeSpan summaryPeriod = new TimeSpan(Utility.convertToLocalDateTime(startDateFilter));
-            summaryPeriod.setEndTime(Utility.convertToLocalDateTime(endDateFilter));
+            TimeSpan summaryPeriod = new TimeSpan(
+                    Utility.convertToLocalDateTime(startDateFilter));
+            summaryPeriod.setEndTime(
+                    Utility.convertToLocalDateTime(endDateFilter));
 
-            SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData, summaryPeriod);
+            SummaryGraph summaryGraph = new SummaryGraph(filteredTaskData,
+                                                         summaryPeriod);
             ChartComponent c = summaryGraph.createPieChart();
 
             graphRow.add(c);

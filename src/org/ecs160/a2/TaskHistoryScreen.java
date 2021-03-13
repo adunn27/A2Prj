@@ -12,17 +12,21 @@ import com.codename1.ui.spinner.Picker;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 
 class HistoryTaskObject1 extends Container {
     public HistoryTaskObject1(String startTime, String stopTime,
-                              String startDate, String stopDate, Duration totalDuration){
+                              String startDate, String stopDate,
+                              Duration totalDuration){
         setLayout(new BorderLayout());
 
-        String durationHours = String.format("%02d",totalDuration.toHours());
-        String durationMinutes = String.format("%02d",totalDuration.toMinutes()%60);
-        String durationSeconds = String.format("%02d",totalDuration.toSeconds()%60);
+        String durationHours = String.format("%02d", totalDuration.toHours());
+        String durationMinutes = String.format("%02d",
+                totalDuration.toMinutes() % 60);
+        String durationSeconds = String.format("%02d",
+                totalDuration.toSeconds() % 60);
 
         Container LeftContainer = new Container();
         LeftContainer.setLayout(BoxLayout.y());
@@ -30,11 +34,14 @@ class HistoryTaskObject1 extends Container {
         Border simpleBorder = Border.createLineBorder(1,UITheme.BLACK);
         getAllStyles().setBorder(simpleBorder);
 
-        Label startDateLabel = new Label("Start: " + startDate + " " + startTime);
-        Label stopDateLabel = new Label("Stop: " + stopDate + " " + stopTime);
-        Label durationLabel = new Label("Duration: " + durationHours + ":"
-                + durationMinutes + ":"
-                + durationSeconds);
+        Label startDateLabel = new Label("Start: " + startDate
+                                          + " " + startTime);
+        Label stopDateLabel = new Label("Stop: " + stopDate
+                                        + " " + stopTime);
+        Label durationLabel = new Label("Duration: "
+                                        + durationHours + ":"
+                                        + durationMinutes + ":"
+                                        + durationSeconds);
 
         LeftContainer.add(startDateLabel);
         LeftContainer.add(stopDateLabel);
@@ -106,28 +113,32 @@ public class TaskHistoryScreen extends Form {
             LocalDateTime endTime = thisTimeSpan.getEndTimeAsDate();
             String endTimeString = endTime.format(timeFormatter);
 
-            HistoryTaskObject1 newHTO = new HistoryTaskObject1(startTimeString, endTimeString,
-                    startTime.format(dateFormatter), endTime.format(dateFormatter),
-                    thisTimeSpan.getTimeSpanDuration());
+            HistoryTaskObject1 newHTO = new HistoryTaskObject1(
+                                        startTimeString, endTimeString,
+                                        startTime.format(dateFormatter),
+                                        endTime.format(dateFormatter),
+                                        thisTimeSpan.getTimeSpanDuration());
 
-            UIComponents.ButtonObject editButton = new UIComponents.ButtonObject();
+            UIComponents.ButtonObject editButton =
+                                    new UIComponents.ButtonObject();
             editButton.setMyIcon(FontImage.MATERIAL_MODE_EDIT);
             editButton.setMyColor(UITheme.LIGHT_GREY);
-            editButton.addActionListener(e -> EditTask(thisTimeSpan, newHTO));
+            editButton.addActionListener(e -> EditTask(thisTimeSpan));
 
-            UIComponents.ButtonObject calendarButton = new UIComponents.ButtonObject();
+            UIComponents.ButtonObject calendarButton =
+                                    new UIComponents.ButtonObject();
             calendarButton.setMyIcon(FontImage.MATERIAL_PERM_CONTACT_CALENDAR);
             calendarButton.setMyColor(UITheme.LIGHT_GREY);
 
-            calendarButton.addActionListener(e -> EditTask(thisTimeSpan, newHTO));
+            calendarButton.addActionListener(e -> EditTask(thisTimeSpan));
 
-            UIComponents.ButtonObject deleteButton = new UIComponents.ButtonObject();
+            UIComponents.ButtonObject deleteButton =
+                                    new UIComponents.ButtonObject();
             deleteButton.setMyIcon(FontImage.MATERIAL_DELETE);
           
             deleteButton.setMyColor(RED);
-            deleteButton.addActionListener(e -> {
-                DeleteTimeSpan(thisTimeSpan, newHTO);
-            });
+            deleteButton.addActionListener(e ->
+                    DeleteTimeSpan(thisTimeSpan, newHTO));
 
             Container RightContainer = new Container(BoxLayout.y());
             RightContainer.add(editButton);
@@ -137,28 +148,27 @@ public class TaskHistoryScreen extends Form {
         }
     }
 
-    private void DeleteTimeSpan(TimeSpan deletedTimeSpan, Component deletedComponent) {
+    private void DeleteTimeSpan(TimeSpan deletedTimeSpan,
+                                Component deletedComponent) {
         Dialog d = new Dialog();
         d.setLayout(BoxLayout.y());
         d.add("Are you sure you want to delete?");
 
-        UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
+        UIComponents.ButtonObject cancelButton =
+                                        new UIComponents.ButtonObject();
         cancelButton.setMyText("Yes");
         cancelButton.setMyColor(RED);
         cancelButton.addActionListener(e -> {
-            //TODO add delete code right here
             ui.backend.removeTimeSpan(taskData, deletedTimeSpan);
             TaskList.removeComponent(deletedComponent);
             d.dispose();
-
         });
 
-        UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
+        UIComponents.ButtonObject submitButton =
+                                        new UIComponents.ButtonObject();
         submitButton.setMyText("No");
         submitButton.setMyColor(COL_UNSELECTED);
-        submitButton.addActionListener(e -> {
-            d.dispose();
-        });
+        submitButton.addActionListener(e -> d.dispose());
 
         d.add(cancelButton);
         d.add(submitButton);
@@ -166,7 +176,7 @@ public class TaskHistoryScreen extends Form {
         d.show();
     }
 
-    private void EditTask(TimeSpan editedTimeSpan, Component editedComponent) {
+    private void EditTask(TimeSpan editedTimeSpan) {
         Dialog PopupDialog = new Dialog();
         PopupDialog.setLayout(BoxLayout.y());
 
@@ -178,8 +188,10 @@ public class TaskHistoryScreen extends Form {
 
         LocalDateTime initStartDate = editedTimeSpan.getStartTimeAsDate();
         LocalDateTime initEndDate = editedTimeSpan.getEndTimeAsDate();
-        Date StartDate = Date.from(initStartDate.atZone(ZoneId.systemDefault()).toInstant());
-        Date EndDate = Date.from(initEndDate.atZone(ZoneId.systemDefault()).toInstant());
+        Date StartDate = Date.from(
+                initStartDate.atZone(ZoneId.systemDefault()).toInstant());
+        Date EndDate = Date.from(
+                initEndDate.atZone(ZoneId.systemDefault()).toInstant());
 
         Container startContainer = BoxLayout.encloseXCenter();
         Container endContainer = BoxLayout.encloseXCenter();
@@ -196,7 +208,8 @@ public class TaskHistoryScreen extends Form {
         Picker startTimePicker = new Picker();
         startTimePicker.setMinuteStep(1);
         startTimePicker.setType(Display.PICKER_TYPE_TIME);
-        startTimePicker.setTime(StartDate.getHours(), StartDate.getMinutes());
+        startTimePicker.setTime(getHoursFromDate(StartDate),
+                                getMinutesFromDate(StartDate));
         startTimePicker.setShowMeridiem(true);
         startTimePicker.setMinuteStep(1);
         startContainer.add(startTimePicker);
@@ -213,7 +226,8 @@ public class TaskHistoryScreen extends Form {
         Picker endTimePicker = new Picker();
         endTimePicker.setMinuteStep(1);
         endTimePicker.setType(Display.PICKER_TYPE_TIME);
-        endTimePicker.setTime(EndDate.getHours(), EndDate.getMinutes());
+        endTimePicker.setTime(getHoursFromDate(EndDate),
+                              getMinutesFromDate(EndDate));
         endTimePicker.setShowMeridiem(true);
         endTimePicker.setMinuteStep(1);
         endContainer.add(endTimePicker);
@@ -222,11 +236,9 @@ public class TaskHistoryScreen extends Form {
         UIComponents.ButtonObject cancelButton = new UIComponents.ButtonObject();
         cancelButton.setMyText("Cancel");
         cancelButton.setMyColor(UITheme.LIGHT_GREY);
-        cancelButton.addActionListener(e -> {
-            PopupDialog.dispose();
-        });
+        cancelButton.addActionListener(e -> PopupDialog.dispose());
 
-        UIComponents.ButtonObject submitButton = new UIComponents.ButtonObject();
+        UIComponents.ButtonObject submitButton =new UIComponents.ButtonObject();
         submitButton.setMyText("Submit");
         submitButton.setMyColor(UITheme.LIGHT_YELLOW);
         submitButton.addActionListener(e -> {
@@ -244,12 +256,11 @@ public class TaskHistoryScreen extends Form {
 
                 warningDialog.setLayout(BoxLayout.y());
                 warningDialog.add("You can't have a negative duration!");
-                UIComponents.ButtonObject button = new UIComponents.ButtonObject();
+                UIComponents.ButtonObject button =
+                                        new UIComponents.ButtonObject();
                 button.setMyText("OK");
                 button.setMyColor(UITheme.LIGHT_YELLOW);
-                button.addActionListener(event -> {
-                    newDialog.dispose();
-                });
+                button.addActionListener(event -> newDialog.dispose());
                 warningDialog.add(button);
                 newDialog.add(warningDialog);
                 newDialog.show();
@@ -268,6 +279,18 @@ public class TaskHistoryScreen extends Form {
         PopupDialog.add(d);
 
         PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
+    }
+
+    private int getMinutesFromDate(Date date) {
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        return cd.get(Calendar.MINUTE);
+    }
+
+    private int getHoursFromDate(Date date) {
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        return cd.get(Calendar.HOUR_OF_DAY);
     }
 
     private LocalDateTime getTimeFromPickers(Picker datePicker,

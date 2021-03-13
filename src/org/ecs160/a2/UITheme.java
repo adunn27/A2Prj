@@ -1,5 +1,4 @@
 package org.ecs160.a2;
-import com.codename1.ui.*;
 
 import com.codename1.ui.FontImage;
 
