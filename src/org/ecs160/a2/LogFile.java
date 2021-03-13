@@ -47,9 +47,12 @@ public class LogFile {
                 line++;
                 String data = myReader.readLine();
                 String[] split = data.split(Pattern.quote(LOG_DELIMITER));
+                for (int i = 0; i < split.length; i++) {
+                    split[i]= decode(split[i]);
+                }
                 executeLogLine(split);
             }
-        } catch (IOException e) {
+        } catch (IOException | ArrayIndexOutOfBoundsException e) {
             System.out.println("An error occurred in log on line " + line);
             throw e;
         }
@@ -247,7 +250,12 @@ public class LogFile {
     }
 
     private String encode(String str) {
-        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE);
+        return str.replace(LOG_DELIMITER, LOG_DELIMITER_REPLACE)
+                .replace("\n", "\\n");
+    }
+
+    private String decode(String str) {
+        return str.replace("\\n", "\n");
     }
 
     private void writeToLog(String output) {
