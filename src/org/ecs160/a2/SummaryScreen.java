@@ -21,13 +21,13 @@ import static org.ecs160.a2.UIComponents.*;
 
 
 public class SummaryScreen extends Form {
-    Container FilterHeader;
-    Container TaskList;
-    Container StatsList;
-    Container graphRow;
-    Picker startDate;
-    Picker endDate;
-    Dialog FilterDialog;
+    private Container FilterHeader;
+    private Container TaskList;
+    private Container StatsList;
+    private Container graphRow;
+    private Picker startDate;
+    private Picker endDate;
+    private Dialog FilterDialog;
 
     // FILTERS
     private java.util.List<String> sizeFilters;
