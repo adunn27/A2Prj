@@ -207,13 +207,16 @@ public class UIComponents {
 
             // OPTIONS container
             ButtonObject edit = new ButtonObject();
-            edit.setAllStyles("", COL_SELECTED, FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
+            edit.setAllStyles("", COL_SELECTED,
+                    FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
             edit.addActionListener(e->{ui.goEdit(taskData.getName());});
 
             ButtonObject archive = new ButtonObject();
-            archive.setAllStyles("", COL_UNSELECTED,ICON_ARCHIVE,PAD_3MM);
+            archive.setAllStyles("",
+                    COL_UNSELECTED,ICON_ARCHIVE,PAD_3MM);
             if (taskData.isArchived())
-                archive.setAllStyles("", COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
+                archive.setAllStyles("",
+                        COL_UNSELECTED,ICON_UNARCHIVE,PAD_3MM);
 
             archive.addActionListener(e->{
                 if (taskData.isArchived()) {
@@ -224,16 +227,17 @@ public class UIComponents {
                     Dialog areYouSure = new Dialog(BoxLayout.y());
                     areYouSure.add("Archive this currently running task?");
                     ButtonObject yesB = new ButtonObject();
-                    yesB.setAllStyles("Yes", COL_UNSELECTED,  ' ',PAD_3MM);
+                    yesB.setAllStyles("Yes", COL_UNSELECTED,' ',PAD_3MM);
                     yesB.addActionListener(yes -> {
                         ui.backend.archiveTask(taskData);
-                        areYouSure.setTransitionOutAnimator(CommonTransitions.createEmpty());
+                        areYouSure.setTransitionOutAnimator(
+                                        CommonTransitions.createEmpty());
                         areYouSure.dispose();
                         ui.refreshScreen();
                     });
 
                     ButtonObject noB = new ButtonObject();
-                    noB.setAllStyles("Cancel", COL_SELECTED,  ' ',PAD_3MM);
+                    noB.setAllStyles("Cancel", COL_SELECTED,' ',PAD_3MM);
                     noB.addActionListener(cancel -> areYouSure.dispose());
 
 
@@ -249,7 +253,8 @@ public class UIComponents {
             options.addAll(edit, archive);
 
             // taskPanel: TASK + OPTIONS
-            SwipeableContainer taskPanel = new SwipeableContainer(options, taskContainer);
+            SwipeableContainer taskPanel =
+                            new SwipeableContainer(options, taskContainer);
             add(taskPanel);
             getAllStyles().setMarginUnit(Style.UNIT_TYPE_DIPS);
             getAllStyles().setMargin(PAD_1MM,PAD_1MM,PAD_1MM,PAD_1MM);
@@ -278,7 +283,7 @@ public class UIComponents {
         @Override
         public boolean animate() {
             taskContainer.setTextLine2(taskData.getTotalTimeString());
-            return true; //TODO what does this mean
+            return true;
         }
     }
 
@@ -305,7 +310,7 @@ public class UIComponents {
             // right side (time)
             Label durationLabel = new Label(
                     Utility.durationToFormattedString(
-                            taskObj.getTimeBetween(startTime, endTime)));//TODO need to restrict by time
+                            taskObj.getTimeBetween(startTime, endTime)));
 
             add(BorderLayout.WEST, leftContainer);
             add(BorderLayout.EAST, durationLabel);
@@ -337,7 +342,8 @@ public class UIComponents {
             UIComponents.ButtonObject Edit = new UIComponents.ButtonObject();
             Delete.setAllStyles("", RED, ICON_EDIT, PAD_3MM);
             Edit.setMyIcon(FontImage.MATERIAL_EDIT);
-            Edit.getAllStyles().setBorder(RoundBorder.create().rectangle(true).color(COL_UNSELECTED));
+            Edit.getAllStyles().setBorder(RoundBorder.create()
+                                       .rectangle(true).color(COL_UNSELECTED));
 
             Container EastSide = new Container(BoxLayout.x());
 
