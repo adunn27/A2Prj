@@ -12,6 +12,7 @@ import com.codename1.ui.spinner.Picker;
 
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -207,7 +208,8 @@ public class TaskHistoryScreen extends Form {
         Picker startTimePicker = new Picker();
         startTimePicker.setMinuteStep(1);
         startTimePicker.setType(Display.PICKER_TYPE_TIME);
-        startTimePicker.setTime(StartDate.getHours(), StartDate.getMinutes());
+        startTimePicker.setTime(getHoursFromDate(StartDate),
+                                getMinutesFromDate(StartDate));
         startTimePicker.setShowMeridiem(true);
         startTimePicker.setMinuteStep(1);
         startContainer.add(startTimePicker);
@@ -224,7 +226,8 @@ public class TaskHistoryScreen extends Form {
         Picker endTimePicker = new Picker();
         endTimePicker.setMinuteStep(1);
         endTimePicker.setType(Display.PICKER_TYPE_TIME);
-        endTimePicker.setTime(EndDate.getHours(), EndDate.getMinutes());
+        endTimePicker.setTime(getHoursFromDate(EndDate),
+                              getMinutesFromDate(EndDate));
         endTimePicker.setShowMeridiem(true);
         endTimePicker.setMinuteStep(1);
         endContainer.add(endTimePicker);
@@ -276,6 +279,18 @@ public class TaskHistoryScreen extends Form {
         PopupDialog.add(d);
 
         PopupDialog.show(h/8 * 2, h/8 * 3, w / 8, w / 8);
+    }
+
+    private int getMinutesFromDate(Date date) {
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        return cd.get(Calendar.MINUTE);
+    }
+
+    private int getHoursFromDate(Date date) {
+        Calendar cd = Calendar.getInstance();
+        cd.setTime(date);
+        return cd.get(Calendar.HOUR_OF_DAY);
     }
 
     private LocalDateTime getTimeFromPickers(Picker datePicker,
