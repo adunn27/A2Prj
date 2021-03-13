@@ -274,7 +274,7 @@ public class UIComponents {
         @Override
         public boolean animate() {
             taskContainer.setTextLine2(taskData.getTotalTimeString());
-            return true;
+            return taskData.isActive();
         }
     }
 
