@@ -1,13 +1,11 @@
 package org.ecs160.a2;
 
 import com.codename1.charts.ChartComponent;
-import com.codename1.components.SpanLabel;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.Style;
 import com.codename1.ui.spinner.Picker;
 
 import java.time.Duration;
@@ -30,19 +28,15 @@ public class TaskDetailsScreen extends Form {
     private Picker endDatePicker;
     private Container Body;
     private Container Footer;
-  
-    private String allTime;
-    private String weekTime;
-    private String dayTime;
-  
+
     private Date startDateFilter;
     private Date endDateFilter;
 
-    private Task taskData;
-    private UINavigator ui;
+    private final Task taskData;
+    private final UINavigator ui;
   
     private TextObject timeData;
-    long lastRenderedTime;
+    private long lastRenderedTime;
   
     TaskDetailsScreen(Task task, UINavigator ui) {
         registerAnimated(this);
@@ -87,7 +81,8 @@ public class TaskDetailsScreen extends Form {
     }
 
     private void resetStartEndDate() {
-        startDateFilter = Utility.convertToDate(Utility.getStartOfCurrentWeek());
+        startDateFilter = Utility.convertToDate(
+                                    Utility.getStartOfCurrentWeek());
         endDateFilter = new Date();
     }
 
@@ -159,7 +154,8 @@ public class TaskDetailsScreen extends Form {
                 taskData.getName(), BLACK, PAD_3MM, SIZE_LARGE);
         nameLabel.setBold();
 
-        SizeLabelObject sizeLabel = new SizeLabelObject(taskData.getTaskSizeString());
+        SizeLabelObject sizeLabel =
+                new SizeLabelObject(taskData.getTaskSizeString());
 
         // add components
         titleRow.add(nameLabel);
@@ -181,7 +177,8 @@ public class TaskDetailsScreen extends Form {
         tagRow = new Container();
         tagRow.setLayout(BoxLayout.y());
 
-        TextObject title = new TextObject("Tags", GREY, PAD_3MM, SIZE_SMALL);
+        TextObject title = new TextObject("Tags", GREY,
+                                            PAD_3MM, SIZE_SMALL);
         Container objects = new Container();
         for (String tag : taskData.getTags()) {
             ButtonObject tagObj = new ButtonObject();
@@ -195,9 +192,9 @@ public class TaskDetailsScreen extends Form {
 
     private String getStringTimeStats() {
         // times
-        allTime = taskData.getTotalTimeString();
-        weekTime = taskData.getTotalTimeThisWeekString();
-        dayTime = taskData.getTotalTimeTodayString();
+        String allTime = taskData.getTotalTimeString();
+        String weekTime = taskData.getTotalTimeThisWeekString();
+        String dayTime = taskData.getTotalTimeTodayString();
 
         return "All Time:\t" + allTime + "\n"+
                 "This Week:\t" + weekTime + "\n" +
@@ -257,27 +254,32 @@ public class TaskDetailsScreen extends Form {
 
         // RESET BUTTON
         UIComponents.ButtonObject resetButton = new UIComponents.ButtonObject();
-        resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        resetButton.setAllStyles("Reset", UITheme.LIGHT_GREY,
+                            ' ', UITheme.PAD_3MM);
         resetButton.addActionListener(e -> {
             resetStartEndDate();
             refreshChartDialog();
         });
 
         // REFRESH BUTTON
-        UIComponents.ButtonObject refreshButton = new UIComponents.ButtonObject();
-        refreshButton.setAllStyles("Update chart",UITheme.COL_SELECTED,ICON_REFRESH,PAD_3MM);
+        UIComponents.ButtonObject refreshButton =
+                                                new UIComponents.ButtonObject();
+        refreshButton.setAllStyles("Update chart",
+                                    UITheme.COL_SELECTED,ICON_REFRESH,PAD_3MM);
         refreshButton.addActionListener(e -> {
             startDateFilter = startDatePicker.getDate();
             endDateFilter = endDatePicker.getDate();
             if (startDateFilter.compareTo(endDateFilter) > 0)
-                new UIComponents.showWarningDialog("Please select a start date on or before the end date");
+                new UIComponents.showWarningDialog(
+                        "Please select a start date on or before the end date");
             else
                 refreshChartDialog();
         });
 
         // DONE BUTTON
         UIComponents.ButtonObject doneButton = new UIComponents.ButtonObject();
-        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY, ' ', UITheme.PAD_3MM);
+        doneButton.setAllStyles("Done", UITheme.LIGHT_GREY,
+                            ' ', UITheme.PAD_3MM);
         doneButton.addActionListener(e -> FilterDialog.dispose());
 
         // ADD TO FILTER
@@ -318,9 +320,7 @@ public class TaskDetailsScreen extends Form {
                 ICON_ARCHIVE, PAD_3MM);
 
         // action listeners
-        historyButton.addActionListener(e-> {
-            ui.goHistory(taskData.getName());
-        });
+        historyButton.addActionListener(e-> ui.goHistory(taskData.getName()));
 
         archiveButton.addActionListener(e-> {
             if (taskData.isArchived())
