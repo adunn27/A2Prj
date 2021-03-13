@@ -47,7 +47,7 @@ public class UITheme {
     public static final char ICON_BACK = FontImage.MATERIAL_ARROW_BACK;
     public static final char ICON_HISTORY = FontImage.MATERIAL_HISTORY;
     public static final char ICON_ARCHIVE = FontImage.MATERIAL_INBOX;
-    public static final char ICON_UNARCHIVE = FontImage.MATERIAL_FAVORITE;
+    public static final char ICON_UNARCHIVE = FontImage.MATERIAL_UNARCHIVE;
     public static final char ICON_SAVE = FontImage.MATERIAL_DONE;
     public static final char ICON_FILTER = FontImage.MATERIAL_FILTER_LIST;
     public static final char ICON_DELETE = FontImage.MATERIAL_DELETE;
