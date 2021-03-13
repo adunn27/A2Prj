@@ -5,13 +5,11 @@ import com.codename1.components.SpanLabel;
 import com.codename1.components.SpanMultiButton;
 import com.codename1.ui.*;
 import com.codename1.ui.animations.CommonTransitions;
-import com.codename1.ui.animations.Transition;
 import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.GridLayout;
-import com.codename1.ui.plaf.Border;
 import com.codename1.ui.plaf.RoundBorder;
 import com.codename1.ui.plaf.Style;
 import com.codename1.ui.Label;
@@ -81,11 +79,6 @@ public class UIComponents {
         public void setMyText(String text) {
             this.setText(text);
         }
-
-        public void setMyPadding(int pad) {
-            this.getAllStyles().setPaddingUnit(Style.UNIT_TYPE_DIPS);
-            this.getAllStyles().setPadding(pad,pad,pad,pad);
-        }
     }
 
     static class SizeLabelObject extends Label {
@@ -139,20 +132,18 @@ public class UIComponents {
         }
 
         private int setColor(String size) {
-            if (size == "XL") {
-                return COL_SIZE_XL;
-            } else if (size == "L") {
-                return COL_SIZE_L;
-            } else if (size == "M") {
-                return COL_SIZE_M;
-            } else {
-                return COL_SIZE_S;
+            switch (TaskSize.parse(size)) {
+                case XL: return COL_SIZE_XL;
+                case L: return COL_SIZE_L;
+                case M: return COL_SIZE_M;
+                case S: return COL_SIZE_S;
+                default: return -1;
             }
         }
     }
 
     static class TextObject extends SpanLabel {
-        private int size;
+        private final int size;
         public TextObject(String title, int color, int margin, int size) {
             setText(title);
             getTextAllStyles().setFgColor(color);
@@ -173,7 +164,7 @@ public class UIComponents {
     static class TaskObject extends Container {
         Task taskData;
         UINavigator ui;
-        private SpanMultiButton taskContainer;
+        private final SpanMultiButton taskContainer;
 
         public TaskObject(Task task, UINavigator ui) {
             setLayout(BoxLayout.y());
@@ -194,12 +185,12 @@ public class UIComponents {
                 );
             }
 
-            String tags = "";
+            StringBuilder tags = new StringBuilder();
             for (String t : taskData.getTags()) {
-                tags += t + "   ";
+                tags.append(t).append("   ");
             }
-            if (!tags.isEmpty())
-                taskContainer.setTextLine3(tags);
+            if (tags.length() > 0)
+                taskContainer.setTextLine3(tags.toString());
 
             // LISTENERS
             taskContainer.addActionListener(e-> shortPressEvent());
@@ -209,7 +200,7 @@ public class UIComponents {
             ButtonObject edit = new ButtonObject();
             edit.setAllStyles("", COL_SELECTED,
                     FontImage.MATERIAL_MODE_EDIT,PAD_3MM);
-            edit.addActionListener(e->{ui.goEdit(taskData.getName());});
+            edit.addActionListener(e-> ui.goEdit(taskData.getName()));
 
             ButtonObject archive = new ButtonObject();
             archive.setAllStyles("",
@@ -323,36 +314,6 @@ public class UIComponents {
         private void goDetails() {
             log("go description: " + taskObj.getName());
             ui.goDetails(taskObj.getName());
-        }
-    }
-
-    static class HistoryTaskObject extends Container {
-        public HistoryTaskObject(String startTime, String stopTime){
-            setLayout(new BorderLayout());
-            Border simpleBorder = Border.createLineBorder(1,BLACK);
-            getAllStyles().setBorder(simpleBorder);
-
-            Label startLabel = new Label("Start: " + startTime);
-            Label stopLabel = new Label("Stop: " + stopTime);
-
-
-            UIComponents.ButtonObject Delete = new UIComponents.ButtonObject();
-            Delete.setAllStyles("", RED, ICON_DELETE, PAD_3MM);
-
-            UIComponents.ButtonObject Edit = new UIComponents.ButtonObject();
-            Delete.setAllStyles("", RED, ICON_EDIT, PAD_3MM);
-            Edit.setMyIcon(FontImage.MATERIAL_EDIT);
-            Edit.getAllStyles().setBorder(RoundBorder.create()
-                                       .rectangle(true).color(COL_UNSELECTED));
-
-            Container EastSide = new Container(BoxLayout.x());
-
-            EastSide.add(stopLabel);
-            EastSide.add(Edit);
-            EastSide.add(Delete);
-
-            add(WEST, startLabel);
-            add(EAST, EastSide);
         }
     }
 
