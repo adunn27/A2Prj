@@ -6,7 +6,7 @@ Please refer to the [Documentation](https://github.com/adunn27/A2Prj/blob/ac6cb3
 
 Also please enjoy the trailer video for a demonstration of the app and an overview of its features.
 
-https://github.com/adunn27/A2Prj/blob/ac6cb3ee8d8d0657c978ea7fb1b31621e988cdb2/Final%20Video%20Demo%20v2.mp4
+https://user-images.githubusercontent.com/49731414/148639668-43ad008f-ef59-42b3-a8d8-eead38760e71.mp4
 
 
 #### Note
