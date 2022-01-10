@@ -1,7 +1,7 @@
 package org.ecs160.a2;
 
 public enum TaskSize {
-    NONE, S, M, L, XL;
+    S, M, L, XL;
 
     public static TaskSize parse(String sizeString) {
         switch (sizeString) {
